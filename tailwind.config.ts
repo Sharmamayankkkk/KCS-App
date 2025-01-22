@@ -20,27 +20,27 @@ const config = {
     extend: {
       colors: {
         dark: {
-          1: '#1C1F2E',
-          2: '#161925',
-          3: '#252A41',
-          4: '#1E2757',
+          1: '#FFFFFF',  // Changed from #1C1F2E to white
+          2: '#F8F9FA',  // Changed from #161925 to light gray
+          3: '#E9ECEF',  // Changed from #252A41 to lighter gray
+          4: '#DEE2E6',  // Changed from #1E2757 to light blue-gray
         },
         blue: {
-          1: '#0E78F9',
+          1: '#2196F3',  // Changed from #0E78F9 to brighter blue
         },
         sky: {
-          1: '#C9DDFF',
-          2: '#ECF0FF',
-          3: '#F5FCFF',
+          1: '#E3F2FD',  // Changed from #C9DDFF to lighter blue
+          2: '#BBDEFB',  // Changed from #ECF0FF to light blue
+          3: '#90CAF9',  // Changed from #F5FCFF to sky blue
         },
         orange: {
-          1: '#FF742E',
+          1: '#FF9800',  // Changed from #FF742E to brighter orange
         },
         purple: {
-          1: '#830EF9',
+          1: '#9C27B0',  // Changed from #830EF9 to brighter purple
         },
         yellow: {
-          1: '#F9A90E',
+          1: '#FFC107',  // Changed from #F9A90E to brighter yellow
         },
       },
       keyframes: {
