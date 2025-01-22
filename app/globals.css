@@ -12,71 +12,71 @@
 .str-video__call-stats {
   max-width: 500px;
   position: relative;
-  background-color: #E8EAF2; /* Light background */
-  color: #1A1C23; /* Dark text for contrast */
+  background-color: #E8EAF2; /* dark-1: Primary background */
+  color: #1A1C23; /* text-light */
 }
 
 .str-video__speaker-layout__wrapper {
   max-height: 700px;
-  background-color: #E8EAF2; /* Light background */
+  background-color: #E8EAF2; /* dark-1 */
 }
 
 .str-video__participant-details {
-  color: #1A1C23; /* Dark text */
-  background-color: #E8EAF2; /* Light background */
+  color: #1A1C23; /* text-light */
+  background-color: #E8EAF2; /* dark-1 */
 }
 
 .str-video__menu-container {
-  color: #1A1C23; /* Dark text */
-  background-color: #E8EAF2; /* Light background */
+  color: #1A1C23; /* text-light */
+  background-color: #E8EAF2; /* dark-1 */
 }
 
 .str-video__notification {
-  color: #1A1C23; /* Dark text */
-  background-color: #E8EAF2; /* Light background */
+  color: #1A1C23; /* text-light */
+  background-color: #E8EAF2; /* dark-1 */
 }
 
 .str-video__participant-list {
-  background-color: #E2E4ED; /* Slightly darker light background */
+  background-color: #E2E4ED; /* dark-2: Secondary background */
   padding: 10px;
   border-radius: 10px;
-  color: #1A1C23; /* Dark text */
+  color: #1A1C23; /* text-light */
   height: 100%;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1); /* Subtle shadow */
+  box-shadow: 0 2px 8px rgba(14, 120, 249, 0.1); /* blue-1 with opacity */
 }
 
 .str-video__call-controls__button {
   height: 40px;
-  background-color: #2196F3; /* Bright blue */
-  color: #FFFFFF; /* White text */
+  background-color: #0E78F9; /* blue-1: Primary action color */
+  color: #FFFFFF; /* text-dark */
 }
 
 .str-video__call-controls__button:hover {
-  background-color: #1976D2; /* Darker blue for hover state */
+  background-color: #0960C7; /* Darker shade of blue-1 */
 }
 
 /* Glassmorphism effects */
 .glassmorphism {
-  background: rgba(232, 234, 242, 0.9);
+  background: rgba(232, 234, 242, 0.9); /* dark-1 with opacity */
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(33, 150, 243, 0.2);
+  border: 1px solid rgba(14, 120, 249, 0.2); /* blue-1 with opacity */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  color: #1A1C23; /* Dark text */
+  color: #1A1C23; /* text-light */
 }
 
 .glassmorphism2 {
-  background: rgba(232, 234, 242, 0.95);
+  background: rgba(232, 234, 242, 0.95); /* dark-1 with opacity */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(33, 150, 243, 0.2);
+  border: 1px solid rgba(14, 120, 249, 0.2); /* blue-1 with opacity */
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  color: #1A1C23; /* Dark text */
+  color: #1A1C23; /* text-light */
 }
 
 /* Clerk class overrides */
 .cl-userButtonPopoverActionButtonIcon {
-  color: #2196F3; /* Bright blue for icons */
+  color: #0E78F9; /* blue-1 */
 }
 
 .cl-logoBox {
@@ -84,67 +84,67 @@
 }
 
 .cl-dividerLine {
-  background: #D8DCE9; /* Medium light background */
+  background: #D8DCE9; /* dark-3 */
   height: 2px;
 }
 
 .cl-socialButtonsIconButton {
-  border: 3px solid #2196F3; /* Bright blue border */
-  background-color: #E8EAF2; /* Light background */
-  color: #1A1C23; /* Dark text */
+  border: 3px solid #0E78F9; /* blue-1 */
+  background-color: #E8EAF2; /* dark-1 */
+  color: #1A1C23; /* text-light */
 }
 
 .cl-internal-wkkub3 {
-  color: #2196F3; /* Bright blue */
+  color: #0E78F9; /* blue-1 */
 }
 
 .cl-userButtonPopoverActionButton {
-  color: #1A1C23; /* Dark text */
-  background-color: #E8EAF2; /* Light background */
+  color: #1A1C23; /* text-light */
+  background-color: #E8EAF2; /* dark-1 */
 }
 
 .cl-userButtonPopoverActionButton:hover {
-  background-color: #D8DCE9; /* Slightly darker background */
-  color: #1A1C23; /* Dark text */
+  background-color: #D8DCE9; /* dark-3 */
+  color: #1A1C23; /* text-light */
 }
 
 /* ======== New styles for the main UI elements ======== */
 body {
-  background-color: #E8EAF2; /* Light background */
-  color: #1A1C23; /* Dark text */
+  background-color: #E8EAF2; /* dark-1 */
+  color: #1A1C23; /* text-light */
 }
 
 .sidebar {
-  background-color: #E2E4ED; /* Slightly darker background */
-  color: #1A1C23; /* Dark text */
+  background-color: #E2E4ED; /* dark-2 */
+  color: #1A1C23; /* text-light */
 }
 
 .main-content {
-  background-color: #E8EAF2; /* Light background */
-  color: #1A1C23; /* Dark text */
+  background-color: #E8EAF2; /* dark-1 */
+  color: #1A1C23; /* text-light */
 }
 
 .time-display {
-  color: #1A1C23; /* Dark text */
+  color: #1A1C23; /* text-light */
 }
 
 .upcoming-meeting {
-  background-color: #D8DCE9; /* Medium light background */
-  color: #1A1C23; /* Dark text */
+  background-color: #D8DCE9; /* dark-3 */
+  color: #1A1C23; /* text-light */
 }
 
 .navigation-item {
-  color: #1A1C23; /* Dark text */
+  color: #1A1C23; /* text-light */
 }
 
 .navigation-item:hover {
-  background-color: #CED3E8; /* Slightly darker background */
-  color: #1A1C23; /* Dark text */
+  background-color: #CED3E8; /* dark-4 */
+  color: #1A1C23; /* text-light */
 }
 
 .navigation-item.active {
-  background-color: #2196F3; /* Bright blue */
-  color: #FFFFFF; /* White text */
+  background-color: #0E78F9; /* blue-1 */
+  color: #FFFFFF; /* text-dark */
 }
 
 /* ======== Animation ======== */
