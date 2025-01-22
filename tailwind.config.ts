@@ -21,9 +21,9 @@ const config = {
       colors: {
         dark: {
           1: '#000000',  // Changed from #1C1F2E to white
-          2: '#F8F9FA',  // Changed from #161925 to light gray
-          3: '#E9ECEF',  // Changed from #252A41 to lighter gray
-          4: '#DEE2E6',  // Changed from #1E2757 to light blue-gray
+          2: '#1A1A1A', /* Slightly lighter black */
+          3: '#333333', /* Dark gray */
+          4: '#4D4D4D  // Changed from #1E2757 to light blue-gray
         },
         blue: {
           1: '#2196F3',  // Changed from #0E78F9 to brighter blue
