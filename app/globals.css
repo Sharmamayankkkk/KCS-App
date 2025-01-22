@@ -12,51 +12,70 @@
 .str-video__call-stats {
   max-width: 500px;
   position: relative;
+  background-color: #ffffff;
+  color: #2d3748;
 }
 
 .str-video__speaker-layout__wrapper {
   max-height: 700px;
+  background-color: #f7fafc;
 }
 
 .str-video__participant-details {
-  color: #333333; /* Changed from white to dark gray for better contrast */
+  color: #2d3748;
+  background-color: #ffffff;
 }
 
 .str-video__menu-container {
-  color: #333333; /* Changed from white to dark gray */
+  color: #2d3748;
+  background-color: #ffffff;
 }
 
 .str-video__notification {
-  color: #333333; /* Changed from white to dark gray */
+  color: #2d3748;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .str-video__participant-list {
-  background-color: #f0f2ff; /* Changed from dark #1c1f2e to light blue-tinted white */
+  background-color: #ffffff;
   padding: 10px;
   border-radius: 10px;
-  color: #333333; /* Changed from white to dark gray */
+  color: #2d3748;
   height: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .str-video__call-controls__button {
   height: 40px;
+  background-color: #edf2f7;
+  color: #2d3748;
+  border: 1px solid #e2e8f0;
+}
+
+.str-video__call-controls__button:hover {
+  background-color: #e2e8f0;
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.75); /* Increased opacity for brighter appearance */
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .glassmorphism2 {
-  background: rgba(240, 240, 240, 0.75); /* Changed from dark to light gray */
+  background: rgba(247, 250, 252, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.5);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 /* ==== clerk class override ===== */
 .cl-userButtonPopoverActionButtonIcon {
-  color: #333333; /* Changed from white to dark gray */
+  color: #2d3748;
 }
 
 .cl-logoBox {
@@ -64,20 +83,26 @@
 }
 
 .cl-dividerLine {
-  background: #e0e4ff; /* Changed from dark #252a41 to light blue-tinted */
+  background: #e2e8f0;
   height: 2px;
 }
 
 .cl-socialButtonsIconButton {
-  border: 3px solid #d8d8dc; /* Changed from dark #565761 to light gray */
+  border: 3px solid #e2e8f0;
+  background-color: #ffffff;
 }
 
 .cl-internal-wkkub3 {
-  color: #333333; /* Changed from white to dark gray */
+  color: #2d3748;
 }
 
 .cl-userButtonPopoverActionButton {
-  color: #333333; /* Changed from white to dark gray */
+  color: #2d3748;
+  background-color: #ffffff;
+}
+
+.cl-userButtonPopoverActionButton:hover {
+  background-color: #f7fafc;
 }
 
 /* =============================== */
