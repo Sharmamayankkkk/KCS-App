@@ -12,70 +12,67 @@
 .str-video__call-stats {
   max-width: 500px;
   position: relative;
-  background-color: #E8F5E9;
-  color: #1B5E20;
+  background-color: #FFFFFF;
 }
 
 .str-video__speaker-layout__wrapper {
   max-height: 700px;
-  background-color: #FFF8E1;
+  background-color: #FFFFFF;
 }
 
 .str-video__participant-details {
-  color: #FF6F00;
-  background-color: #FFF3E0;
+  color: #2196F3; /* Bright blue */
+  background-color: #FFFFFF;
 }
 
 .str-video__menu-container {
-  color: #4A148C;
-  background-color: #F3E5F5;
+  color: #2196F3;
+  background-color: #FFFFFF;
 }
 
 .str-video__notification {
-  color: #0D47A1;
-  background-color: #E3F2FD;
-  box-shadow: 0 2px 8px rgba(13, 71, 161, 0.2);
+  color: #2196F3;
+  background-color: #FFFFFF;
 }
 
 .str-video__participant-list {
-  background-color: #E1F5FE;
+  background-color: #FFFFFF;
   padding: 10px;
   border-radius: 10px;
-  color: #01579B;
+  color: #2196F3;
   height: 100%;
-  box-shadow: 0 2px 8px rgba(1, 87, 155, 0.15);
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
 }
 
 .str-video__call-controls__button {
   height: 40px;
-  background-color: #F5F5F5;
-  color: #424242;
-  border: 1px solid #E0E0E0;
+  background-color: #2196F3;
+  color: white;
 }
 
 .str-video__call-controls__button:hover {
-  background-color: #EEEEEE;
+  background-color: #1976D2;
 }
 
 .glassmorphism {
-  background: rgba(178, 235, 242, 0.9);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(128, 222, 234, 0.5);
-  box-shadow: 0 4px 6px rgba(0, 151, 167, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 .glassmorphism2 {
-  background: rgba(225, 190, 231, 0.95);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(186, 104, 200, 0.5);
-  box-shadow: 0 4px 6px rgba(142, 36, 170, 0.1);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 /* ==== clerk class override ===== */
 .cl-userButtonPopoverActionButtonIcon {
-  color: #D84315;
+  color: #2196F3;
 }
 
 .cl-logoBox {
@@ -83,26 +80,26 @@
 }
 
 .cl-dividerLine {
-  background: #FFE0B2;
+  background: #E3F2FD;
   height: 2px;
 }
 
 .cl-socialButtonsIconButton {
-  border: 3px solid #FFCCBC;
-  background-color: #FBE9E7;
+  border: 3px solid #2196F3;
+  background-color: #FFFFFF;
 }
 
 .cl-internal-wkkub3 {
-  color: #BF360C;
+  color: #2196F3;
 }
 
 .cl-userButtonPopoverActionButton {
-  color: #E65100;
-  background-color: #FFF3E0;
+  color: #2196F3;
+  background-color: #FFFFFF;
 }
 
 .cl-userButtonPopoverActionButton:hover {
-  background-color: #FFE0B2;
+  background-color: #E3F2FD;
 }
 
 /* =============================== */
@@ -135,4 +132,39 @@
     animation-timing-function: ease-in;
     width: 100%;
   }
+}
+
+/* Add these new styles for the main UI elements */
+body {
+  background-color: #FFFFFF;
+}
+
+.sidebar {
+  background-color: #FFFFFF;
+}
+
+.main-content {
+  background-color: #FFFFFF;
+}
+
+.time-display {
+  color: #2196F3;
+}
+
+.upcoming-meeting {
+  background-color: #E3F2FD;
+  color: #2196F3;
+}
+
+.navigation-item {
+  color: #2196F3;
+}
+
+.navigation-item:hover {
+  background-color: #E3F2FD;
+}
+
+.navigation-item.active {
+  background-color: #2196F3;
+  color: white;
 }
