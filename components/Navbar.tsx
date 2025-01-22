@@ -9,7 +9,7 @@ const Navbar = () => {
     <nav className="flex-between fixed z-50 w-full bg-dark-1 px-6 py-4 lg:px-10">
       <Link href="/" className="flex items-center gap-1">
         <Image
-          src="/icons/logo.svg"
+          src="/icons/KCS.png"
           width={32}
           height={32}
           alt="yoom logo"
