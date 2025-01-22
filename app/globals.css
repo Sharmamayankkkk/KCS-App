@@ -12,35 +12,35 @@
 .str-video__call-stats {
   max-width: 500px;
   position: relative;
-  background-color: #FFFFFF;
-  color: #1C1F2E; /* Dark color for contrast */
+  background-color: #E8EAF2;
+  color: #1C1F2E;
 }
 
 .str-video__speaker-layout__wrapper {
   max-height: 700px;
-  background-color: #FFFFFF;
+  background-color: #E8EAF2;
 }
 
 .str-video__participant-details {
-  color: #1C1F2E; /* Dark text color */
-  background-color: #FFFFFF;
+  color: #1C1F2E;
+  background-color: #E8EAF2;
 }
 
 .str-video__menu-container {
   color: #1C1F2E;
-  background-color: #FFFFFF;
+  background-color: #E8EAF2;
 }
 
 .str-video__notification {
   color: #1C1F2E;
-  background-color: #FFFFFF;
+  background-color: #E8EAF2;
 }
 
 .str-video__participant-list {
-  background-color: #FFFFFF;
+  background-color: #E2E4ED;
   padding: 10px;
   border-radius: 10px;
-  color: #1C1F2E; /* Updated text color for readability */
+  color: #1C1F2E;
   height: 100%;
   box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
 }
@@ -56,21 +56,21 @@
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(232, 234, 242, 0.9);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(33, 150, 243, 0.2);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  color: #1C1F2E; /* Ensure text is dark */
+  color: #1C1F2E;
 }
 
 .glassmorphism2 {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(232, 234, 242, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(33, 150, 243, 0.2);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  color: #1C1F2E; /* Ensure text is dark */
+  color: #1C1F2E;
 }
 
 /* ==== clerk class override ===== */
@@ -83,14 +83,14 @@
 }
 
 .cl-dividerLine {
-  background: #E3F2FD;
+  background: #D8DCE9;
   height: 2px;
 }
 
 .cl-socialButtonsIconButton {
   border: 3px solid #2196F3;
-  background-color: #FFFFFF;
-  color: #1C1F2E; /* Ensure icon contrast */
+  background-color: #E8EAF2;
+  color: #1C1F2E;
 }
 
 .cl-internal-wkkub3 {
@@ -99,12 +99,12 @@
 
 .cl-userButtonPopoverActionButton {
   color: #1C1F2E;
-  background-color: #FFFFFF;
+  background-color: #E8EAF2;
 }
 
 .cl-userButtonPopoverActionButton:hover {
-  background-color: #E3F2FD;
-  color: #1C1F2E; /* Adjust hover text color */
+  background-color: #D8DCE9;
+  color: #1C1F2E;
 }
 
 /* =============================== */
@@ -141,36 +141,36 @@
 
 /* Add these new styles for the main UI elements */
 body {
-  background-color: #FFFFFF;
-  color: #1C1F2E; /* Ensure default text is visible */
+  background-color: #E8EAF2;
+  color: #1C1F2E;
 }
 
 .sidebar {
-  background-color: #FFFFFF;
-  color: #1C1F2E; /* Ensure text contrast */
+  background-color: #E2E4ED;
+  color: #1C1F2E;
 }
 
 .main-content {
-  background-color: #FFFFFF;
-  color: #1C1F2E; /* Ensure text contrast */
+  background-color: #E8EAF2;
+  color: #1C1F2E;
 }
 
 .time-display {
-  color: #1C1F2E; /* Darker color for visibility */
+  color: #1C1F2E;
 }
 
 .upcoming-meeting {
-  background-color: #E3F2FD;
-  color: #1C1F2E; /* Contrast color */
+  background-color: #D8DCE9;
+  color: #1C1F2E;
 }
 
 .navigation-item {
-  color: #1C1F2E; /* Adjusted for contrast */
+  color: #1C1F2E;
 }
 
 .navigation-item:hover {
-  background-color: #E3F2FD;
-  color: #1C1F2E; /* Dark text on light hover */
+  background-color: #CED3E8;
+  color: #1C1F2E;
 }
 
 .navigation-item.active {
