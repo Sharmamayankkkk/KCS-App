@@ -12,28 +12,27 @@
 .str-video__call-stats {
   max-width: 500px;
   position: relative;
-  background-color: #FFFFFF;
-  color: #333333; /* Dark text for readability */
+  background-color: #F4F6F8; /* Light gray for better contrast */
 }
 
 .str-video__speaker-layout__wrapper {
   max-height: 700px;
-  background-color: #FFFFFF;
+  background-color: #F4F6F8;
 }
 
 .str-video__participant-details {
-  color: #1565C0; /* Slightly darker blue for better contrast */
-  background-color: #FFFFFF;
+  color: #1565C0; /* Deeper blue for readability */
+  background-color: #F4F6F8;
 }
 
 .str-video__menu-container {
   color: #1565C0;
-  background-color: #FFFFFF;
+  background-color: #F4F6F8;
 }
 
 .str-video__notification {
   color: #1565C0;
-  background-color: #FFFFFF;
+  background-color: #F4F6F8;
 }
 
 .str-video__participant-list {
@@ -42,35 +41,33 @@
   border-radius: 10px;
   color: #1565C0;
   height: 100%;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
+  box-shadow: 0 2px 8px rgba(21, 101, 192, 0.1);
 }
 
 .str-video__call-controls__button {
   height: 40px;
-  background-color: #1565C0; /* Consistent with the color scheme */
-  color: #FFFFFF;
+  background-color: #1565C0;
+  color: white;
 }
 
 .str-video__call-controls__button:hover {
-  background-color: #0D47A1; /* Slightly darker hover state */
+  background-color: #0D47A1;
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.95); /* Slightly darker for contrast */
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(33, 150, 243, 0.2);
+  border: 1px solid rgba(21, 101, 192, 0.2);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  color: #333333; /* Ensure readable text */
 }
 
 .glassmorphism2 {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(33, 150, 243, 0.2);
+  border: 1px solid rgba(21, 101, 192, 0.2);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  color: #333333; /* Ensure readable text */
 }
 
 /* ==== clerk class override ===== */
@@ -83,7 +80,7 @@
 }
 
 .cl-dividerLine {
-  background: #BBDEFB; /* Subtle light blue divider */
+  background: #E1F5FE; /* Lighter blue */
   height: 2px;
 }
 
@@ -102,7 +99,7 @@
 }
 
 .cl-userButtonPopoverActionButton:hover {
-  background-color: #E3F2FD;
+  background-color: #E1F5FE;
 }
 
 /* =============================== */
@@ -139,38 +136,35 @@
 
 /* Add these new styles for the main UI elements */
 body {
-  background-color: #FFFFFF;
-  color: #333333; /* Ensure readable text */
+  background-color: #F4F6F8; /* Light gray for a soft tone */
 }
 
 .sidebar {
-  background-color: #F5F5F5; /* Subtle light gray for differentiation */
-  color: #333333;
+  background-color: #F4F6F8;
 }
 
 .main-content {
   background-color: #FFFFFF;
-  color: #333333;
 }
 
 .time-display {
-  color: #1565C0;
+  color: #0D47A1; /* Strong blue */
 }
 
 .upcoming-meeting {
-  background-color: #E3F2FD;
-  color: #1565C0;
+  background-color: #E1F5FE;
+  color: #0D47A1;
 }
 
 .navigation-item {
-  color: #1565C0;
+  color: #0D47A1;
 }
 
 .navigation-item:hover {
-  background-color: #E3F2FD;
+  background-color: #E1F5FE;
 }
 
 .navigation-item.active {
-  background-color: #1565C0;
-  color: #FFFFFF;
+  background-color: #0D47A1;
+  color: white;
 }
