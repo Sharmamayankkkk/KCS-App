@@ -1,9 +1,7 @@
-/* eslint-disable camelcase */
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-
 import HomeCard from './HomeCard';
 import MeetingModal from './MeetingModal';
 import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk';
@@ -31,45 +29,46 @@ const MeetingTypeList = () => {
   const { user } = useUser();
   const { toast } = useToast();
 
-const createMeeting = async () => {
-  if (!client || !user) return;
-  try {
-    if (!values.dateTime) {
-      toast({ title: 'Please select a date and time' });
-      return;
-    }
-    const id = crypto.randomUUID();
-    const call = client.call('default', id);
-    if (!call) throw new Error('Failed to create meeting');
+  const createMeeting = async () => {
+    if (!client || !user) return;
+    try {
+      if (!values.dateTime) {
+        toast({ title: 'Please select a date and time' });
+        return;
+      }
 
-    // Fix timezone issue
-    const timeZoneOffset = values.dateTime.getTimezoneOffset() * 60000; // Offset in ms
-    const localISOTime = new Date(values.dateTime.getTime() - timeZoneOffset).toISOString();
-    const startsAt = localISOTime; // Corrected ISO time
+      const id = crypto.randomUUID();
+      const call = client.call('default', id);
+      if (!call) throw new Error('Failed to create meeting');
 
-    const description = values.description || 'Instant Meeting';
+      // Convert local time to UTC for storage
+      const localDateTime = values.dateTime;
+      const utcDateTime = new Date(localDateTime.getTime() - localDateTime.getTimezoneOffset() * 60000);
+      
+      const startsAt = utcDateTime.toISOString();
+      const description = values.description || 'Instant Meeting';
 
-    await call.getOrCreate({
-      data: {
-        starts_at: startsAt,
-        custom: {
-          description,
+      await call.getOrCreate({
+        data: {
+          starts_at: startsAt,
+          custom: {
+            description,
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, // Store user's timezone
+          },
         },
-      },
-    });
-    setCallDetail(call);
-    if (!values.description) {
-      router.push(`/meeting/${call.id}`);
+      });
+
+      setCallDetail(call);
+      if (!values.description) {
+        router.push(`/meeting/${call.id}`);
+      }
+      toast({ title: 'Meeting Created' });
+    } catch (error) {
+      console.error(error);
+      toast({ title: 'Failed to create Meeting' });
     }
-    toast({
-      title: 'Meeting Created',
-    });
-  } catch (error) {
-    console.error(error);
-    toast({ title: 'Failed to create Meeting' });
-  }
-};
-  
+  };
+
   if (!client || !user) return <Loader />;
 
   const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetail?.id}`;
@@ -135,7 +134,12 @@ const createMeeting = async () => {
               timeCaption="time"
               dateFormat="MMMM d, yyyy h:mm aa"
               className="w-full rounded bg-dark-3 p-2 focus:outline-none"
+              // Show times in user's local timezone
+              timeZone={Intl.DateTimeFormat().resolvedOptions().timeZone}
             />
+            <div className="text-sm text-gray-400">
+              Times are shown in your local timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}
+            </div>
           </div>
         </MeetingModal>
       ) : (
