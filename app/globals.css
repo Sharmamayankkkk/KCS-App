@@ -19,22 +19,22 @@
 }
 
 .str-video__participant-details {
-  color: white;
+  color: #333333; /* Changed from white to dark gray for better contrast */
 }
 
 .str-video__menu-container {
-  color: white;
+  color: #333333; /* Changed from white to dark gray */
 }
 
 .str-video__notification {
-  color: white;
+  color: #333333; /* Changed from white to dark gray */
 }
 
 .str-video__participant-list {
-  background-color: #1c1f2e;
+  background-color: #f0f2ff; /* Changed from dark #1c1f2e to light blue-tinted white */
   padding: 10px;
   border-radius: 10px;
-  color: white;
+  color: #333333; /* Changed from white to dark gray */
   height: 100%;
 }
 
@@ -43,39 +43,41 @@
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.75); /* Increased opacity for brighter appearance */
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
 }
+
 .glassmorphism2 {
-  background: rgba(18, 17, 17, 0.25);
+  background: rgba(240, 240, 240, 0.75); /* Changed from dark to light gray */
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
 
 /* ==== clerk class override ===== */
-
 .cl-userButtonPopoverActionButtonIcon {
-  color: white;
+  color: #333333; /* Changed from white to dark gray */
 }
 
 .cl-logoBox {
   height: 40px;
 }
+
 .cl-dividerLine {
-  background: #252a41;
+  background: #e0e4ff; /* Changed from dark #252a41 to light blue-tinted */
   height: 2px;
 }
 
 .cl-socialButtonsIconButton {
-  border: 3px solid #565761;
+  border: 3px solid #d8d8dc; /* Changed from dark #565761 to light gray */
 }
 
 .cl-internal-wkkub3 {
-  color: white;
+  color: #333333; /* Changed from white to dark gray */
 }
+
 .cl-userButtonPopoverActionButton {
-  color: white;
+  color: #333333; /* Changed from white to dark gray */
 }
 
 /* =============================== */
@@ -91,7 +93,6 @@
 }
 
 /* animation */
-
 .show-block {
   width: 100%;
   max-width: 350px;
