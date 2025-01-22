@@ -12,53 +12,53 @@
 .str-video__call-stats {
   max-width: 500px;
   position: relative;
-  background-color: #FFFFFF;
+  background-color: theme('colors.dark.1'); /* Using your theme white */
 }
 
 .str-video__speaker-layout__wrapper {
   max-height: 700px;
-  background-color: #FFFFFF;
+  background-color: theme('colors.dark.2');
 }
 
 .str-video__participant-details {
-  color: #2196F3; /* Bright blue */
-  background-color: #FFFFFF;
+  color: theme('colors.blue.1');
+  background-color: theme('colors.dark.1');
 }
 
 .str-video__menu-container {
-  color: #2196F3;
-  background-color: #FFFFFF;
+  color: theme('colors.blue.1');
+  background-color: theme('colors.dark.1');
 }
 
 .str-video__notification {
-  color: #2196F3;
-  background-color: #FFFFFF;
+  color: theme('colors.blue.1');
+  background-color: theme('colors.dark.1');
 }
 
 .str-video__participant-list {
-  background-color: #FFFFFF;
+  background-color: theme('colors.dark.1');
   padding: 10px;
   border-radius: 10px;
-  color: #2196F3;
+  color: theme('colors.blue.1');
   height: 100%;
   box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
 }
 
 .str-video__call-controls__button {
   height: 40px;
-  background-color: #2196F3;
-  color: white;
+  background-color: theme('colors.blue.1');
+  color: theme('colors.dark.1');
 }
 
 .str-video__call-controls__button:hover {
-  background-color: #1976D2;
+  background-color: theme('colors.sky.3');
 }
 
 .glassmorphism {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(33, 150, 243, 0.2);
+  border: 1px solid theme('colors.sky.1');
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
@@ -66,13 +66,13 @@
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(33, 150, 243, 0.2);
+  border: 1px solid theme('colors.sky.2');
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 /* ==== clerk class override ===== */
 .cl-userButtonPopoverActionButtonIcon {
-  color: #2196F3;
+  color: theme('colors.blue.1');
 }
 
 .cl-logoBox {
@@ -80,30 +80,29 @@
 }
 
 .cl-dividerLine {
-  background: #E3F2FD;
+  background: theme('colors.dark.3');
   height: 2px;
 }
 
 .cl-socialButtonsIconButton {
-  border: 3px solid #2196F3;
-  background-color: #FFFFFF;
+  border: 3px solid theme('colors.blue.1');
+  background-color: theme('colors.dark.1');
 }
 
 .cl-internal-wkkub3 {
-  color: #2196F3;
+  color: theme('colors.blue.1');
 }
 
 .cl-userButtonPopoverActionButton {
-  color: #2196F3;
-  background-color: #FFFFFF;
+  color: theme('colors.blue.1');
+  background-color: theme('colors.dark.1');
 }
 
 .cl-userButtonPopoverActionButton:hover {
-  background-color: #E3F2FD;
+  background-color: theme('colors.sky.1');
 }
 
 /* =============================== */
-
 @layer utilities {
   .flex-center {
     @apply flex justify-center items-center;
@@ -127,7 +126,6 @@
     animation-timing-function: ease-in;
     width: 0%;
   }
-
   100% {
     animation-timing-function: ease-in;
     width: 100%;
@@ -136,35 +134,35 @@
 
 /* Add these new styles for the main UI elements */
 body {
-  background-color: #FFFFFF;
+  background-color: theme('colors.dark.1');
 }
 
 .sidebar {
-  background-color: #FFFFFF;
+  background-color: theme('colors.dark.2');
 }
 
 .main-content {
-  background-color: #FFFFFF;
+  background-color: theme('colors.dark.1');
 }
 
 .time-display {
-  color: #2196F3;
+  color: theme('colors.blue.1');
 }
 
 .upcoming-meeting {
-  background-color: #E3F2FD;
-  color: #2196F3;
+  background-color: theme('colors.sky.1');
+  color: theme('colors.blue.1');
 }
 
 .navigation-item {
-  color: #2196F3;
+  color: theme('colors.blue.1');
 }
 
 .navigation-item:hover {
-  background-color: #E3F2FD;
+  background-color: theme('colors.sky.1');
 }
 
 .navigation-item.active {
-  background-color: #2196F3;
-  color: white;
+  background-color: theme('colors.blue.1');
+  color: theme('colors.dark.1');
 }
