@@ -20,31 +20,31 @@ const config = {
     extend: {
       colors: {
         dark: {
-          1: '#E8EAF2', // Light blue-grey
-          2: '#E2E4ED', // Slightly darker light blue-grey
-          3: '#D8DCE9', // Medium light blue-grey
-          4: '#CED3E8', // More saturated light blue
+          1: '#E8EAF2', // Primary background color - Lightest blue-grey
+          2: '#E2E4ED', // Secondary background color - Light blue-grey
+          3: '#D8DCE9', // Tertiary background color - Medium blue-grey
+          4: '#CED3E8', // Quaternary background color - Deep blue-grey
         },
         blue: {
-          1: '#0E78F9',
+          1: '#0E78F9', // Primary action color - Used for interactive elements like buttons
         },
         sky: {
-          1: '#C9DDFF',
-          2: '#ECF0FF',
-          3: '#F5FCFF',
+          1: '#C9DDFF', // Active state background - Lightest sky blue
+          2: '#ECF0FF', // Secondary active state - Medium sky blue
+          3: '#F5FCFF', // Tertiary active state - Darkest sky blue
         },
         orange: {
-          1: '#FF742E',
+          1: '#FF742E', // Primary accent color - Used for highlight elements
         },
         purple: {
-          1: '#830EF9',
+          1: '#830EF9', // Secondary accent color - Used for secondary highlights
         },
         yellow: {
-          1: '#F9A90E',
+          1: '#F9A90E', // Tertiary accent color - Used for tertiary highlights
         },
         text: {
-          light: '#1A1C23', // Updated for better contrast on light backgrounds
-          dark: '#FFFFFF',  // For better contrast on dark backgrounds
+          light: '#1A1C23', // Primary text color for light themes - Near black for contrast
+          dark: '#FFFFFF', // Primary text color for dark themes - Pure white
         },
       },
       keyframes: {
@@ -69,4 +69,4 @@ const config = {
   plugins: [require('tailwindcss-animate')],
 } satisfies Config;
 
-export default config;
+export default config; 
