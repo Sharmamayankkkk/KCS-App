@@ -33,53 +33,42 @@ const MeetingTypeList = () => {
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const createMeeting = async () => {
-  if (!client || !user) return;
-  try {
-    if (!values.dateTime) {
-      toast({ title: 'Please select a date and time' });
-      return;
-    }
-    const id = crypto.randomUUID();
-    const call = client.call('default', id);
-    if (!call) throw new Error('Failed to create meeting');
+    if (!client || !user) return;
+    try {
+      if (!values.dateTime) {
+        toast({ title: 'Please select a date and time' });
+        return;
+      }
 
-    const formatDateToLocalISOString = (date) => {
-      const pad = (n) => String(n).padStart(2, '0');
-      const timezoneOffset = -date.getTimezoneOffset(); // Offset in minutes
-      const diffHours = Math.floor(Math.abs(timezoneOffset) / 60);
-      const diffMinutes = Math.abs(timezoneOffset) % 60;
-      const sign = timezoneOffset >= 0 ? '+' : '-';
+      const id = crypto.randomUUID();
+      const call = client.call('default', id);
+      if (!call) throw new Error('Failed to create meeting');
 
-      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
-        date.getHours()
-      )}:${pad(date.getMinutes())}:${pad(date.getSeconds())}${sign}${pad(diffHours)}:${pad(
-        diffMinutes
-      )}`;
-    };
+      // The selected date is already in local timezone, so we just need to convert it to ISO string
+      const startsAt = values.dateTime.toISOString();
+      const description = values.description || 'Instant Meeting';
 
-    const startsAt = formatDateToLocalISOString(values.dateTime);
-    const description = values.description || 'Instant Meeting';
-
-    await call.getOrCreate({
-      data: {
-        starts_at: startsAt,
-        custom: {
-          description,
+      await call.getOrCreate({
+        data: {
+          starts_at: startsAt,
+          custom: {
+            description,
+            created_in_timezone: userTimezone, // Store the timezone where meeting was created
+          },
         },
-      },
-    });
-    setCallDetail(call);
-    if (!values.description) {
-      router.push(`/meeting/${call.id}`);
+      });
+
+      setCallDetail(call);
+      if (!values.description) {
+        router.push(`/meeting/${call.id}`);
+      }
+      toast({ title: 'Meeting Created' });
+    } catch (error) {
+      console.error(error);
+      toast({ title: 'Failed to create Meeting' });
     }
-    toast({
-      title: 'Meeting Created',
-    });
-  } catch (error) {
-    console.error(error);
-    toast({ title: 'Failed to create Meeting' });
-  }
-};
+  };
+
   if (!client || !user) return <Loader />;
 
   const meetingLink = `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callDetail?.id}`;
