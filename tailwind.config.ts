@@ -20,7 +20,7 @@ const config = {
     extend: {
       colors: {
         dark: {
-          1: '#FFFFFF',  // Changed from #1C1F2E to white
+          1: '#000000',  // Changed from #1C1F2E to white
           2: '#F8F9FA',  // Changed from #161925 to light gray
           3: '#E9ECEF',  // Changed from #252A41 to lighter gray
           4: '#DEE2E6',  // Changed from #1E2757 to light blue-gray
