@@ -31,7 +31,7 @@ const MeetingTypeList = () => {
   const { user } = useUser();
   const { toast } = useToast();
 
-  const createMeeting = async () => {
+const createMeeting = async () => {
   if (!client || !user) return;
   try {
     if (!values.dateTime) {
@@ -42,10 +42,11 @@ const MeetingTypeList = () => {
     const call = client.call('default', id);
     if (!call) throw new Error('Failed to create meeting');
 
-    // Convert the datetime to a local string format
-    const startsAt = values.dateTime.toLocaleString('en-US', {
-      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-    });
+    // Fix timezone issue
+    const timeZoneOffset = values.dateTime.getTimezoneOffset() * 60000; // Offset in ms
+    const localISOTime = new Date(values.dateTime.getTime() - timeZoneOffset).toISOString();
+    const startsAt = localISOTime; // Corrected ISO time
+
     const description = values.description || 'Instant Meeting';
 
     await call.getOrCreate({
