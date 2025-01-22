@@ -1,6 +1,6 @@
 <div align="center">
   <br /
-      <img src="/public/icons/logo.png" alt="Project Banner">
+      <img src="https://github.com/Sharmamayankkkk/KCS-App/blob/main/public/icons/KCS-Logo.png" alt="Krishna ConsciousnessSociety">
   <br />
 
   <div>
