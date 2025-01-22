@@ -12,70 +12,70 @@
 .str-video__call-stats {
   max-width: 500px;
   position: relative;
-  background-color: #ffffff;
-  color: #2d3748;
+  background-color: #E8F5E9;
+  color: #1B5E20;
 }
 
 .str-video__speaker-layout__wrapper {
   max-height: 700px;
-  background-color: #f7fafc;
+  background-color: #FFF8E1;
 }
 
 .str-video__participant-details {
-  color: #2d3748;
-  background-color: #ffffff;
+  color: #FF6F00;
+  background-color: #FFF3E0;
 }
 
 .str-video__menu-container {
-  color: #2d3748;
-  background-color: #ffffff;
+  color: #4A148C;
+  background-color: #F3E5F5;
 }
 
 .str-video__notification {
-  color: #2d3748;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: #0D47A1;
+  background-color: #E3F2FD;
+  box-shadow: 0 2px 8px rgba(13, 71, 161, 0.2);
 }
 
 .str-video__participant-list {
-  background-color: #ffffff;
+  background-color: #E1F5FE;
   padding: 10px;
   border-radius: 10px;
-  color: #2d3748;
+  color: #01579B;
   height: 100%;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(1, 87, 155, 0.15);
 }
 
 .str-video__call-controls__button {
   height: 40px;
-  background-color: #edf2f7;
-  color: #2d3748;
-  border: 1px solid #e2e8f0;
+  background-color: #F5F5F5;
+  color: #424242;
+  border: 1px solid #E0E0E0;
 }
 
 .str-video__call-controls__button:hover {
-  background-color: #e2e8f0;
+  background-color: #EEEEEE;
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(178, 235, 242, 0.9);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(128, 222, 234, 0.5);
+  box-shadow: 0 4px 6px rgba(0, 151, 167, 0.1);
 }
 
 .glassmorphism2 {
-  background: rgba(247, 250, 252, 0.95);
+  background: rgba(225, 190, 231, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(226, 232, 240, 0.5);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(186, 104, 200, 0.5);
+  box-shadow: 0 4px 6px rgba(142, 36, 170, 0.1);
 }
 
 /* ==== clerk class override ===== */
 .cl-userButtonPopoverActionButtonIcon {
-  color: #2d3748;
+  color: #D84315;
 }
 
 .cl-logoBox {
@@ -83,26 +83,26 @@
 }
 
 .cl-dividerLine {
-  background: #e2e8f0;
+  background: #FFE0B2;
   height: 2px;
 }
 
 .cl-socialButtonsIconButton {
-  border: 3px solid #e2e8f0;
-  background-color: #ffffff;
+  border: 3px solid #FFCCBC;
+  background-color: #FBE9E7;
 }
 
 .cl-internal-wkkub3 {
-  color: #2d3748;
+  color: #BF360C;
 }
 
 .cl-userButtonPopoverActionButton {
-  color: #2d3748;
-  background-color: #ffffff;
+  color: #E65100;
+  background-color: #FFF3E0;
 }
 
 .cl-userButtonPopoverActionButton:hover {
-  background-color: #f7fafc;
+  background-color: #FFE0B2;
 }
 
 /* =============================== */
