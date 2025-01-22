@@ -12,67 +12,70 @@
 .str-video__call-stats {
   max-width: 500px;
   position: relative;
-  background-color: theme('colors.dark.1'); /* Using your theme white */
+  background-color: #FFFFFF;
+  color: #333333; /* Dark text for readability */
 }
 
 .str-video__speaker-layout__wrapper {
   max-height: 700px;
-  background-color: theme('colors.dark.2');
+  background-color: #FFFFFF;
 }
 
 .str-video__participant-details {
-  color: theme('colors.blue.1');
-  background-color: theme('colors.dark.1');
+  color: #1565C0; /* Slightly darker blue for better contrast */
+  background-color: #FFFFFF;
 }
 
 .str-video__menu-container {
-  color: theme('colors.blue.1');
-  background-color: theme('colors.dark.1');
+  color: #1565C0;
+  background-color: #FFFFFF;
 }
 
 .str-video__notification {
-  color: theme('colors.blue.1');
-  background-color: theme('colors.dark.1');
+  color: #1565C0;
+  background-color: #FFFFFF;
 }
 
 .str-video__participant-list {
-  background-color: theme('colors.dark.1');
+  background-color: #FFFFFF;
   padding: 10px;
   border-radius: 10px;
-  color: theme('colors.blue.1');
+  color: #1565C0;
   height: 100%;
   box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
 }
 
 .str-video__call-controls__button {
   height: 40px;
-  background-color: theme('colors.blue.1');
-  color: theme('colors.dark.1');
+  background-color: #1565C0; /* Consistent with the color scheme */
+  color: #FFFFFF;
 }
 
 .str-video__call-controls__button:hover {
-  background-color: theme('colors.sky.3');
+  background-color: #0D47A1; /* Slightly darker hover state */
 }
 
 .glassmorphism {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid theme('colors.sky.1');
+  border: 1px solid rgba(33, 150, 243, 0.2);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  color: #333333; /* Ensure readable text */
 }
 
 .glassmorphism2 {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid theme('colors.sky.2');
+  border: 1px solid rgba(33, 150, 243, 0.2);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  color: #333333; /* Ensure readable text */
 }
 
 /* ==== clerk class override ===== */
 .cl-userButtonPopoverActionButtonIcon {
-  color: theme('colors.blue.1');
+  color: #1565C0;
 }
 
 .cl-logoBox {
@@ -80,29 +83,30 @@
 }
 
 .cl-dividerLine {
-  background: theme('colors.dark.3');
+  background: #BBDEFB; /* Subtle light blue divider */
   height: 2px;
 }
 
 .cl-socialButtonsIconButton {
-  border: 3px solid theme('colors.blue.1');
-  background-color: theme('colors.dark.1');
+  border: 3px solid #1565C0;
+  background-color: #FFFFFF;
 }
 
 .cl-internal-wkkub3 {
-  color: theme('colors.blue.1');
+  color: #1565C0;
 }
 
 .cl-userButtonPopoverActionButton {
-  color: theme('colors.blue.1');
-  background-color: theme('colors.dark.1');
+  color: #1565C0;
+  background-color: #FFFFFF;
 }
 
 .cl-userButtonPopoverActionButton:hover {
-  background-color: theme('colors.sky.1');
+  background-color: #E3F2FD;
 }
 
 /* =============================== */
+
 @layer utilities {
   .flex-center {
     @apply flex justify-center items-center;
@@ -126,6 +130,7 @@
     animation-timing-function: ease-in;
     width: 0%;
   }
+
   100% {
     animation-timing-function: ease-in;
     width: 100%;
@@ -134,35 +139,38 @@
 
 /* Add these new styles for the main UI elements */
 body {
-  background-color: theme('colors.dark.1');
+  background-color: #FFFFFF;
+  color: #333333; /* Ensure readable text */
 }
 
 .sidebar {
-  background-color: theme('colors.dark.2');
+  background-color: #F5F5F5; /* Subtle light gray for differentiation */
+  color: #333333;
 }
 
 .main-content {
-  background-color: theme('colors.dark.1');
+  background-color: #FFFFFF;
+  color: #333333;
 }
 
 .time-display {
-  color: theme('colors.blue.1');
+  color: #1565C0;
 }
 
 .upcoming-meeting {
-  background-color: theme('colors.sky.1');
-  color: theme('colors.blue.1');
+  background-color: #E3F2FD;
+  color: #1565C0;
 }
 
 .navigation-item {
-  color: theme('colors.blue.1');
+  color: #1565C0;
 }
 
 .navigation-item:hover {
-  background-color: theme('colors.sky.1');
+  background-color: #E3F2FD;
 }
 
 .navigation-item.active {
-  background-color: theme('colors.blue.1');
-  color: theme('colors.dark.1');
+  background-color: #1565C0;
+  color: #FFFFFF;
 }
