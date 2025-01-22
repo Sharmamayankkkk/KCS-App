@@ -30,15 +30,15 @@ export default function RootLayout({
             logoImageUrl: "/icons/KCS-Logo.png",
           },
           variables: {
-            colorText: "#fff",
-            colorPrimary: "#0E78F9",
-            colorBackground: "#1C1F2E",
-            colorInputBackground: "#252A41",
-            colorInputText: "#fff",
+            colorText: "#1A1C23", // Updated to dark text for better contrast
+            colorPrimary: "#2196F3", // Bright blue as the primary color
+            colorBackground: "#E8EAF2", // Light background color
+            colorInputBackground: "#D8DCE9", // Medium-light input background
+            colorInputText: "#1A1C23", // Dark input text color for contrast
           },
         }}
       >
-        <body className={`${inter.className} bg-dark-2`}>
+        <body className={`${inter.className} bg-light`}>
           <Toaster />
           {children}
         </body>
