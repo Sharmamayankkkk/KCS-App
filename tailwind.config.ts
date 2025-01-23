@@ -20,10 +20,10 @@ const config = {
     extend: {
       colors: {
         dark: {
-          1: '#E8EAF2', // Primary background color - Lightest blue-grey
-          2: '#E2E4ED', // Secondary background color - Light blue-grey
-          3: '#D8DCE9', // Tertiary background color - Medium blue-grey
-          4: '#CED3E8', // Quaternary background color - Deep blue-grey
+          1: '#000000', // Primary background color - Lightest blue-grey
+          2: '#000907', // Secondary background color - Light blue-grey
+          3: '#26282A', // Tertiary background color - Medium blue-grey
+          4: '#060606', // Quaternary background color - Deep blue-grey
         },
         blue: {
           1: '#0E78F9', // Primary action color - Used for interactive elements like buttons
