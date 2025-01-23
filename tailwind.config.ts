@@ -43,7 +43,7 @@ const config = {
           1: '#F9A90E', // Tertiary accent color - Used for tertiary highlights
         },
         text: {
-          light: '#1A1C23', // Primary text color for light themes - Near black for contrast
+          light: '#FF742E', // Primary text color for light themes - Near black for contrast
           dark: '#FFFFFF', // Primary text color for dark themes - Pure white
         },
       },
