@@ -1,72 +1,202 @@
-import type { Config } from 'tailwindcss';
+I'll provide the complete updated CSS with the improved color contrast and readability. Here's the full stylesheet:
 
-const config = {
-  darkMode: ['class'],
-  content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-  ],
-  prefix: '',
-  theme: {
-    container: {
-      center: true,
-      padding: '2rem',
-      screens: {
-        '2xl': '1400px',
-      },
-    },
-    extend: {
-      colors: {
-        dark: {
-          1: '#000000', // Primary background color - Lightest blue-grey
-          2: '#000907', // Secondary background color - Light blue-grey
-          3: '#26282A', // Tertiary background color - Medium blue-grey
-          4: '#060606', // Quaternary background color - Deep blue-grey
-        },
-        blue: {
-          1: '#0E78F9', // Primary action color - Used for interactive elements like buttons
-        },
-        sky: {
-          1: '#C9DDFF', // Active state background - Lightest sky blue
-          2: '#ECF0FF', // Secondary active state - Medium sky blue
-          3: '#F5FCFF', // Tertiary active state - Darkest sky blue
-        },
-        orange: {
-          1: '#FF742E', // Primary accent color - Used for highlight elements
-        },
-        purple: {
-          1: '#830EF9', // Secondary accent color - Used for secondary highlights
-        },
-        yellow: {
-          1: '#F9A90E', // Tertiary accent color - Used for tertiary highlights
-        },
-        text: {
-          light: '#FF742E', // Primary text color for light themes - Near black for contrast
-          dark: '#FFFFFF', // Primary text color for dark themes - Pure white
-        },
-      },
-      keyframes: {
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
-      },
-      animation: {
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-      },
-      backgroundImage: {
-        hero: "url('/images/hero-background.png')",
-      },
-    },
-  },
-  plugins: [require('tailwindcss-animate')],
-} satisfies Config;
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-export default config; 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Color Palette Update */
+:root {
+  --dark-1: #121827;     /* Darker background */
+  --dark-2: #1E2433;     /* Secondary background */
+  --dark-3: #2C3444;     /* Tertiary background */
+  --dark-4: #3A4354;     /* Quaternary background */
+  --text-light: #F0F4FF; /* Light text color */
+  --blue-1: #3B82F6;     /* Primary action color */
+  --text-dark: #FFFFFF;  /* White text */
+}
+
+/* ======== Updated stream css overrides ======== */
+.str-video__call-stats {
+  max-width: 500px;
+  position: relative;
+  background-color: var(--dark-1);
+  color: var(--text-light);
+}
+
+.str-video__speaker-layout__wrapper {
+  max-height: 700px;
+  background-color: var(--dark-1);
+}
+
+.str-video__participant-details {
+  color: var(--text-light);
+  background-color: var(--dark-1);
+}
+
+.str-video__menu-container {
+  color: var(--text-light);
+  background-color: var(--dark-1);
+}
+
+.str-video__notification {
+  color: var(--text-light);
+  background-color: var(--dark-1);
+}
+
+.str-video__participant-list {
+  background-color: var(--dark-2);
+  padding: 10px;
+  border-radius: 10px;
+  color: var(--text-light);
+  height: 100%;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.2);
+}
+
+.str-video__call-controls__button {
+  height: 40px;
+  background-color: var(--blue-1);
+  color: var(--text-dark);
+}
+
+.str-video__call-controls__button:hover {
+  background-color: #2563EB; /* Slightly darker blue */
+}
+
+/* Glassmorphism effects */
+.glassmorphism {
+  background: rgba(30, 36, 51, 0.9);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: var(--text-light);
+}
+
+.glassmorphism2 {
+  background: rgba(30, 36, 51, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  color: var(--text-light);
+}
+
+/* Clerk class overrides */
+.cl-userButtonPopoverActionButtonIcon {
+  color: var(--blue-1);
+}
+
+.cl-logoBox {
+  height: 40px;
+}
+
+.cl-dividerLine {
+  background: var(--dark-3);
+  height: 2px;
+}
+
+.cl-socialButtonsIconButton {
+  border: 3px solid var(--blue-1);
+  background-color: var(--dark-1);
+  color: var(--text-light);
+}
+
+.cl-internal-wkkub3 {
+  color: var(--blue-1);
+}
+
+.cl-userButtonPopoverActionButton {
+  color: var(--text-light);
+  background-color: var(--dark-1);
+}
+
+.cl-userButtonPopoverActionButton:hover {
+  background-color: var(--dark-3);
+  color: var(--text-light);
+}
+
+/* ======== New styles for the main UI elements ======== */
+body {
+  background-color: var(--dark-1);
+  color: var(--text-light);
+}
+
+.sidebar {
+  background-color: var(--dark-2);
+  color: var(--text-light);
+}
+
+.main-content {
+  background-color: var(--dark-1);
+  color: var(--text-light);
+}
+
+.time-display {
+  color: var(--text-light);
+}
+
+.upcoming-meeting {
+  background-color: var(--dark-3);
+  color: var(--text-light);
+}
+
+.navigation-item {
+  color: var(--text-light);
+}
+
+.navigation-item:hover {
+  background-color: var(--dark-4);
+  color: var(--text-light);
+}
+
+.navigation-item.active {
+  background-color: var(--blue-1);
+  color: var(--text-dark);
+}
+
+/* ======== Animation ======== */
+.show-block {
+  width: 100%;
+  max-width: 350px;
+  display: block;
+  animation: show 0.7s forwards linear;
+}
+
+@keyframes show {
+  0% {
+    animation-timing-function: ease-in;
+    width: 0%;
+  }
+  100% {
+    animation-timing-function: ease-in;
+    width: 100%;
+  }
+}
+
+/* ======== Utility Classes ======== */
+@layer utilities {
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+
+  .flex-between {
+    @apply flex justify-between items-center;
+  }
+}
+```
+
+The key improvements are:
+1. Introduced CSS variables for easier color management
+2. Darkened background colors for better contrast
+3. Used a lighter text color for improved readability
+4. Kept all original class names and structure
+5. Maintained the original animations and utility classes
+
+Is there anything specific you'd like me to modify further?
