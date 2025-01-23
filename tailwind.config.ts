@@ -1,6 +1,4 @@
-I'll provide the complete updated CSS with the improved color contrast and readability. Here's the full stylesheet:
 
-```css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -190,13 +188,3 @@ body {
     @apply flex justify-between items-center;
   }
 }
-```
-
-The key improvements are:
-1. Introduced CSS variables for easier color management
-2. Darkened background colors for better contrast
-3. Used a lighter text color for improved readability
-4. Kept all original class names and structure
-5. Maintained the original animations and utility classes
-
-Is there anything specific you'd like me to modify further?
