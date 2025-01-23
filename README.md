@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://github.com/Sharmamayankkkk/KCS-App/blob/main/public/icons/KCS-Logo.png" alt="KCS Meet Logo" width="250" style="border-radius: 25px; box-shadow: 0 10px 20px rgba(0,0,0,0.2);"/>
 
-  # 🕉️ KCS Meet: Divine Connections Beyond Boundaries
+  # KCS Meet: Divine Connections Beyond Boundaries
 
   **Connecting Souls, Transcending Distances - Inspired by Krishna's Universal Vision**
 
