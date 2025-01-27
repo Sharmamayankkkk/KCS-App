@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     "virtual sangha",
     "transcendental communication",
     "spiritual technology",
-  ].join(", "),
+  ],
   authors: [
     {
       name: "Mayank Sharma",
@@ -78,79 +78,48 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const keywordsString = Array.isArray(metadata.keywords) 
-    ? metadata.keywords.join(", ")
-    : metadata.keywords || "Default keywords";
-
-  // Convert metadata values to strings for meta tags
-  const ogTitle = String(metadata.openGraph?.title || "");
-  const ogDescription = String(metadata.openGraph?.description || "");
-  const ogUrl = String(metadata.openGraph?.url || "");
-  const ogType = String(metadata.openGraph?.type || "");
-  const twitterCard = String(metadata.twitter?.card || "");
-  const twitterTitle = String(metadata.twitter?.title || "");
-  const twitterDescription = String(metadata.twitter?.description || "");
-
   return (
-    <html lang="en">
+      <html lang="en">
       <Head>
-        <meta
-          name="description"
-          content={String(metadata.description || "Default description")}
-        />
-        <meta
-          name="keywords"
-          content={keywordsString}
-        />
-        <meta property="og:title" content={ogTitle} />
-        <meta
-          property="og:description"
-          content={ogDescription}
-        />
-        <meta property="og:url" content={ogUrl} />
-        <meta property="og:type" content={ogType} />
-        <meta
-          property="og:image"
-          content="https://kcs-app.vercel.app/icons/KCS-Logo.png"
-        />
+        {/* Essential Metadata for Social Media and Previews */}
+        <meta name="description" content={metadata.description} />
+        <meta name="keywords" content={metadata.keywords.join(", ")} />
+        <meta property="og:title" content={metadata.openGraph.title} />
+        <meta property="og:description" content={metadata.openGraph.description} />
+        <meta property="og:url" content={metadata.openGraph.url} />
+        <meta property="og:type" content={metadata.openGraph.type} />
+        <meta property="og:image" content="https://kcs-app.vercel.app/icons/KCS-Logo.png" />
         <meta property="og:image:width" content="250" />
         <meta property="og:image:height" content="250" />
-        <meta name="twitter:card" content={twitterCard} />
-        <meta name="twitter:title" content={twitterTitle} />
-        <meta
-          name="twitter:description"
-          content={twitterDescription}
-        />
-        <meta
-          name="twitter:image"
-          content="https://kcs-app.vercel.app/icons/KCS-Logo.png"
-        />
+        <meta name="twitter:card" content={metadata.twitter.card} />
+        <meta name="twitter:title" content={metadata.twitter.title} />
+        <meta name="twitter:description" content={metadata.twitter.description} />
+        <meta name="twitter:image" content="https://kcs-app.vercel.app/icons/KCS-Logo.png" />
         <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/icons/KCS-Logo.png" />
-        <link rel="apple-touch-icon" href="/icons/KCS-Logo.png" />
-      </Head>
-      <ClerkProvider
-        appearance={{
-          layout: {
-            socialButtonsVariant: "iconButton",
-            logoImageUrl: "/icons/KCS-Logo.png",
-          },
-          variables: {
-            colorText: "#1A1C23",
-            colorPrimary: "#2196F3",
-            colorBackground: "#E8EAF2",
-            colorInputBackground: "#D8DCE9",
-            colorInputText: "#1A1C23",
-          },
-        }}
-      >
-        <body className={`${inter.className} bg-light`}>
-          <Toaster />
-          {children}
-        </body>
-      </ClerkProvider>
-      <SpeedInsights />
-      <Analytics />
-    </html>
-  );
-}
+      <link rel="icon" href="/icons/KCS-Logo.png" />
+    <link rel="apple-touch-icon" href="/icons/KCS-Logo.png" />
+  </Head>
+  <ClerkProvider
+    appearance={{
+      layout: {
+        socialButtonsVariant: "iconButton",
+        logoImageUrl: "/icons/KCS-Logo.png",
+      },
+      variables: {
+        colorText: "#1A1C23", // Updated to dark text for better contrast
+        colorPrimary: "#2196F3", // Bright blue as the primary color
+        colorBackground: "#E8EAF2", // Light background color
+        colorInputBackground: "#D8DCE9", // Medium-light input background color
+        colorInputText: "#1A1C23", // Dark input text color for contrast
+      },
+    }}
+  >
+    <body className={`${inter.className} bg-light`}>
+      <Toaster />
+      {children}
+    </body>
+  </ClerkProvider>
+  <SpeedInsights />
+  <Analytics />
+</html>
+          }
