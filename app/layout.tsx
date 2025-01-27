@@ -122,5 +122,5 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   <SpeedInsights />
   <Analytics />
 </html>
-};
-]
+);
+}
