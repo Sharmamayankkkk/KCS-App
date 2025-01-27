@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     "virtual sangha",
     "transcendental communication",
     "spiritual technology",
-  ],
+  ].join(", "),
   authors: [
     {
       name: "Mayank Sharma",
@@ -78,6 +78,10 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
+  const keywordsString = Array.isArray(metadata.keywords) 
+    ? metadata.keywords.join(", ")
+    : metadata.keywords || "Default keywords";
+
   return (
     <html lang="en">
       <Head>
@@ -88,26 +92,26 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <meta
           name="keywords"
-          content={metadata.keywords?.join(", ") || "Default keywords"}
+          content={keywordsString}
         />
-        <meta property="og:title" content={metadata.openGraph.title || ""} />
+        <meta property="og:title" content={metadata.openGraph?.title || ""} />
         <meta
           property="og:description"
-          content={metadata.openGraph.description || ""}
+          content={metadata.openGraph?.description || ""}
         />
-        <meta property="og:url" content={metadata.openGraph.url || ""} />
-        <meta property="og:type" content={metadata.openGraph.type || ""} />
+        <meta property="og:url" content={metadata.openGraph?.url || ""} />
+        <meta property="og:type" content={metadata.openGraph?.type || ""} />
         <meta
           property="og:image"
           content="https://kcs-app.vercel.app/icons/KCS-Logo.png"
         />
         <meta property="og:image:width" content="250" />
         <meta property="og:image:height" content="250" />
-        <meta name="twitter:card" content={metadata.twitter.card || ""} />
-        <meta name="twitter:title" content={metadata.twitter.title || ""} />
+        <meta name="twitter:card" content={metadata.twitter?.card || ""} />
+        <meta name="twitter:title" content={metadata.twitter?.title || ""} />
         <meta
           name="twitter:description"
-          content={metadata.twitter.description || ""}
+          content={metadata.twitter?.description || ""}
         />
         <meta
           name="twitter:image"
