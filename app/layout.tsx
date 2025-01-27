@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     telephone: false,
   },
   icons: {
-    icon: "/icons/KCS.png",
-    apple: "/icons/KCS-Logo.png",
-    shortcut: "/icons/KCS-Logo.png"
+    icon: "/public/icons/KCS-Logo.png",
+    apple: "/public/icons/KCS-Logo.png",
+    shortcut: "/public/icons/KCS-Logo.png"
   },
   manifest: "/manifest.json",
   openGraph: {
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     description: "Connect spiritually through technology with KCS Meet - inspired by Krishna's universal vision",
     siteName: "KCS Meet",
     images: [{
-      url: "/icons/KCS-Logo.png",
+      url: "/public/icons/KCS-Logo.png",
       width: 250,
       height: 250,
       alt: "KCS Meet Logo"
@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "KCS Meet - Divine Connections Beyond Boundaries",
     description: "Connect spiritually through technology with KCS Meet - inspired by Krishna's universal vision",
-    images: ["/icons/KCS-Logo.png"],
+    images: ["/public/icons/KCS-Logo.png"],
     creator: "@KCSMeet",
   },
   viewport: {
@@ -83,7 +83,7 @@ export default function RootLayout({
         appearance={{
           layout: {
             socialButtonsVariant: "iconButton",
-            logoImageUrl: "/icons/KCS-Logo.png",
+            logoImageUrl: "/public/icons/KCS-Logo.png",
           },
           variables: {
             colorText: "#1A1C23", // Updated to dark text for better contrast
