@@ -12,11 +12,66 @@ import { Toaster } from "@/components/ui/toaster";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "KCS",
-  description: "Video calling App",
+  title: "KCS Meet - Divine Connections Beyond Boundaries",
+  description: "Experience spiritual connection through technology with KCS Meet - a video calling platform inspired by Krishna's universal vision. Connect with fellow seekers, share wisdom, and transcend physical distances through secure, real-time meetings.",
+  keywords: [
+    "spiritual video conferencing",
+    "divine connections",
+    "Krishna consciousness",
+    "online spiritual gatherings",
+    "secure spiritual meetings",
+    "virtual sangha",
+    "transcendental communication",
+    "spiritual technology"
+  ],
+  authors: [
+    {
+      name: "Mayank Sharma",
+      url: "https://github.com/Sharmamayankkkk"
+    }
+  ],
+  creator: "KCS Meet Team",
+  publisher: "KCS Meet",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   icons: {
     icon: "/icons/KCS.png",
+    apple: "/icons/KCS-Logo.png",
+    shortcut: "/icons/KCS-Logo.png"
   },
+  manifest: "/manifest.json",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://kcs-app.vercel.app/",
+    title: "KCS Meet - Divine Connections Beyond Boundaries",
+    description: "Connect spiritually through technology with KCS Meet - inspired by Krishna's universal vision",
+    siteName: "KCS Meet",
+    images: [{
+      url: "/icons/KCS-Logo.png",
+      width: 250,
+      height: 250,
+      alt: "KCS Meet Logo"
+    }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "KCS Meet - Divine Connections Beyond Boundaries",
+    description: "Connect spiritually through technology with KCS Meet - inspired by Krishna's universal vision",
+    images: ["/icons/KCS-Logo.png"],
+    creator: "@KCSMeet",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  category: "Technology",
+  classification: "Video Conferencing Platform",
+  themeColor: "#2196F3"
 };
 
 export default function RootLayout({
