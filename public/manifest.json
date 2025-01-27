@@ -1,0 +1,16 @@
+{
+  "name": "KCS Meet",
+  "short_name": "KCS Meet",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#E8EAF2",
+  "theme_color": "#2196F3",
+  "description": "Experience spiritual connection through technology with KCS Meet - a video calling platform inspired by Krishna's universal vision.",
+  "icons": [
+    {
+      "src": "/icons/KCS-Logo.png",
+      "sizes": "250x250",
+      "type": "image/png"
+    }
+  ]
+}
