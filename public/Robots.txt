@@ -1,3 +1,0 @@
-User-Agent: *
-Allow: /
-Sitemap: https://kcs-app.vercel.app/sitemap.xml
