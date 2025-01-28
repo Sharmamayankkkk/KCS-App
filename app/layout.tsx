@@ -8,7 +8,6 @@ import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
-import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -79,9 +78,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-      <html lang="en">
-      <Head>
-        {/* Essential Metadata for Social Media and Previews */}
+    <html lang="en">
+      <head>
         <meta name="description" content={metadata.description} />
         <meta name="keywords" content={metadata.keywords.join(", ")} />
         <meta property="og:title" content={metadata.openGraph.title} />
@@ -96,31 +94,31 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <meta name="twitter:description" content={metadata.twitter.description} />
         <meta name="twitter:image" content="https://kcs-app.vercel.app/icons/KCS-Logo.png" />
         <link rel="manifest" href="/manifest.json" />
-      <link rel="icon" href="/icons/KCS-Logo.png" />
-    <link rel="apple-touch-icon" href="/icons/KCS-Logo.png" />
-  </Head>
-  <ClerkProvider
-    appearance={{
-      layout: {
-        socialButtonsVariant: "iconButton",
-        logoImageUrl: "/icons/KCS-Logo.png",
-      },
-      variables: {
-        colorText: "#1A1C23", // Updated to dark text for better contrast
-        colorPrimary: "#2196F3", // Bright blue as the primary color
-        colorBackground: "#E8EAF2", // Light background color
-        colorInputBackground: "#D8DCE9", // Medium-light input background color
-        colorInputText: "#1A1C23", // Dark input text color for contrast
-      },
-    }}
-  >
-    <body className={`${inter.className} bg-light`}>
-      <Toaster />
-      {children}
-    </body>
-  </ClerkProvider>
-  <SpeedInsights />
-  <Analytics />
-</html>
-);
-}
+        <link rel="icon" href="/icons/KCS-Logo.png" />
+        <link rel="apple-touch-icon" href="/icons/KCS-Logo.png" />
+      </head>
+      <body className={`${inter.className} bg-light`}>
+        <ClerkProvider
+          appearance={{
+            layout: {
+              socialButtonsVariant: "iconButton",
+              logoImageUrl: "/icons/KCS-Logo.png",
+            },
+            variables: {
+              colorText: "#1A1C23",
+              colorPrimary: "#2196F3",
+              colorBackground: "#E8EAF2",
+              colorInputBackground: "#D8DCE9",
+              colorInputText: "#1A1C23",
+            },
+          }}
+        >
+          <Toaster />
+          {children}
+          <SpeedInsights />
+          <Analytics />
+        </ClerkProvider>
+      </body>
+    </html>
+  );
+          }
