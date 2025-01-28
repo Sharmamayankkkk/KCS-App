@@ -11,6 +11,8 @@ const protectedRoute = createRouteMatcher([
 
 export default clerkMiddleware((auth, req) => {
   if (protectedRoute(req)) auth().protect();
+}, {
+  authorizedParties: ['https://meet.krishnaconsciousnesssociety.com']
 });
 
 export const config = {
