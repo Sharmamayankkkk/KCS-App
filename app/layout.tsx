@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     "virtual sangha",
     "transcendental communication",
     "spiritual technology",
-  ],
+  ].join(", "),
   authors: [
     {
       name: "Mayank Sharma",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://kcs-app.vercel.app/",
+    url: "https://meet.krishnaconsciousnesssociety.com",
     title: "KCS Meet - Divine Connections Beyond Boundaries",
     description: "Connect spiritually through technology with KCS Meet - inspired by Krishna's universal vision",
     siteName: "KCS Meet",
@@ -79,25 +79,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <meta name="description" content={metadata.description} />
-        <meta name="keywords" content={metadata.keywords.join(", ")} />
-        <meta property="og:title" content={metadata.openGraph.title} />
-        <meta property="og:description" content={metadata.openGraph.description} />
-        <meta property="og:url" content={metadata.openGraph.url} />
-        <meta property="og:type" content={metadata.openGraph.type} />
-        <meta property="og:image" content="https://kcs-app.vercel.app/icons/KCS-Logo.png" />
-        <meta property="og:image:width" content="250" />
-        <meta property="og:image:height" content="250" />
-        <meta name="twitter:card" content={metadata.twitter.card} />
-        <meta name="twitter:title" content={metadata.twitter.title} />
-        <meta name="twitter:description" content={metadata.twitter.description} />
-        <meta name="twitter:image" content="https://kcs-app.vercel.app/icons/KCS-Logo.png" />
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/icons/KCS-Logo.png" />
-        <link rel="apple-touch-icon" href="/icons/KCS-Logo.png" />
-      </head>
-      <body className={`${inter.className} bg-light`}>
+      <body className={`${inter.className} bg-white dark:bg-gray-900`}>
         <ClerkProvider
           appearance={{
             layout: {
@@ -121,4 +103,4 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </body>
     </html>
   );
-          }
+  }
