@@ -29,7 +29,7 @@ const MeetingTypeList = () => {
   const { user } = useUser();
   const { toast } = useToast();
 
-  // Get user's timezone for display
+  // Get user's timezone
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const createMeeting = async () => {
@@ -44,7 +44,7 @@ const MeetingTypeList = () => {
       const call = client.call('default', id);
       if (!call) throw new Error('Failed to create meeting');
 
-      // The selected date is already in local timezone, so we just need to convert it to ISO string
+      // Store time in local timezone format
       const startsAt = values.dateTime.toISOString();
       const description = values.description || 'Instant Meeting';
 
