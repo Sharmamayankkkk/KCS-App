@@ -3,13 +3,19 @@ import MeetingTypeList from '@/components/MeetingTypeList';
 const Home = () => {
   const now = new Date();
 
+  // Get the user's timezone dynamically
+  const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  // Format time and date using the user's local timezone
   const time = now.toLocaleTimeString('en-US', { 
     hour: '2-digit', 
-    minute: '2-digit'
+    minute: '2-digit', 
+    timeZone: userTimeZone // Ensure it's using the detected timezone
   });
 
   const date = new Intl.DateTimeFormat('en-US', { 
-    dateStyle: 'full'
+    dateStyle: 'full',
+    timeZone: userTimeZone // Ensure the date follows the correct timezone
   }).format(now);
 
   return (
@@ -22,6 +28,7 @@ const Home = () => {
           <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-extrabold lg:text-7xl">{time}</h1>
             <p className="text-lg font-medium text-sky-1 lg:text-2xl">{date}</p>
+            <p className="text-sm text-gray-400">Time Zone: {userTimeZone}</p> 
           </div>
         </div>
       </div>
