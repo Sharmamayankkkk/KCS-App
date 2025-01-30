@@ -43,11 +43,6 @@ const MeetingTypeList = () => {
         if (!client || !user) return;
 
         const userEmail = user.primaryEmailAddress?.emailAddress?.trim().toLowerCase() || '';
-        //const userName = user.fullName || user.username || 'User';
-
-        // Debugging logs (uncomment for testing)
-        // console.log("Loaded Admin Emails:", ADMIN_EMAILS);
-        // console.log("User Email:", userEmail);
 
         if (!isAdmin(userEmail)) {
             toast({
