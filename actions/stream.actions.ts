@@ -1,6 +1,6 @@
 'use server';
 
-import { StreamVideoServerClient } from '@stream-io/video-node';
+import { StreamVideoServerClient } from '@stream-io/node-sdk';
 import { currentUser } from '@clerk/nextjs/server';
 import { randomUUID } from 'crypto';
 
