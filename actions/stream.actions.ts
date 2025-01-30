@@ -1,51 +1,55 @@
-'use server';
+'use client';
 
-import { StreamVideoServerClient } from '@stream-io/node-sdk';
-import { currentUser } from '@clerk/nextjs/server';
-import { randomUUID } from 'crypto';
+import { ReactNode, useEffect, useState } from 'react';
+import { StreamVideoClient, StreamVideo } from '@stream-io/video-react-sdk';
+import { useUser } from '@clerk/nextjs';
+import { useRouter } from 'next/navigation';
+import Loader from '@/components/Loader';
 
-const apiKey = process.env.STREAM_API_KEY!;
-const apiSecret = process.env.STREAM_API_SECRET!;
-const serverClient = new StreamVideoServerClient(apiKey, apiSecret, {
-  timeout: 6000,
-});
+import { tokenProvider } from '@/actions/stream.actions'; // Ensure correct export
 
-// Define admin users
-const adminEmails = process.env.ADMIN_EMAILS?.split(',') || [];
+const API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY;
+const adminEmails = process.env.ADMIN_EMAILS?.split(',') || []; // Define admin emails
 
-export const createMeeting = async (description: string, dateTime: Date) => {
-  try {
-    const user = await currentUser();
-    if (!user || !user.primaryEmailAddress) {
-      throw new Error('User not found');
+const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
+  const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
+  const { user, isLoaded } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    if (!user) {
+      router.push('/login');
+      return;
     }
 
-    // Check if user is an admin
-    if (!adminEmails.includes(user.primaryEmailAddress.emailAddress)) {
-      throw new Error('Access Denied: Only admins can create meetings.');
+    if (!adminEmails.includes(user.primaryEmailAddress?.emailAddress || '')) {
+      console.warn('Access Denied: Only admins can create meetings.');
+      router.push('/');
+      return;
     }
 
-    if (!dateTime) {
-      throw new Error('Meeting date and time are required.');
-    }
-
-    const id = randomUUID();
-    const startsAt = dateTime.toISOString();
-    const call = await serverClient.call('default', id).getOrCreate({
-      data: {
-        starts_at: startsAt,
-        custom: {
-          description: description || 'Instant Meeting',
+    if (API_KEY) {
+      const client = new StreamVideoClient({
+        apiKey: API_KEY,
+        user: {
+          id: user.id,
+          name: user.username || user.id,
+          image: user.imageUrl,
         },
-      },
-    });
+        tokenProvider,
+      });
 
-    return {
-      id: call.id,
-      link: `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${call.id}`,
-    };
-  } catch (error) {
-    console.error('Error creating meeting:', error);
-    throw new Error('Failed to create meeting.');
-  }
+      setVideoClient(client);
+    } else {
+      console.error('Stream API key is missing');
+    }
+  }, [user, isLoaded, router]);
+
+  if (!videoClient) return <Loader />;
+
+  return <StreamVideo client={videoClient}>{children}</StreamVideo>;
 };
+
+export default StreamVideoProvider;
