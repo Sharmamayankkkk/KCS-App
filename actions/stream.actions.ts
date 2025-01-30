@@ -1,59 +1,16 @@
-'use client';
 
-import { ReactNode, useEffect, useState } from 'react';
-import { StreamVideoClient, StreamVideo } from '@stream-io/video-react-sdk';
-import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
-import Loader from '@/components/Loader';
+import { currentUser } from '@clerk/nextjs/server'; import { StreamClient } from '@stream-io/node-sdk';
 
-import { tokenProvider } from '@/actions/stream.actions';
+const STREAM_API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY; const STREAM_API_SECRET = process.env.STREAM_SECRET_KEY;
 
-const API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY;
-const adminEmails = process.env.ADMIN_EMAILS?.split(',') || [];
+export const tokenProvider = async () => { const user = await currentUser();
 
-const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
-  const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
-  const { user, isLoaded } = useUser();
-  const router = useRouter();
+if (!user) throw new Error('User is not authenticated'); if (!STREAM_API_KEY) throw new Error('Stream API key secret is missing'); if (!STREAM_API_SECRET) throw new Error('Stream API secret is missing');
 
-  useEffect(() => {
-    if (!isLoaded) return;
+const streamClient = new StreamClient(STREAM_API_KEY, STREAM_API_SECRET);
 
-    if (!user) {
-      router.push('/login');
-      return;
-    }
+const expirationTime = Math.floor(Date.now() / 1000) + 3600; const issuedAt = Math.floor(Date.now() / 1000) - 60;
 
-    if (!adminEmails.includes(user.primaryEmailAddress?.emailAddress || '')) {
-      console.warn('Access Denied: Only admins can create meetings.');
-      router.push('/');
-      return;
-    }
+const token = streamClient.createToken(user.id, expirationTime, issuedAt);
 
-    if (API_KEY) {
-      const client = new StreamVideoClient({
-        apiKey: API_KEY,
-        user: {
-          id: user.id,
-          name: user.username || user.id,
-          image: user.imageUrl,
-        },
-        tokenProvider,
-      });
-
-      setVideoClient(client);
-    } else {
-      console.error('Stream API key is missing');
-    }
-  }, [user, isLoaded, router]);
-
-  if (!videoClient) return <Loader />;
-
-  return (
-    <StreamVideo client={videoClient}>
-      {children}
-    </StreamVideo>
-  );
-};
-
-export default StreamVideoProvider;
+return token; };
