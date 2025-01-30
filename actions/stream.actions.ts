@@ -1,24 +1,51 @@
 'use server';
 
+import { StreamVideoServerClient } from '@stream-io/video-node';
 import { currentUser } from '@clerk/nextjs/server';
-import { StreamClient } from '@stream-io/node-sdk';
+import { randomUUID } from 'crypto';
 
-const STREAM_API_KEY = process.env.NEXT_PUBLIC_STREAM_API_KEY;
-const STREAM_API_SECRET = process.env.STREAM_SECRET_KEY;
+const apiKey = process.env.STREAM_API_KEY!;
+const apiSecret = process.env.STREAM_API_SECRET!;
+const serverClient = new StreamVideoServerClient(apiKey, apiSecret, {
+  timeout: 6000,
+});
 
-export const tokenProvider = async () => {
-  const user = await currentUser();
+// Define admin users
+const adminEmails = process.env.ADMIN_EMAILS?.split(',') || [];
 
-  if (!user) throw new Error('User is not authenticated');
-  if (!STREAM_API_KEY) throw new Error('Stream API key secret is missing');
-  if (!STREAM_API_SECRET) throw new Error('Stream API secret is missing');
+export const createMeeting = async (description: string, dateTime: Date) => {
+  try {
+    const user = await currentUser();
+    if (!user || !user.primaryEmailAddress) {
+      throw new Error('User not found');
+    }
 
-  const streamClient = new StreamClient(STREAM_API_KEY, STREAM_API_SECRET);
+    // Check if user is an admin
+    if (!adminEmails.includes(user.primaryEmailAddress.emailAddress)) {
+      throw new Error('Access Denied: Only admins can create meetings.');
+    }
 
-  const expirationTime = Math.floor(Date.now() / 1000) + 3600;
-  const issuedAt = Math.floor(Date.now() / 1000) - 60;
+    if (!dateTime) {
+      throw new Error('Meeting date and time are required.');
+    }
 
-  const token = streamClient.createToken(user.id, expirationTime, issuedAt);
+    const id = randomUUID();
+    const startsAt = dateTime.toISOString();
+    const call = await serverClient.call('default', id).getOrCreate({
+      data: {
+        starts_at: startsAt,
+        custom: {
+          description: description || 'Instant Meeting',
+        },
+      },
+    });
 
-  return token;
+    return {
+      id: call.id,
+      link: `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${call.id}`,
+    };
+  } catch (error) {
+    console.error('Error creating meeting:', error);
+    throw new Error('Failed to create meeting.');
+  }
 };
