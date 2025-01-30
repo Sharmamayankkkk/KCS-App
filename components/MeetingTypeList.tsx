@@ -10,7 +10,7 @@ import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import Textarea from './ui/textarea';
 import Input from './ui/input';
-import Loader from './ui/loader';
+import Loader from './Loader';
 import { toast } from './ui/toast';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
