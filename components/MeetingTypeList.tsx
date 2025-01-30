@@ -11,7 +11,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import Textarea from './Textarea';
 import Input from './Input';
 import Loader from './Loader';
-import { toast } from './Toast';
+import { toast } from './toast';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 
