@@ -18,7 +18,7 @@ import Loader from './Loader';
 import { Input } from './ui/input';
 import { Textarea } from './ui/textarea';
 import { useToast } from './ui/use-toast';
-import { toast } from './Toast';
+import { toast } from './ui/toast';
 
 
 dotenv.config();
