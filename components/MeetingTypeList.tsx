@@ -43,7 +43,8 @@ const MeetingTypeList = () => {
     const createMeeting = async () => {
         if (!client || !user) return;
 
-        if (!isAdmin(user.email)) {
+        const userEmail = user.primaryEmailAddress?.emailAddress || '';
+        if (!isAdmin(userEmail)) {
             toast({ title: 'Only admins can create meetings' });
             return;
         }
