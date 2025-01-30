@@ -8,10 +8,10 @@ import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk';
 import { useUser } from '@clerk/nextjs';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Textarea from './Textarea';
-import Input from './Input';
-import Loader from './Loader';
-import { toast } from './toast';
+import Textarea from './ui/textarea';
+import Input from './ui/input';
+import Loader from './ui/loader';
+import { toast } from './ui/toast';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
 
