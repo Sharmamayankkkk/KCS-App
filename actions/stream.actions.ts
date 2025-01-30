@@ -47,9 +47,12 @@ const StreamVideoProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [user, isLoaded, router]);
 
-  if (!videoClient) return <Loader />;
+if (!videoClient) return <Loader />;
 
-  return <StreamVideo client={videoClient}>{children}</StreamVideo>;
-};
+return (
+  <StreamVideo client={videoClient}>
+    {children}
+  </StreamVideo>
+);
 
 export default StreamVideoProvider;
