@@ -18,6 +18,9 @@ const initialValues = {
   link: '',
 };
 
+// Define admin users
+const adminEmails = process.env.ADMIN_EMAILS?.split(',') || [];
+
 const MeetingTypeList = () => {
   const router = useRouter();
   const [meetingState, setMeetingState] = useState<
@@ -34,6 +37,13 @@ const MeetingTypeList = () => {
 
   const createMeeting = async () => {
     if (!client || !user) return;
+
+    // Check if user is an admin
+    if (!adminEmails.includes(user.primaryEmailAddress?.emailAddress || '')) {
+      toast({ title: 'Access Denied', description: 'Only admins can create meetings.' });
+      return;
+    }
+
     try {
       if (!values.dateTime) {
         toast({ title: 'Please select a date and time' });
@@ -53,7 +63,7 @@ const MeetingTypeList = () => {
           starts_at: startsAt,
           custom: {
             description,
-            created_in_timezone: userTimezone, // Store the timezone where meeting was created
+            created_in_timezone: userTimezone,
           },
         },
       });
@@ -75,12 +85,14 @@ const MeetingTypeList = () => {
 
   return (
     <section className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
-      <HomeCard
-        img="/icons/add-meeting.svg"
-        title="New Meeting"
-        description="Start an instant meeting"
-        handleClick={() => setMeetingState('isInstantMeeting')}
-      />
+      {adminEmails.includes(user.primaryEmailAddress?.emailAddress || '') && (
+        <HomeCard
+          img="/icons/add-meeting.svg"
+          title="New Meeting"
+          description="Start an instant meeting"
+          handleClick={() => setMeetingState('isInstantMeeting')}
+        />
+      )}
       <HomeCard
         img="/icons/join-meeting.svg"
         title="Join Meeting"
@@ -88,13 +100,15 @@ const MeetingTypeList = () => {
         className="bg-blue-1"
         handleClick={() => setMeetingState('isJoiningMeeting')}
       />
-      <HomeCard
-        img="/icons/schedule.svg"
-        title="Schedule Meeting"
-        description="Plan your meeting"
-        className="bg-purple-1"
-        handleClick={() => setMeetingState('isScheduleMeeting')}
-      />
+      {adminEmails.includes(user.primaryEmailAddress?.emailAddress || '') && (
+        <HomeCard
+          img="/icons/schedule.svg"
+          title="Schedule Meeting"
+          description="Plan your meeting"
+          className="bg-purple-1"
+          handleClick={() => setMeetingState('isScheduleMeeting')}
+        />
+      )}
       <HomeCard
         img="/icons/recordings.svg"
         title="View Recordings"
