@@ -8,19 +8,19 @@ import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk';
 import { useUser } from '@clerk/nextjs';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { Textarea } from './ui/textarea';  // Corrected: Added curly braces
-import { Input } from './ui/input';        // Corrected: Added curly braces
+import { Textarea } from './ui/textarea';
+import { Input } from './ui/input';
 import Loader from './Loader';
-import { toast } from './ui/use-toast';    // Corrected: Changed path from './ui/toast' to './ui/use-toast'
+import { toast } from './ui/use-toast';
 import crypto from 'crypto';
-import dotenv from 'dotenv';
 
-dotenv.config();
-
-const ADMIN_EMAILS = process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(',') : [];
+// Load admin emails from environment variable
+const ADMIN_EMAILS = process.env.NEXT_PUBLIC_ADMIN_EMAILS
+    ? process.env.NEXT_PUBLIC_ADMIN_EMAILS.split(',').map(email => email.trim().toLowerCase())
+    : [];
 
 function isAdmin(email: string): boolean {
-    return ADMIN_EMAILS.includes(email);
+    return ADMIN_EMAILS.includes(email.trim().toLowerCase());
 }
 
 const initialValues = {
@@ -37,16 +37,23 @@ const MeetingTypeList = () => {
     const client = useStreamVideoClient();
     const { user } = useUser();
 
-    // Get user's timezone
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     const createMeeting = async () => {
         if (!client || !user) return;
 
-        const userEmail = user.primaryEmailAddress?.emailAddress || '';
-        const userName = user.fullName || user.username || 'Admin'; // Retrieve the username
+        const userEmail = user.primaryEmailAddress?.emailAddress?.trim().toLowerCase() || '';
+        const userName = user.fullName || user.username || 'User';
+
+        // Debugging logs (uncomment for testing)
+        // console.log("Loaded Admin Emails:", ADMIN_EMAILS);
+        // console.log("User Email:", userEmail);
+
         if (!isAdmin(userEmail)) {
-            toast({ title: 'Only admins can create meetings', description: `Admin: ${userName} (${userEmail})` }); // Include username and email in the prompt
+            toast({
+                title: 'Permission Denied',
+                description: 'Only admins can create meetings.',
+            });
             return;
         }
 
@@ -60,7 +67,6 @@ const MeetingTypeList = () => {
             const call = client.call('default', id);
             if (!call) throw new Error('Failed to create meeting');
 
-            // Store time in local timezone format
             const startsAt = values.dateTime.toISOString();
             const description = values.description || 'Instant Meeting';
 
@@ -69,7 +75,7 @@ const MeetingTypeList = () => {
                     starts_at: startsAt,
                     custom: {
                         description,
-                        created_in_timezone: userTimezone, // Store the timezone where meeting was created
+                        created_in_timezone: userTimezone,
                     },
                 },
             });
