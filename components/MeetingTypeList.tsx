@@ -44,8 +44,9 @@ const MeetingTypeList = () => {
         if (!client || !user) return;
 
         const userEmail = user.primaryEmailAddress?.emailAddress || '';
+        const userName = user.fullName || user.username || 'Admin'; // Retrieve the username
         if (!isAdmin(userEmail)) {
-            toast({ title: 'Only admins can create meetings' });
+            toast({ title: 'Only admins can create meetings', description: `Admin: ${userName} (${userEmail})` }); // Include username and email in the prompt
             return;
         }
 
