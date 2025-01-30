@@ -2,18 +2,24 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import HomeCard from './HomeCard';
-import MeetingModal from './MeetingModal';
+
+// Third-party libraries
 import { Call, useStreamVideoClient } from '@stream-io/video-react-sdk';
 import { useUser } from '@clerk/nextjs';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import Textarea from './Textarea';
-import Input from './Input';
-import Loader from './Loader';
-import { toast } from './Toast';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+
+// UI Components
+import HomeCard from './HomeCard';
+import MeetingModal from './MeetingModal';
+import Loader from './Loader';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
+import { useToast } from './ui/use-toast';
+import { toast } from './Toast';
+
 
 dotenv.config();
 
