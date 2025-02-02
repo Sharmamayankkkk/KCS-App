@@ -57,7 +57,6 @@ const createStreamVideoClient = (apiKey: string, userData: any, userToken: strin
     apiKey,
     user,
     token: userToken,
-    logLevel: 'info',
   });
 };
 
