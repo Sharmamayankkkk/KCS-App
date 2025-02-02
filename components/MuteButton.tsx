@@ -15,8 +15,8 @@ const MuteButton: React.FC = () => {
       if (userId === localUserId) continue; // Skip the host (local user)
 
       try {
-        // Use the mute/unmute API methods instead
-        await call.muteUser(userId);
+        // muteUser requires both userId and trackType parameters
+        await call.muteUser(userId, 'audio');
       } catch (error) {
         console.error(`Failed to mute ${userId}:`, error);
       }
