@@ -9,7 +9,6 @@ import {
   SpeakerLayout,
   useCallStateHooks,
   useCall,
-  StreamVideoClient,
 } from '@stream-io/video-react-sdk';
 import { StreamChat } from 'stream-chat';
 import { Chat, Channel, Window, MessageList, MessageInput } from 'stream-chat-react';
@@ -43,39 +42,50 @@ const MeetingRoom = () => {
   const callingState = useCallCallingState();
 
   useEffect(() => {
-    // Initialize chat client
+    let cleanupRequired = false;
+
     const initChat = async () => {
-      const client = StreamChat.getInstance(process.env.NEXT_PUBLIC_STREAM_KEY!);
-      
-      await client.connectUser(
-        {
-          id: call?.state.localParticipant?.userId || 'default-user',
-          name: call?.state.localParticipant?.name || 'Anonymous',
-        },
-        client.devToken(call?.state.localParticipant?.userId || 'default-user')
-      );
+      if (!call?.state.localParticipant?.userId) return;
 
-      const channel = client.channel('meeting', call?.id || 'default-channel', {
-        name: 'Meeting Chat',
-        members: [call?.state.localParticipant?.userId || 'default-user'],
-      });
+      try {
+        const client = StreamChat.getInstance(process.env.NEXT_PUBLIC_STREAM_KEY!);
+        
+        await client.connectUser(
+          {
+            id: call.state.localParticipant.userId,
+            name: call.state.localParticipant.name || 'Anonymous',
+          },
+          client.devToken(call.state.localParticipant.userId)
+        );
 
-      await channel.watch();
-      setChatClient(client);
-      setChannel(channel);
-    };
+        const newChannel = client.channel('meeting', call.id || 'default-channel', {
+          name: 'Meeting Chat',
+          members: [call.state.localParticipant.userId],
+        });
 
-    if (call?.state.localParticipant?.userId) {
-      initChat();
-    }
+        await newChannel.watch();
 
-    return () => {
-      // Cleanup chat connection
-      if (chatClient) {
-        chatClient.disconnectUser();
+        if (!cleanupRequired) {
+          setChatClient(client);
+          setChannel(newChannel);
+        }
+      } catch (error) {
+        console.error('Failed to initialize chat:', error);
       }
     };
-  }, [call?.id, call?.state.localParticipant]);
+
+    initChat();
+
+    return () => {
+      cleanupRequired = true;
+      if (chatClient) {
+        chatClient.disconnectUser().then(() => {
+          setChatClient(null);
+          setChannel(null);
+        });
+      }
+    };
+  }, [call?.id, call?.state.localParticipant, chatClient]);
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
