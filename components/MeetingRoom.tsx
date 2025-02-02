@@ -20,7 +20,6 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import Loader from './Loader';
-import EndCallButton from './EndCallButton';
 import MuteButton from './MuteButton'; // Import the new MuteButton component
 import { cn } from '@/lib/utils';
 
@@ -28,7 +27,6 @@ type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
 const MeetingRoom = () => {
   const searchParams = useSearchParams();
-  const isPersonalRoom = !!searchParams.get('personal');
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
   const [showParticipants, setShowParticipants] = useState(false);
