@@ -39,7 +39,11 @@ type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 interface MeetingRoomProps {
   apiKey: string;
   userToken: string;
-  userData: any;
+  userData: {
+    id: string;
+    name?: string;
+    image?: string;
+  };
 }
 
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
@@ -49,69 +53,116 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showChat, setShowChat] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
   const call = useCall();
+  
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const callingState = useCallCallingState();
 
-  /** ✅ Step 1: Initialize Chat Client */
+  // Initialize Chat Client with Error Handling
   const [chatClient, setChatClient] = useState<StreamChat | null>(null);
   useEffect(() => {
-    if (!apiKey || !userToken || !userData) return;
-
-    const client = StreamChat.getInstance(apiKey);
-    client.connectUser(userData, userToken);
-    setChatClient(client);
-
-    return () => {
-      client.disconnectUser();
-      setChatClient(null);
-    };
-  }, [apiKey, userToken, userData]);
-
-  /** ✅ Step 2: Initialize Video Client */
-  const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
-  useEffect(() => {
-    if (!apiKey || !userToken || !userData) return;
-
-    const _client = new StreamVideoClient({
-      apiKey,
-      user: userData,
-      token: userToken,
-    });
-    setVideoClient(_client);
-
-    return () => {
-      _client.disconnectUser();
-      setVideoClient(null);
-    };
-  }, [apiKey, userToken, userData]);
-
-  /** ✅ Step 3: Setup Chat Channel */
-  const [channel, setChannel] = useState<any>(null);
-  useEffect(() => {
-    if (!chatClient || !userData?.id) return;
+    if (!apiKey || !userToken || !userData) {
+      setError('Missing required configuration');
+      setIsLoading(false);
+      return;
+    }
 
     const initChat = async () => {
       try {
-        const newChannel = chatClient.channel('meeting', 'default-channel', {
-          name: 'Meeting Chat',
-          members: [userData.id],
-        });
-
-        await newChannel.watch();
-        setChannel(newChannel);
-      } catch (error) {
-        console.error('Chat Initialization Failed:', error);
+        console.log('Initializing chat client...', { apiKey, userData });
+        const client = StreamChat.getInstance(apiKey);
+        
+        await client.connectUser(userData, userToken);
+        console.log('Chat client connected successfully');
+        setChatClient(client);
+      } catch (err) {
+        console.error('Chat initialization failed:', err);
+        setError('Failed to initialize chat');
+      } finally {
+        setIsLoading(false);
       }
     };
 
     initChat();
+
+    return () => {
+      if (chatClient) {
+        chatClient.disconnectUser();
+        setChatClient(null);
+      }
+    };
+  }, [apiKey, userToken, userData]);
+
+  // Initialize Video Client
+  const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
+  useEffect(() => {
+    if (!apiKey || !userToken || !userData) return;
+
+    try {
+      const client = new StreamVideoClient({
+        apiKey,
+        user: userData,
+        token: userToken,
+      });
+      setVideoClient(client);
+      console.log('Video client initialized successfully');
+    } catch (err) {
+      console.error('Video initialization failed:', err);
+      setError('Failed to initialize video');
+    }
+
+    return () => {
+      if (videoClient) {
+        videoClient.disconnectUser();
+        setVideoClient(null);
+      }
+    };
+  }, [apiKey, userToken, userData]);
+
+  // Setup Chat Channel
+  const [channel, setChannel] = useState<any>(null);
+  useEffect(() => {
+    if (!chatClient || !userData?.id) return;
+
+    const initChannel = async () => {
+      try {
+        console.log('Creating chat channel...');
+        const channelId = 'meeting-chat';
+        
+        const newChannel = chatClient.channel('messaging', channelId, {
+          name: 'Meeting Chat',
+          members: [userData.id],
+          created_by_id: userData.id,
+        });
+
+        await newChannel.watch();
+        console.log('Channel created and watched successfully');
+        setChannel(newChannel);
+      } catch (err) {
+        console.error('Channel initialization failed:', err);
+        setError('Failed to initialize chat channel');
+      }
+    };
+
+    initChannel();
   }, [chatClient, userData]);
 
-  if (callingState !== CallingState.JOINED) return <Loader />;
+  // Error Display Component
+  const ErrorDisplay = ({ message }: { message: string }) => (
+    <div className="flex h-screen items-center justify-center bg-gray-900 text-white">
+      <div className="rounded-lg bg-red-600 p-6 text-center">
+        <h2 className="mb-2 text-xl font-bold">Error</h2>
+        <p>{message}</p>
+      </div>
+    </div>
+  );
+
+  if (error) return <ErrorDisplay message={error} />;
+  if (isLoading || callingState !== CallingState.JOINED) return <Loader />;
 
   const isHost = call?.state.localParticipant?.roles?.includes('host');
 
-  /** ✅ Step 4: Handle Call Layout */
   const CallLayout = () => {
     switch (layout) {
       case 'grid':
@@ -138,58 +189,50 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <CallLayout />
                 </div>
 
-                {/* ✅ Step 5: Participants List */}
+                {/* Participants List */}
                 {showParticipants && !showChat && (
                   <div className="h-[calc(100vh-86px)] w-80 ml-2">
                     <CallParticipantsList onClose={() => setShowParticipants(false)} />
                   </div>
                 )}
 
-                {/* ✅ Step 6: Chat Panel */}
-                {showChat && !showParticipants && (
+                {/* Chat Panel */}
+                {showChat && !showParticipants && channel && (
                   <div className="h-[calc(100vh-86px)] w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden">
-                    {channel ? (
-                      <Channel channel={channel}>
-                        <Window>
-                          <MessageList />
-                          <MessageInput />
-                        </Window>
-                      </Channel>
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <p>Loading chat...</p>
-                      </div>
-                    )}
+                    <Channel channel={channel}>
+                      <Window>
+                        <MessageList />
+                        <MessageInput focus />
+                      </Window>
+                    </Channel>
                   </div>
                 )}
               </div>
 
-              {/* ✅ Step 7: Controls */}
-              <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
-                <CallControls onLeave={() => router.push(`/`)} />
+              {/* Controls */}
+              <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 pb-4">
+                <CallControls onLeave={() => router.push('/')} />
 
                 {isHost && <MuteButton />}
 
                 <DropdownMenu>
-                  <div className="flex items-center">
-                    <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
-                      <LayoutList size={20} className="text-white" />
-                    </DropdownMenuTrigger>
-                  </div>
+                  <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+                    <LayoutList size={20} className="text-white" />
+                  </DropdownMenuTrigger>
                   <DropdownMenuContent className="border-dark-1 bg-dark-1 text-white">
-                    {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item, index) => (
-                      <div key={index}>
-                        <DropdownMenuItem
-                          onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}
-                        >
-                          {item}
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator className="border-dark-1" />
-                      </div>
+                    {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
+                      <DropdownMenuItem
+                        key={item}
+                        onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}
+                      >
+                        {item}
+                      </DropdownMenuItem>
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
+
                 <CallStatsButton />
+
                 <button
                   onClick={() => {
                     setShowParticipants((prev) => !prev);
@@ -199,6 +242,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 >
                   <Users className="text-white" />
                 </button>
+
                 <button
                   onClick={() => {
                     setShowChat((prev) => !prev);
