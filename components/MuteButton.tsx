@@ -1,9 +1,8 @@
-'use client';
 import React from 'react';
 import { useCall } from '@stream-io/video-react-sdk';
 
 const MuteButton: React.FC = () => {
-  const call = useCall(); // Get the current call instance
+  const call = useCall();
 
   const muteAllParticipants = async () => {
     if (!call) return;
@@ -11,10 +10,10 @@ const MuteButton: React.FC = () => {
     const participants = call.state.participants;
 
     for (const [userId, participant] of Object.entries(participants)) {
-      if (participant.isLocalParticipant) continue; // Skip self-muting
+      if (participant.isLocalParticipant) continue;
 
       try {
-        await call.setParticipantMicrophoneMuted(userId, true);
+        await call.updateParticipant(userId, { audio: false }); // Corrected API method
       } catch (error) {
         console.error(`Failed to mute ${userId}:`, error);
       }
