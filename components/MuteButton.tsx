@@ -11,7 +11,7 @@ const MuteButton: React.FC = () => {
     const participants = call.state.participants;
     const localUserId = call.state.localParticipant?.userId;
 
-    for (const [userId, participant] of Object.entries(participants)) {
+    for (const [userId] of Object.entries(participants)) {
       if (userId === localUserId) continue; // Skip the host (local user)
 
       try {
@@ -26,7 +26,7 @@ const MuteButton: React.FC = () => {
   return (
     <button
       onClick={muteAllExceptHost}
-      className="px-4 py-2 bg-red-500 text-white rounded-lg"
+      className="bg-red-500 px-4 py-2 rounded-lg text-white"
     >
       Mute Everyone Except Host
     </button>
