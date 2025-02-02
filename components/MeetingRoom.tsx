@@ -29,10 +29,11 @@ const MeetingRoom = () => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
   const [showParticipants, setShowParticipants] = useState(false);
-  const { useCallCallingState } = useCallStateHooks();
+  const { useCallCallingState, useCall } = useCallStateHooks();
 
   // for more detail about types of CallingState see: https://getstream.io/video/docs/react/ui-cookbook/ringing-call/#incoming-call-panel
   const callingState = useCallCallingState();
+  const call = useCall();
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
@@ -46,6 +47,9 @@ const MeetingRoom = () => {
         return <SpeakerLayout participantsBarPosition="right" />;
     }
   };
+
+  // Check if the local user is the host
+  const isHost = call?.state.localParticipant?.role === 'host';
 
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
@@ -65,7 +69,7 @@ const MeetingRoom = () => {
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
         <CallControls onLeave={() => router.push(`/`)} />
         
-        <MuteButton /> {/* Use the MuteButton component here */}
+        {isHost && <MuteButton />} {/* Conditionally render MuteButton for host only */}
 
         <DropdownMenu>
           <div className="flex items-center">
