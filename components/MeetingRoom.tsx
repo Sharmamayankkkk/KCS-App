@@ -9,7 +9,7 @@ import {
   SpeakerLayout,
   useCallStateHooks,
   useCall,
-  CallChat,
+  StreamChat, // Changed from CallChat to StreamChat
 } from '@stream-io/video-react-sdk';
 import { useRouter } from 'next/navigation';
 import { Users, LayoutList, MessageSquare } from 'lucide-react';
@@ -79,7 +79,7 @@ const MeetingRoom = () => {
               <h2 className="text-lg font-semibold">Chat</h2>
             </div>
             <div className="flex-1 overflow-y-auto">
-              <CallChat />
+              <StreamChat /> {/* Changed from CallChat to StreamChat */}
             </div>
           </div>
         </div>
