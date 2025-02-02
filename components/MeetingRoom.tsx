@@ -43,15 +43,21 @@ interface MeetingRoomProps {
 }
 
 const createStreamChatClient = (apiKey: string) => {
-  const client = StreamChat.getInstance(apiKey);
-  return client;
+  return StreamChat.getInstance(apiKey);
 };
 
 const createStreamVideoClient = (apiKey: string, userData: any, userToken: string) => {
+  const user = {
+    id: userData.id,
+    name: userData.name || userData.id,
+    image: userData.image,
+  };
+
   return new StreamVideoClient({
     apiKey,
-    user: userData,
+    user,
     token: userToken,
+    logLevel: 'info',
   });
 };
 
@@ -73,24 +79,51 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const callingState = useCallCallingState();
 
+  // Validate token and configuration
+  useEffect(() => {
+    const validateConfig = () => {
+      if (!apiKey || !userToken || !userData?.id) {
+        setError('Missing required configuration');
+        return false;
+      }
+
+      try {
+        const tokenParts = userToken.split('.');
+        if (tokenParts.length !== 3) {
+          setError('Invalid token format');
+          return false;
+        }
+
+        const payload = JSON.parse(atob(tokenParts[1]));
+        if (payload.user_id !== userData.id) {
+          setError('Token user_id does not match provided user ID');
+          return false;
+        }
+        return true;
+      } catch (err) {
+        setError('Token validation failed');
+        return false;
+      }
+    };
+
+    validateConfig();
+  }, [apiKey, userToken, userData]);
+
   // Initialize Chat Client
   useEffect(() => {
     let client: StreamChat | null = null;
 
     const initChat = async () => {
       try {
-        // Validate required props
         if (!apiKey || !userToken || !userData?.id) {
           throw new Error('Missing required configuration');
         }
 
-        // Create and connect chat client
         client = createStreamChatClient(apiKey);
         await client.connectUser(userData, userToken);
         console.log('Chat client connected successfully');
         setChatClient(client);
 
-        // Create and initialize channel
         const channelId = getChannelId(userData.id);
         const newChannel = client.channel('messaging', channelId, {
           name: 'Meeting Chat',
@@ -112,13 +145,16 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     initChat();
 
     return () => {
-      if (client) {
-        client.disconnectUser().then(() => {
+      const disconnectChat = async () => {
+        if (client) {
+          await client.disconnectUser();
           console.log('Chat client disconnected');
           setChatClient(null);
           setChannel(null);
-        });
-      }
+        }
+      };
+      
+      disconnectChat();
     };
   }, [apiKey, userToken, userData]);
 
@@ -144,12 +180,15 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     initVideo();
 
     return () => {
-      if (client) {
-        client.disconnectUser().then(() => {
+      const disconnectVideo = async () => {
+        if (client) {
+          await client.disconnectUser();
           console.log('Video client disconnected');
           setVideoClient(null);
-        });
-      }
+        }
+      };
+      
+      disconnectVideo();
     };
   }, [apiKey, userToken, userData]);
 
@@ -161,7 +200,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         <p className="mb-4">{message}</p>
         <button 
           onClick={() => window.location.reload()}
-          className="rounded bg-white px-4 py-2 text-red-600"
+          className="rounded bg-white px-4 py-2 text-red-600 hover:bg-gray-100"
         >
           Retry
         </button>
@@ -231,6 +270,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       <DropdownMenuItem
                         key={item}
                         onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}
+                        className="cursor-pointer"
                       >
                         {item}
                       </DropdownMenuItem>
@@ -247,7 +287,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   }}
                   className="rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b] cursor-pointer"
                 >
-                  <Users className="text-white" />
+                  <Users className="text-white" size={20} />
                 </button>
 
                 <button
@@ -257,7 +297,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   }}
                   className="rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b] cursor-pointer"
                 >
-                  <MessageSquare className="text-white" />
+                  <MessageSquare className="text-white" size={20} />
                 </button>
               </div>
             </section>
