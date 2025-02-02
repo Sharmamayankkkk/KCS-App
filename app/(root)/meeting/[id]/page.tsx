@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -17,7 +16,7 @@ const MeetingPage = () => {
   const { isLoaded, user } = useUser();
   const { call, isCallLoading } = useGetCallById(id);
   const [isSetupComplete, setIsSetupComplete] = useState(false);
-
+  
   const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY;
 
   if (!isLoaded || isCallLoading) return <Loader />;
@@ -40,7 +39,7 @@ const MeetingPage = () => {
         {!isSetupComplete ? (
           <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
         ) : (
-          <MeetingRoom apiKey={apiKey} userToken={user.token} userData={user} />
+          user && <MeetingRoom apiKey={apiKey} userToken={user.token} userData={user} />
         )}
         </StreamTheme>
       </StreamCall>
