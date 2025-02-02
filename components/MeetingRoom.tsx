@@ -27,7 +27,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import Loader from './Loader';
@@ -68,10 +67,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       return;
     }
 
+    let client: StreamChat | null = null;
+
     const initChat = async () => {
       try {
         console.log('Initializing chat client...', { apiKey, userData });
-        const client = StreamChat.getInstance(apiKey);
+        client = StreamChat.getInstance(apiKey);
         
         await client.connectUser(userData, userToken);
         console.log('Chat client connected successfully');
@@ -87,8 +88,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     initChat();
 
     return () => {
-      if (chatClient) {
-        chatClient.disconnectUser();
+      if (client) {
+        client.disconnectUser();
         setChatClient(null);
       }
     };
@@ -99,8 +100,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
 
+    let client: StreamVideoClient | null = null;
+
     try {
-      const client = new StreamVideoClient({
+      client = new StreamVideoClient({
         apiKey,
         user: userData,
         token: userToken,
@@ -113,8 +116,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
 
     return () => {
-      if (videoClient) {
-        videoClient.disconnectUser();
+      if (client) {
+        client.disconnectUser();
         setVideoClient(null);
       }
     };
@@ -150,9 +153,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   // Error Display Component
   const ErrorDisplay = ({ message }: { message: string }) => (
-    <div className="flex h-screen items-center justify-center bg-gray-900 text-white">
-      <div className="rounded-lg bg-red-600 p-6 text-center">
-        <h2 className="mb-2 text-xl font-bold">Error</h2>
+    <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
+      <div className="p-6 text-center rounded-lg bg-red-600">
+        <h2 className="text-xl font-bold mb-2">Error</h2>
         <p>{message}</p>
       </div>
     </div>
@@ -180,9 +183,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         <StreamVideo client={videoClient}>
           <StreamCall call={call}>
             <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
-              <div className="relative flex size-full items-center justify-center">
+              <div className="relative flex items-center justify-center size-full">
                 <div
-                  className={cn('flex size-full max-w-[1000px] items-center', {
+                  className={cn('flex items-center size-full max-w-[1000px]', {
                     'max-w-[800px]': showChat || showParticipants,
                   })}
                 >
@@ -191,14 +194,14 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
                 {/* Participants List */}
                 {showParticipants && !showChat && (
-                  <div className="h-[calc(100vh-86px)] w-80 ml-2">
+                  <div className="ml-2 h-[calc(100vh-86px)] w-80">
                     <CallParticipantsList onClose={() => setShowParticipants(false)} />
                   </div>
                 )}
 
                 {/* Chat Panel */}
                 {showChat && !showParticipants && channel && (
-                  <div className="h-[calc(100vh-86px)] w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden">
+                  <div className="ml-2 h-[calc(100vh-86px)] w-80 overflow-hidden rounded-lg bg-[#19232d]">
                     <Channel channel={channel}>
                       <Window>
                         <MessageList />
@@ -216,10 +219,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 {isHost && <MuteButton />}
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+                  <DropdownMenuTrigger className="rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b] cursor-pointer">
                     <LayoutList size={20} className="text-white" />
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="border-dark-1 bg-dark-1 text-white">
+                  <DropdownMenuContent className="bg-dark-1 border-dark-1 text-white">
                     {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
                       <DropdownMenuItem
                         key={item}
@@ -238,7 +241,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     setShowParticipants((prev) => !prev);
                     setShowChat(false);
                   }}
-                  className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]"
+                  className="rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b] cursor-pointer"
                 >
                   <Users className="text-white" />
                 </button>
@@ -248,7 +251,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     setShowChat((prev) => !prev);
                     setShowParticipants(false);
                   }}
-                  className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]"
+                  className="rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b] cursor-pointer"
                 >
                   <MessageSquare className="text-white" />
                 </button>
