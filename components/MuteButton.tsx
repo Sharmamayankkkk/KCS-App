@@ -10,7 +10,7 @@ const MuteButton: React.FC = () => {
 
     const participants = call.state.participants;
 
-    for (const [userId, participant] of participants) {
+    for (const [userId, participant] of Object.entries(participants)) {
       if (participant.isLocalParticipant) continue; // Skip self-muting
 
       try {
