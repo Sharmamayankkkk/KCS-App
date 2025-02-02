@@ -20,6 +20,7 @@ const ADMIN_EMAILS = process.env.NEXT_PUBLIC_ADMIN_EMAILS
   : [];
 
 const isAdmin = (email: string): boolean => {
+  console.log("Checking admin status for:", email);
   return ADMIN_EMAILS.includes(email.trim().toLowerCase());
 };
 
@@ -33,7 +34,7 @@ const MeetingTypeList = () => {
   const router = useRouter();
   const [meetingState, setMeetingState] = useState<'isScheduleMeeting' | 'isJoiningMeeting' | 'isInstantMeeting' | undefined>(undefined);
   const [values, setValues] = useState(initialValues);
-  const [callDetail, setCallDetail] = useState<Call>();
+  const [callDetail, setCallDetail] = useState<Call | null>(null);
   const client = useStreamVideoClient();
   const { user } = useUser();
   const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -50,28 +51,50 @@ const MeetingTypeList = () => {
   }, [user]);
 
   const createMeeting = async () => {
-    if (!client || !user || !userEmail) {
-      toast({ title: 'Error', description: 'User not found or client not initialized' });
+    console.log("Starting meeting creation...");
+
+    if (!client) {
+      console.error("Stream Video Client not initialized.");
+      toast({ title: 'Error', description: 'Stream Video Client is not initialized' });
+      return;
+    }
+
+    if (!user) {
+      console.error("User not authenticated.");
+      toast({ title: 'Error', description: 'User not authenticated' });
+      return;
+    }
+
+    if (!userEmail) {
+      console.error("User email is missing.");
+      toast({ title: 'Error', description: 'Failed to retrieve user email' });
       return;
     }
 
     if (!isAdmin(userEmail)) {
+      console.warn("User is not an admin:", userEmail);
       toast({ title: 'Permission Denied', description: 'Only admins can create meetings.' });
       return;
     }
 
+    if (!values.dateTime) {
+      toast({ title: 'Error', description: 'Please select a date and time' });
+      return;
+    }
+
     try {
-      if (!values.dateTime) {
-        toast({ title: 'Please select a date and time' });
-        return;
-      }
+      console.log("Creating meeting...");
 
       const id = crypto.randomUUID();
       const call = client.call('default', id);
-      if (!call) throw new Error('Failed to create meeting');
+      if (!call) {
+        throw new Error('Failed to create meeting');
+      }
 
       const startsAt = values.dateTime.toISOString();
       const description = values.description || 'Instant Meeting';
+
+      console.log("Sending meeting creation request...");
 
       await call.getOrCreate({
         data: {
@@ -83,6 +106,7 @@ const MeetingTypeList = () => {
         },
       });
 
+      console.log("Meeting created successfully:", call.id);
       setCallDetail(call);
       toast({ title: 'Meeting Created' });
 
@@ -91,7 +115,7 @@ const MeetingTypeList = () => {
       }
     } catch (error) {
       console.error('Meeting creation error:', error);
-      toast({ title: 'Failed to create Meeting' });
+      toast({ title: 'Failed to create Meeting', description: error instanceof Error ? error.message : 'An unknown error occurred' });
     }
   };
 
