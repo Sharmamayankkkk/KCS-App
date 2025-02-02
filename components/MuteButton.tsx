@@ -9,13 +9,14 @@ const MuteButton: React.FC = () => {
     if (!call) return;
 
     const participants = call.state.participants;
-    const localUserId = call.state.localParticipant?.userId; // Get the host's user ID
+    const localUserId = call.state.localParticipant?.userId;
 
     for (const [userId, participant] of Object.entries(participants)) {
       if (userId === localUserId) continue; // Skip the host (local user)
 
       try {
-        await call.updateParticipantPermissions(userId, { audio: false }); // Mute participant
+        // Use the mute/unmute API methods instead
+        await call.muteUser(userId);
       } catch (error) {
         console.error(`Failed to mute ${userId}:`, error);
       }
