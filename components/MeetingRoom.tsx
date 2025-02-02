@@ -37,8 +37,8 @@ const MeetingRoom = () => {
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
-  // Check if current user is the host
-  const isHost = call?.state.localParticipant?.role === 'host';
+  // Check if current user is the host using roles array
+  const isHost = call?.state.localParticipant?.roles?.includes('host');
 
   const CallLayout = () => {
     switch (layout) {
