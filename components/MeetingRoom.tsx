@@ -13,7 +13,7 @@ import {
   useCreateChatClient,
 } from '@stream-io/video-react-sdk';
 
-import { StreamVideoClient } from '@stream-io/video-sdk';
+import { StreamVideoClient } from '@stream-io/video-react-sdk';
 import { Chat, Channel, Window, MessageList, MessageInput } from 'stream-chat-react';
 import 'stream-chat-react/dist/css/v2/index.css';
 import { useRouter } from 'next/navigation';
