@@ -9,9 +9,14 @@ import {
   SpeakerLayout,
   useCallStateHooks,
   useCall,
+  StreamChat,
+  Channel,
+  Window,
+  MessageList,
+  MessageInput,
 } from '@stream-io/video-react-sdk';
 import { useRouter } from 'next/navigation';
-import { Users, LayoutList } from 'lucide-react';
+import { Users, LayoutList, MessageSquare } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -30,6 +35,7 @@ const MeetingRoom = () => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
   const [showParticipants, setShowParticipants] = useState(false);
+  const [showChat, setShowChat] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
   const call = useCall();
 
@@ -37,8 +43,10 @@ const MeetingRoom = () => {
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
-  // Check if current user is the host using roles array
   const isHost = call?.state.localParticipant?.roles?.includes('host');
+  
+  // Get the channel instance from the call
+  const channel = call?.state.channel;
 
   const CallLayout = () => {
     switch (layout) {
@@ -54,22 +62,46 @@ const MeetingRoom = () => {
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <div className="relative flex size-full items-center justify-center">
-        <div className="flex size-full max-w-[1000px] items-center">
+        <div className={cn('flex size-full max-w-[1000px] items-center', {
+          'max-w-[800px]': showChat || showParticipants
+        })}>
           <CallLayout />
         </div>
+        {/* Participants List */}
         <div
-          className={cn('h-[calc(100vh-86px)] hidden ml-2', {
-            'show-block': showParticipants,
+          className={cn('h-[calc(100vh-86px)] hidden w-80 ml-2', {
+            'block': showParticipants && !showChat,
           })}
         >
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
+        {/* Chat Panel */}
+        {channel && (
+          <div
+            className={cn('h-[calc(100vh-86px)] hidden w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden', {
+              'block': showChat && !showParticipants,
+            })}
+          >
+            <div className="flex h-full flex-col">
+              <div className="p-4 border-b border-[#2D3B4B]">
+                <h2 className="text-lg font-semibold">Chat</h2>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <Channel channel={channel}>
+                  <Window>
+                    <MessageList />
+                    <MessageInput />
+                  </Window>
+                </Channel>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
-      {/* video layout and call controls */}
+      {/* Controls */}
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
         <CallControls onLeave={() => router.push(`/`)} />
         
-        {/* Only show MuteButton if user is host */}
         {isHost && <MuteButton />}
 
         <DropdownMenu>
@@ -94,8 +126,23 @@ const MeetingRoom = () => {
           </DropdownMenuContent>
         </DropdownMenu>
         <CallStatsButton />
-        <button onClick={() => setShowParticipants((prev) => !prev)}>
+        <button 
+          onClick={() => {
+            setShowParticipants((prev) => !prev);
+            setShowChat(false);
+          }}
+          className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]"
+        >
           <Users className="text-white" />
+        </button>
+        <button 
+          onClick={() => {
+            setShowChat((prev) => !prev);
+            setShowParticipants(false);
+          }}
+          className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]"
+        >
+          <MessageSquare className="text-white" />
         </button>
       </div>
     </section>
