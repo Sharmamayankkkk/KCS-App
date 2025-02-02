@@ -14,23 +14,20 @@ import {
   useCallStateHooks,
   useCall,
 } from '@stream-io/video-react-sdk';
-
 import { Chat, Channel, Window, MessageList, MessageInput } from 'stream-chat-react';
 import { StreamChat } from 'stream-chat';
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import 'stream-chat-react/dist/css/v2/index.css';
-
 import { useRouter } from 'next/navigation';
 import { Users, LayoutList, MessageSquare } from 'lucide-react';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
-import Loader from './Loader';
-import MuteButton from './MuteButton';
+} from '@/components/ui/dropdown-menu';
+import Loader from '@/components/Loader';
+import MuteButton from '@/components/MuteButton';
 import { cn } from '@/lib/utils';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
@@ -45,6 +42,23 @@ interface MeetingRoomProps {
   };
 }
 
+const createStreamChatClient = (apiKey: string) => {
+  const client = StreamChat.getInstance(apiKey);
+  return client;
+};
+
+const createStreamVideoClient = (apiKey: string, userData: any, userToken: string) => {
+  return new StreamVideoClient({
+    apiKey,
+    user: userData,
+    token: userToken,
+  });
+};
+
+const getChannelId = (userId: string) => {
+  return `meeting-room-${userId}-${Date.now()}`;
+};
+
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
@@ -52,34 +66,44 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showChat, setShowChat] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
   const call = useCall();
-  
+  const [chatClient, setChatClient] = useState<StreamChat | null>(null);
+  const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
+  const [channel, setChannel] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
   const callingState = useCallCallingState();
 
-  // Initialize Chat Client with Error Handling
-  const [chatClient, setChatClient] = useState<StreamChat | null>(null);
+  // Initialize Chat Client
   useEffect(() => {
-    if (!apiKey || !userToken || !userData) {
-      setError('Missing required configuration');
-      setIsLoading(false);
-      return;
-    }
-
     let client: StreamChat | null = null;
 
     const initChat = async () => {
       try {
-        console.log('Initializing chat client...', { apiKey, userData });
-        client = StreamChat.getInstance(apiKey);
-        
+        // Validate required props
+        if (!apiKey || !userToken || !userData?.id) {
+          throw new Error('Missing required configuration');
+        }
+
+        // Create and connect chat client
+        client = createStreamChatClient(apiKey);
         await client.connectUser(userData, userToken);
         console.log('Chat client connected successfully');
         setChatClient(client);
+
+        // Create and initialize channel
+        const channelId = getChannelId(userData.id);
+        const newChannel = client.channel('messaging', channelId, {
+          name: 'Meeting Chat',
+          members: [userData.id],
+          created_by_id: userData.id,
+        });
+
+        await newChannel.watch();
+        setChannel(newChannel);
+        console.log('Channel initialized successfully');
       } catch (err) {
-        console.error('Chat initialization failed:', err);
-        setError('Failed to initialize chat');
+        console.error('Chat initialization error:', err);
+        setError(err instanceof Error ? err.message : 'Failed to initialize chat');
       } finally {
         setIsLoading(false);
       }
@@ -89,74 +113,58 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     return () => {
       if (client) {
-        client.disconnectUser();
-        setChatClient(null);
+        client.disconnectUser().then(() => {
+          console.log('Chat client disconnected');
+          setChatClient(null);
+          setChannel(null);
+        });
       }
     };
   }, [apiKey, userToken, userData]);
 
   // Initialize Video Client
-  const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
   useEffect(() => {
-    if (!apiKey || !userToken || !userData) return;
-
     let client: StreamVideoClient | null = null;
 
-    try {
-      client = new StreamVideoClient({
-        apiKey,
-        user: userData,
-        token: userToken,
-      });
-      setVideoClient(client);
-      console.log('Video client initialized successfully');
-    } catch (err) {
-      console.error('Video initialization failed:', err);
-      setError('Failed to initialize video');
-    }
+    const initVideo = async () => {
+      try {
+        if (!apiKey || !userToken || !userData) {
+          throw new Error('Missing required video configuration');
+        }
+
+        client = createStreamVideoClient(apiKey, userData, userToken);
+        setVideoClient(client);
+        console.log('Video client initialized successfully');
+      } catch (err) {
+        console.error('Video initialization error:', err);
+        setError(err instanceof Error ? err.message : 'Failed to initialize video');
+      }
+    };
+
+    initVideo();
 
     return () => {
       if (client) {
-        client.disconnectUser();
-        setVideoClient(null);
+        client.disconnectUser().then(() => {
+          console.log('Video client disconnected');
+          setVideoClient(null);
+        });
       }
     };
   }, [apiKey, userToken, userData]);
 
-  // Setup Chat Channel
-  const [channel, setChannel] = useState<any>(null);
-  useEffect(() => {
-    if (!chatClient || !userData?.id) return;
-
-    const initChannel = async () => {
-      try {
-        console.log('Creating chat channel...');
-        const channelId = 'meeting-chat';
-        
-        const newChannel = chatClient.channel('messaging', channelId, {
-          name: 'Meeting Chat',
-          members: [userData.id],
-          created_by_id: userData.id,
-        });
-
-        await newChannel.watch();
-        console.log('Channel created and watched successfully');
-        setChannel(newChannel);
-      } catch (err) {
-        console.error('Channel initialization failed:', err);
-        setError('Failed to initialize chat channel');
-      }
-    };
-
-    initChannel();
-  }, [chatClient, userData]);
-
   // Error Display Component
   const ErrorDisplay = ({ message }: { message: string }) => (
-    <div className="flex items-center justify-center h-screen bg-gray-900 text-white">
-      <div className="p-6 text-center rounded-lg bg-red-600">
-        <h2 className="text-xl font-bold mb-2">Error</h2>
-        <p>{message}</p>
+    <div className="flex h-screen items-center justify-center bg-gray-900">
+      <div className="max-w-md rounded-lg bg-red-600 p-6 text-white">
+        <h2 className="mb-2 text-xl font-bold">Error</h2>
+        <p className="mb-4">{message}</p>
+        <button 
+          onClick={() => window.location.reload()}
+          className="rounded bg-white px-4 py-2 text-red-600"
+        >
+          Retry
+        </button>
       </div>
     </div>
   );
@@ -192,14 +200,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <CallLayout />
                 </div>
 
-                {/* Participants List */}
                 {showParticipants && !showChat && (
                   <div className="ml-2 h-[calc(100vh-86px)] w-80">
                     <CallParticipantsList onClose={() => setShowParticipants(false)} />
                   </div>
                 )}
 
-                {/* Chat Panel */}
                 {showChat && !showParticipants && channel && (
                   <div className="ml-2 h-[calc(100vh-86px)] w-80 overflow-hidden rounded-lg bg-[#19232d]">
                     <Channel channel={channel}>
@@ -212,15 +218,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 )}
               </div>
 
-              {/* Controls */}
               <div className="fixed bottom-0 flex w-full items-center justify-center gap-5 pb-4">
                 <CallControls onLeave={() => router.push('/')} />
-
                 {isHost && <MuteButton />}
 
                 <DropdownMenu>
                   <DropdownMenuTrigger className="rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b] cursor-pointer">
-                    <LayoutList size={20} className="text-white" />
+                    <LayoutList className="text-white" size={20} />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent className="bg-dark-1 border-dark-1 text-white">
                     {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
