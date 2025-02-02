@@ -9,15 +9,8 @@ import {
   SpeakerLayout,
   useCallStateHooks,
   useCall,
+  CallChat,
 } from '@stream-io/video-react-sdk';
-import {
-  Channel as ChatChannel,
-  Window as ChatWindow,
-  MessageList,
-  MessageInput,
-  Chat,
-} from 'stream-chat-react';
-import { StreamChat } from 'stream-chat';
 import { useRouter } from 'next/navigation';
 import { Users, LayoutList, MessageSquare } from 'lucide-react';
 
@@ -34,9 +27,6 @@ import { cn } from '@/lib/utils';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
-// Initialize Stream Chat client (you should move this to a separate file)
-const chatClient = StreamChat.getInstance(process.env.NEXT_PUBLIC_STREAM_KEY!);
-
 const MeetingRoom = () => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
@@ -50,27 +40,6 @@ const MeetingRoom = () => {
   if (callingState !== CallingState.JOINED) return <Loader />;
 
   const isHost = call?.state.localParticipant?.roles?.includes('host');
-  
-  // Get the channel ID from the call's channel
-  const channelId = call?.state.channel?.id;
-  const userId = call?.state.localParticipant?.userId;
-
-  // Connect user to Stream Chat
-  if (userId && !chatClient.user) {
-    chatClient.connectUser(
-      {
-        id: userId,
-        name: call?.state.localParticipant?.name || userId,
-      },
-      chatClient.devToken(userId)
-    );
-  }
-
-  // Get or create chat channel
-  const chatChannel = channelId ? chatClient.channel('meeting', channelId, {
-    name: 'Meeting Chat',
-    members: [userId!],
-  }) : null;
 
   const CallLayout = () => {
     switch (layout) {
@@ -100,29 +69,20 @@ const MeetingRoom = () => {
           <CallParticipantsList onClose={() => setShowParticipants(false)} />
         </div>
         {/* Chat Panel */}
-        {chatChannel && (
-          <div
-            className={cn('h-[calc(100vh-86px)] hidden w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden', {
-              'block': showChat && !showParticipants,
-            })}
-          >
-            <div className="flex h-full flex-col">
-              <div className="p-4 border-b border-[#2D3B4B]">
-                <h2 className="text-lg font-semibold">Chat</h2>
-              </div>
-              <div className="flex-1 overflow-y-auto">
-                <Chat client={chatClient}>
-                  <ChatChannel channel={chatChannel}>
-                    <ChatWindow>
-                      <MessageList />
-                      <MessageInput />
-                    </ChatWindow>
-                  </ChatChannel>
-                </Chat>
-              </div>
+        <div
+          className={cn('h-[calc(100vh-86px)] hidden w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden', {
+            'block': showChat && !showParticipants,
+          })}
+        >
+          <div className="flex h-full flex-col">
+            <div className="p-4 border-b border-[#2D3B4B]">
+              <h2 className="text-lg font-semibold">Chat</h2>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <CallChat />
             </div>
           </div>
-        )}
+        </div>
       </div>
       {/* Controls */}
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
