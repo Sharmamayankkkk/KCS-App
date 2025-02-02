@@ -26,9 +26,9 @@ const MuteButton: React.FC = () => {
   return (
     <button
       onClick={muteAllExceptHost}
-      className="bg-red-500 px-4 py-2 rounded-lg text-white"
+      className="px-4 py-2 bg-red-500 text-white rounded-lg"
     >
-      Mute Everyone
+      Mute Everyone Except Host
     </button>
   );
 };
