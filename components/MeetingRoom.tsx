@@ -8,8 +8,9 @@ import {
   PaginatedGridLayout,
   SpeakerLayout,
   useCallStateHooks,
+  useCall,
 } from '@stream-io/video-react-sdk';
-import { useRouter } from 'next/navigation'; // Removed useSearchParams import
+import { useRouter } from 'next/navigation';
 import { Users, LayoutList } from 'lucide-react';
 
 import {
@@ -20,7 +21,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import Loader from './Loader';
-import MuteButton from './MuteButton'; // Import the new MuteButton component
+import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
@@ -29,13 +30,15 @@ const MeetingRoom = () => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
   const [showParticipants, setShowParticipants] = useState(false);
-  const { useCallCallingState, useCall } = useCallStateHooks();
-
-  // for more detail about types of CallingState see: https://getstream.io/video/docs/react/ui-cookbook/ringing-call/#incoming-call-panel
-  const callingState = useCallCallingState();
+  const { useCallCallingState } = useCallStateHooks();
   const call = useCall();
 
+  const callingState = useCallCallingState();
+
   if (callingState !== CallingState.JOINED) return <Loader />;
+
+  // Check if current user is the host
+  const isHost = call?.state.localParticipant?.role === 'host';
 
   const CallLayout = () => {
     switch (layout) {
@@ -48,13 +51,10 @@ const MeetingRoom = () => {
     }
   };
 
-  // Check if the local user is the host
-  const isHost = call?.state.localParticipant?.role === 'host';
-
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
       <div className="relative flex size-full items-center justify-center">
-        <div className=" flex size-full max-w-[1000px] items-center">
+        <div className="flex size-full max-w-[1000px] items-center">
           <CallLayout />
         </div>
         <div
@@ -69,7 +69,8 @@ const MeetingRoom = () => {
       <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
         <CallControls onLeave={() => router.push(`/`)} />
         
-        {isHost && <MuteButton />} {/* Conditionally render MuteButton for host only */}
+        {/* Only show MuteButton if user is host */}
+        {isHost && <MuteButton />}
 
         <DropdownMenu>
           <div className="flex items-center">
