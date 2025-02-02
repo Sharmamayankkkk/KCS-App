@@ -42,6 +42,24 @@ interface MeetingRoomProps {
   };
 }
 
+const validateToken = (token: string): { isValid: boolean; payload: any; error?: string } => {
+  try {
+    const tokenParts = token.split('.');
+    if (tokenParts.length !== 3) {
+      return { isValid: false, payload: null, error: 'Invalid token format: Token must have three parts' };
+    }
+
+    const payload = JSON.parse(atob(tokenParts[1]));
+    if (!payload.user_id) {
+      return { isValid: false, payload, error: 'Token missing user_id in payload' };
+    }
+
+    return { isValid: true, payload };
+  } catch (err) {
+    return { isValid: false, payload: null, error: `Token validation failed: ${err}` };
+  }
+};
+
 const createStreamChatClient = (apiKey: string) => {
   return StreamChat.getInstance(apiKey);
 };
@@ -78,31 +96,42 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const callingState = useCallCallingState();
 
-  // Validate token and configuration
+  // Enhanced token validation
   useEffect(() => {
-    const validateConfig = () => {
+    const validateConfig = async () => {
       if (!apiKey || !userToken || !userData?.id) {
         setError('Missing required configuration');
-        return false;
+        console.error('Configuration error:', { apiKey: !!apiKey, userToken: !!userToken, userId: userData?.id });
+        return;
       }
 
-      try {
-        const tokenParts = userToken.split('.');
-        if (tokenParts.length !== 3) {
-          setError('Invalid token format');
-          return false;
-        }
-
-        const payload = JSON.parse(atob(tokenParts[1]));
-        if (payload.user_id !== userData.id) {
-          setError('Token user_id does not match provided user ID');
-          return false;
-        }
-        return true;
-      } catch (err) {
-        setError('Token validation failed');
-        return false;
+      const { isValid, payload, error: validationError } = validateToken(userToken);
+      
+      if (!isValid) {
+        setError(validationError || 'Token validation failed');
+        console.error('Token validation failed:', validationError, { providedUserId: userData.id });
+        return;
       }
+
+      if (payload.user_id !== userData.id) {
+        const errorMsg = `Token user_id (${payload.user_id}) does not match provided user ID (${userData.id})`;
+        setError(errorMsg);
+        console.error(errorMsg);
+        return;
+      }
+
+      // Additional token expiration check
+      const currentTime = Math.floor(Date.now() / 1000);
+      if (payload.exp && currentTime > payload.exp) {
+        setError('Token has expired');
+        console.error('Token expired at:', new Date(payload.exp * 1000));
+        return;
+      }
+
+      console.log('Token validation successful', {
+        userId: payload.user_id,
+        expires: payload.exp ? new Date(payload.exp * 1000) : 'No expiration'
+      });
     };
 
     validateConfig();
@@ -191,18 +220,26 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [apiKey, userToken, userData]);
 
-  // Error Display Component
+  // Enhanced error display component
   const ErrorDisplay = ({ message }: { message: string }) => (
     <div className="flex h-screen items-center justify-center bg-gray-900">
       <div className="max-w-md rounded-lg bg-red-600 p-6 text-white">
         <h2 className="mb-2 text-xl font-bold">Error</h2>
         <p className="mb-4">{message}</p>
-        <button 
-          onClick={() => window.location.reload()}
-          className="rounded bg-white px-4 py-2 text-red-600 hover:bg-gray-100"
-        >
-          Retry
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => window.location.reload()}
+            className="rounded bg-white px-4 py-2 text-red-600 hover:bg-gray-100"
+          >
+            Retry
+          </button>
+          <button 
+            onClick={() => router.push('/')}
+            className="rounded border border-white px-4 py-2 text-white hover:bg-red-700"
+          >
+            Back to Home
+          </button>
+        </div>
       </div>
     </div>
   );
