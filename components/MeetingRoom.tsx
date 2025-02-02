@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   CallControls,
   CallParticipantsList,
@@ -9,8 +9,11 @@ import {
   SpeakerLayout,
   useCallStateHooks,
   useCall,
-  StreamChat, // Changed from CallChat to StreamChat
+  StreamVideoClient,
 } from '@stream-io/video-react-sdk';
+import { StreamChat } from 'stream-chat';
+import { Chat, Channel, Window, MessageList, MessageInput } from 'stream-chat-react';
+import 'stream-chat-react/dist/css/v2/index.css';
 import { useRouter } from 'next/navigation';
 import { Users, LayoutList, MessageSquare } from 'lucide-react';
 
@@ -34,8 +37,45 @@ const MeetingRoom = () => {
   const [showChat, setShowChat] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
   const call = useCall();
+  const [chatClient, setChatClient] = useState<StreamChat | null>(null);
+  const [channel, setChannel] = useState<any>(null);
 
   const callingState = useCallCallingState();
+
+  useEffect(() => {
+    // Initialize chat client
+    const initChat = async () => {
+      const client = StreamChat.getInstance(process.env.NEXT_PUBLIC_STREAM_KEY!);
+      
+      await client.connectUser(
+        {
+          id: call?.state.localParticipant?.userId || 'default-user',
+          name: call?.state.localParticipant?.name || 'Anonymous',
+        },
+        client.devToken(call?.state.localParticipant?.userId || 'default-user')
+      );
+
+      const channel = client.channel('meeting', call?.id || 'default-channel', {
+        name: 'Meeting Chat',
+        members: [call?.state.localParticipant?.userId || 'default-user'],
+      });
+
+      await channel.watch();
+      setChatClient(client);
+      setChannel(channel);
+    };
+
+    if (call?.state.localParticipant?.userId) {
+      initChat();
+    }
+
+    return () => {
+      // Cleanup chat connection
+      if (chatClient) {
+        chatClient.disconnectUser();
+      }
+    };
+  }, [call?.id, call?.state.localParticipant]);
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
@@ -74,14 +114,20 @@ const MeetingRoom = () => {
             'block': showChat && !showParticipants,
           })}
         >
-          <div className="flex h-full flex-col">
-            <div className="p-4 border-b border-[#2D3B4B]">
-              <h2 className="text-lg font-semibold">Chat</h2>
+          {chatClient && channel ? (
+            <Chat client={chatClient} theme="messaging dark">
+              <Channel channel={channel}>
+                <Window>
+                  <MessageList />
+                  <MessageInput />
+                </Window>
+              </Channel>
+            </Chat>
+          ) : (
+            <div className="flex h-full items-center justify-center">
+              <p>Loading chat...</p>
             </div>
-            <div className="flex-1 overflow-y-auto">
-              <StreamChat /> {/* Changed from CallChat to StreamChat */}
-            </div>
-          </div>
+          )}
         </div>
       </div>
       {/* Controls */}
