@@ -14,7 +14,7 @@ const MuteButton: React.FC = () => {
       if (participant.isLocalParticipant) continue; // Skip self-muting
 
       try {
-        await call.disableParticipantMicrophone(userId);
+        await call.setMicrophoneMuted(userId, true);
       } catch (error) {
         console.error(`Failed to mute ${userId}:`, error);
       }
