@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import {
   CallControls,
   CallParticipantsList,
@@ -9,11 +9,10 @@ import {
   SpeakerLayout,
   useCallStateHooks,
   useCall,
+  CallChat,
 } from '@stream-io/video-react-sdk';
 import { useRouter } from 'next/navigation';
 import { Users, LayoutList, MessageSquare } from 'lucide-react';
-import { Chat, Channel, ChannelHeader, MessageList, MessageInput } from 'stream-chat-react';
-import { StreamChat } from 'stream-chat';
 
 import {
   DropdownMenu,
@@ -35,6 +34,7 @@ const MeetingRoom = () => {
   const [showChat, setShowChat] = useState(false);
   const { useCallCallingState } = useCallStateHooks();
   const call = useCall();
+
   const callingState = useCallCallingState();
 
   if (callingState !== CallingState.JOINED) return <Loader />;
@@ -51,35 +51,6 @@ const MeetingRoom = () => {
         return <SpeakerLayout participantsBarPosition="right" />;
     }
   };
-
-  const chatClient = StreamChat.getInstance(process.env.NEXT_PUBLIC_STREAM_API_KEY);
-  const [channel, setChannel] = useState(null);
-
-  useEffect(() => {
-    const setupChannel = async () => {
-      await chatClient.connectUser(
-        {
-          id: 'user-id',
-          name: 'User Name',
-          image: 'https://getstream.io/random_png/?id=user-id',
-        },
-        chatClient.devToken('user-id')
-      );
-
-      const channel = chatClient.channel('messaging', 'video-chat', {
-        name: 'Video Chat',
-      });
-      await channel.watch();
-
-      setChannel(channel);
-    };
-
-    setupChannel();
-
-    return () => {
-      chatClient.disconnectUser();
-    };
-  }, [chatClient]);
 
   return (
     <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
@@ -103,15 +74,14 @@ const MeetingRoom = () => {
             'block': showChat && !showParticipants,
           })}
         >
-          {channel && (
-            <Chat client={chatClient} theme="messaging light">
-              <Channel channel={channel}>
-                <ChannelHeader />
-                <MessageList />
-                <MessageInput />
-              </Channel>
-            </Chat>
-          )}
+          <div className="flex h-full flex-col">
+            <div className="p-4 border-b border-[#2D3B4B]">
+              <h2 className="text-lg font-semibold">Chat</h2>
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              <CallChat />
+            </div>
+          </div>
         </div>
       </div>
       {/* Controls */}
