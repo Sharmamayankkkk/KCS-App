@@ -17,10 +17,10 @@ const Table = ({
 }) => {
   return (
     <div className="flex flex-col items-start gap-2 xl:flex-row">
-      <h1 className="text-base font-medium text-sky-1 lg:text-xl xl:min-w-32">
+      <h1 className="text-base font-medium text-black lg:text-xl xl:min-w-32">
         {title}:
       </h1>
-      <h1 className="truncate text-sm font-bold max-sm:max-w-[320px] lg:text-xl">
+      <h1 className="truncate text-sm font-bold max-sm:max-w-80 lg:text-xl">
         {description}
       </h1>
     </div>
@@ -64,11 +64,11 @@ const PersonalRoom = () => {
         <Table title="Invite Link" description={meetingLink} />
       </div>
       <div className="flex gap-5">
-        <Button className="bg-blue-1" onClick={startRoom}>
+        <Button className="bg-blue-1 hover:bg-blue-700" onClick={startRoom}>
           Start Meeting
         </Button>
         <Button
-          className="bg-dark-3"
+          className="bg-dark-3 hover:bg-dark-2"
           onClick={() => {
             navigator.clipboard.writeText(meetingLink);
             toast({

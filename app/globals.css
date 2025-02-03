@@ -38,6 +38,11 @@
     height: 100%;
 }
 
+.str-video__call-controls{
+    display: flex;
+    flex-wrap: wrap;
+}
+
 .str-video__call-controls__button {
     height: 40px;
 }
@@ -57,7 +62,7 @@
 /* ==== clerk class override ===== */
 
 .cl-userButtonPopoverActionButtonIcon {
-    color: white;
+    color: rgb(14, 14, 14);
 }
 
 .cl-logoBox {
@@ -74,11 +79,11 @@
 }
 
 .cl-internal-wkkub3 {
-    color: white;
+    color: rgb(14, 14, 14);;
 }
 
 .cl-userButtonPopoverActionButton {
-    color: white;
+    color: rgb(14, 14, 14);;
 }
 
 /* =============================== */

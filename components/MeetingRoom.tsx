@@ -165,7 +165,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
 
               {/* ✅ Step 7: Controls */}
-              <div className="fixed bottom-0 flex w-full items-center justify-center gap-5">
+              <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
                 <CallControls onLeave={() => router.push(`/`)} />
 
                 {isHost && <MuteButton />}
