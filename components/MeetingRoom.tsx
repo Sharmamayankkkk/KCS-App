@@ -144,7 +144,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       <span>Participants</span>
                       <X className="cursor-pointer" onClick={() => setActivePanel(null)} />
                     </div>
-                    <CallParticipantsList />
+                    <CallParticipantsList onClose={() => setActivePanel(null)} />
                   </div>
                 )}
 
