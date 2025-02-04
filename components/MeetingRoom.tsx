@@ -27,7 +27,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  // DropdownMenuSeparator, //never used in the code
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import Loader from './Loader';
@@ -88,6 +87,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     if (!chatClient.current || !userData?.id) return;
 
     const initChat = async () => {
+      if (!chatClient.current) {
+        console.error("Chat client is not initialized");
+        return;
+      }
+
       try {
         const newChannel = chatClient.current.channel('meeting', 'default-channel', {
           name: 'Meeting Chat',
