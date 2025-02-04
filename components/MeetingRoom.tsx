@@ -27,7 +27,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
+  // DropdownMenuSeparator, //never used in the code
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import Loader from './Loader';
