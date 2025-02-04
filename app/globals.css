@@ -118,3 +118,23 @@
         width: 100%;
     }
 }
+
+/* Smooth animations for chat & participant panels */
+.chat-panel, .participants-panel {
+  transition: transform 0.3s ease-in-out, opacity 0.3s;
+}
+
+/* Dark background for modals */
+.bg-dark-1 {
+  background-color: #19232d;
+}
+
+/* Slight border radius for a modern look */
+.rounded-2xl {
+  border-radius: 12px;
+}
+
+/* Custom hover effect */
+button:hover {
+  transform: scale(1.05);
+}
