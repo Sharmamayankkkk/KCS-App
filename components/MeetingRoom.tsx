@@ -128,54 +128,56 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       <Chat client={chatClient} theme="messaging dark">
         <StreamVideo client={videoClient}>
           <StreamCall call={call}>
-            <section className="relative h-screen w-full overflow-hidden text-white">
-              {/* Main content area */}
-              <div className="absolute top-0 left-0 right-0 bottom-16"> {/* Adjusted to leave space for controls */}
-                <div className="relative flex h-full items-center justify-center">
-                  <div
-                    className={cn('flex h-full max-w-[1000px] items-center', {
-                      'max-w-[800px]': showChat || showParticipants,
-                    })}
-                  >
-                    <CallLayout />
-                  </div>
-
-                  {showParticipants && !showChat && (
-                    <div className="h-full w-80 ml-2">
-                      <CallParticipantsList onClose={() => setShowParticipants(false)} />
-                    </div>
-                  )}
-
-                  {showChat && !showParticipants && (
-                    <div className="h-full w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden">
-                      {channel ? (
-                        <Channel channel={channel}>
-                          <Window>
-                            <MessageList />
-                            <MessageInput />
-                          </Window>
-                        </Channel>
-                      ) : (
-                        <div className="flex h-full items-center justify-center">
-                          <p>Loading chat...</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
+            <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
+              <div className="relative flex size-full items-center justify-center">
+                <div
+                  className={cn('flex size-full max-w-[1000px] items-center', {
+                    'max-w-[800px]': showChat || showParticipants,
+                  })}
+                >
+                  <CallLayout />
                 </div>
+
+                {showParticipants && !showChat && (
+                  <div className="h-[calc(100vh-86px)] w-80 ml-2">
+                    <CallParticipantsList onClose={() => setShowParticipants(false)} />
+                  </div>
+                )}
+
+                {showChat && !showParticipants && (
+                  <div className="h-[calc(100vh-86px)] w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden">
+                    {channel ? (
+                      <Channel channel={channel}>
+                        <Window>
+                          <MessageList />
+                          <MessageInput />
+                        </Window>
+                      </Channel>
+                    ) : (
+                      <div className="flex h-full items-center justify-center">
+                        <p>Loading chat...</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Controls area */}
-              <div className="absolute bottom-0 left-0 right-0 h-16 bg-[#19232d]/80 flex items-center justify-center space-x-4 px-4">
+              <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
                 <CallControls onLeave={() => router.push(`/`)} />
-                
-                <MuteButton />
-                <EndCallButton />
+
+                {isHost && (
+                  <>
+                    <MuteButton />
+                    <EndCallButton />
+                  </>
+                )}
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
-                    <LayoutList size={20} className="text-white" />
-                  </DropdownMenuTrigger>
+                  <div className="flex items-center">
+                    <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
+                      <LayoutList size={20} className="text-white" />
+                    </DropdownMenuTrigger>
+                  </div>
                   <DropdownMenuContent className="border-dark-1 bg-dark-1 text-white">
                     {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item, index) => (
                       <div key={index}>
@@ -184,7 +186,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                         >
                           {item}
                         </DropdownMenuItem>
-                        {index < 2 && <DropdownMenuSeparator className="border-dark-1" />}
+                        <DropdownMenuSeparator className="border-dark-1" />
                       </div>
                     ))}
                   </DropdownMenuContent>
@@ -197,9 +199,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   }}
                   className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]"
                 >
-                  <Users size={20} className="text-white" />
+                  <Users className="text-white" />
                 </button>
-
                 <button
                   onClick={() => {
                     setShowChat((prev) => !prev);
@@ -207,7 +208,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   }}
                   className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]"
                 >
-                  <MessageSquare size={20} className="text-white" />
+                  <MessageSquare className="text-white" />
                 </button>
               </div>
             </section>
