@@ -167,8 +167,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
                 {isHost && (
                   <>
-                    <MuteButton />
-                    <EndCallButton />
+                    <MuteButton />  //Mutes Everyone 
+                    <EndCallButton /> //Ends Meet for Everyone
                   </>
                 )}
 
