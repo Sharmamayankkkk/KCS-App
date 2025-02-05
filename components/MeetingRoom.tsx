@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import {
   CallControls,
   CallParticipantsList,
-  CallStatsButton,
   CallingState,
   PaginatedGridLayout,
   SpeakerLayout,
@@ -21,7 +20,7 @@ import "@stream-io/video-react-sdk/dist/css/styles.css";
 import 'stream-chat-react/dist/css/v2/index.css';
 
 import { useRouter } from 'next/navigation';
-import { Users, LayoutList, MessageSquare } from 'lucide-react';
+import { Users, LayoutList, MessageSquare, PhoneOff } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -123,6 +122,18 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   };
 
+  /** ✅ Step 5: End Call for Everyone */
+  const handleEndCallForEveryone = async () => {
+    if (call) {
+      try {
+        await call.end();
+        router.push(`/`);
+      } catch (error) {
+        console.error("Failed to end call for everyone:", error);
+      }
+    }
+  };
+
   return (
     chatClient && videoClient && call ? (
       <Chat client={chatClient} theme="messaging dark">
@@ -138,14 +149,14 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <CallLayout />
                 </div>
 
-                {/* ✅ Step 5: Participants List */}
+                {/* ✅ Step 6: Participants List */}
                 {showParticipants && !showChat && (
                   <div className="h-[calc(100vh-86px)] w-80 ml-2">
                     <CallParticipantsList onClose={() => setShowParticipants(false)} />
                   </div>
                 )}
 
-                {/* ✅ Step 6: Chat Panel */}
+                {/* ✅ Step 7: Chat Panel */}
                 {showChat && !showParticipants && (
                   <div className="h-[calc(100vh-86px)] w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden">
                     {channel ? (
@@ -164,7 +175,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 )}
               </div>
 
-              {/* ✅ Step 7: Controls */}
+              {/* ✅ Step 8: Controls */}
               <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
                 <CallControls onLeave={() => router.push(`/`)} />
 
@@ -189,7 +200,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
-                <CallStatsButton />
+
                 <button
                   onClick={() => {
                     setShowParticipants((prev) => !prev);
@@ -199,6 +210,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 >
                   <Users className="text-white" />
                 </button>
+
                 <button
                   onClick={() => {
                     setShowChat((prev) => !prev);
@@ -208,6 +220,16 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 >
                   <MessageSquare className="text-white" />
                 </button>
+
+                {/* ✅ End Call for Everyone Button (Only for Host) */}
+                {isHost && (
+                  <button
+                    onClick={handleEndCallForEveryone}
+                    className="cursor-pointer rounded-2xl bg-red-600 px-4 py-2 hover:bg-red-700"
+                  >
+                    <PhoneOff className="text-white" />
+                  </button>
+                )}
               </div>
             </section>
           </StreamCall>
