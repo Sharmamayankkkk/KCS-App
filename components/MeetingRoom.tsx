@@ -20,7 +20,7 @@ import "@stream-io/video-react-sdk/dist/css/styles.css";
 import 'stream-chat-react/dist/css/v2/index.css';
 
 import { useRouter } from 'next/navigation';
-import { Users, LayoutList, MessageSquare, PhoneOff } from 'lucide-react';
+import { Users, LayoutList, MessageSquare } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -31,6 +31,7 @@ import {
 } from './ui/dropdown-menu';
 import Loader from './Loader';
 import MuteButton from './MuteButton';
+import EndCallButton from './EndCallButton';
 import { cn } from '@/lib/utils';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
@@ -51,7 +52,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   const callingState = useCallCallingState();
 
-  /** ✅ Step 1: Initialize Chat Client */
+  /** Step 1: Initialize Chat Client */
   const [chatClient, setChatClient] = useState<StreamChat | null>(null);
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
@@ -66,7 +67,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [apiKey, userToken, userData]);
 
-  /** ✅ Step 2: Initialize Video Client */
+  /** Step 2: Initialize Video Client */
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
@@ -84,7 +85,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [apiKey, userToken, userData]);
 
-  /** ✅ Step 3: Setup Chat Channel */
+  /** Step 3: Setup Chat Channel */
   const [channel, setChannel] = useState<any>(null);
   useEffect(() => {
     if (!chatClient || !userData?.id) return;
@@ -110,7 +111,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   const isHost = call?.state.localParticipant?.roles?.includes('host');
 
-  /** ✅ Step 4: Handle Call Layout */
+  /** Step 4: Handle Call Layout */
   const CallLayout = () => {
     switch (layout) {
       case 'grid':
@@ -119,18 +120,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         return <SpeakerLayout participantsBarPosition="left" />;
       default:
         return <SpeakerLayout participantsBarPosition="right" />;
-    }
-  };
-
-  /** ✅ Step 5: End Call for Everyone */
-  const handleEndCallForEveryone = async () => {
-    if (call) {
-      try {
-        await call.end();
-        router.push(`/`);
-      } catch (error) {
-        console.error("Failed to end call for everyone:", error);
-      }
     }
   };
 
@@ -149,14 +138,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <CallLayout />
                 </div>
 
-                {/* ✅ Step 6: Participants List */}
                 {showParticipants && !showChat && (
                   <div className="h-[calc(100vh-86px)] w-80 ml-2">
                     <CallParticipantsList onClose={() => setShowParticipants(false)} />
                   </div>
                 )}
 
-                {/* ✅ Step 7: Chat Panel */}
                 {showChat && !showParticipants && (
                   <div className="h-[calc(100vh-86px)] w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden">
                     {channel ? (
@@ -175,11 +162,15 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 )}
               </div>
 
-              {/* ✅ Step 8: Controls */}
               <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
                 <CallControls onLeave={() => router.push(`/`)} />
 
-                {isHost && <MuteButton />}
+                {isHost && (
+                  <>
+                    <MuteButton />
+                    <EndCallButton />
+                  </>
+                )}
 
                 <DropdownMenu>
                   <div className="flex items-center">
@@ -210,7 +201,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 >
                   <Users className="text-white" />
                 </button>
-
                 <button
                   onClick={() => {
                     setShowChat((prev) => !prev);
@@ -220,16 +210,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 >
                   <MessageSquare className="text-white" />
                 </button>
-
-                {/* ✅ End Call for Everyone Button (Only for Host) */}
-                {isHost && (
-                  <button
-                    onClick={handleEndCallForEveryone}
-                    className="cursor-pointer rounded-2xl bg-red-600 px-4 py-2 hover:bg-red-700"
-                  >
-                    <PhoneOff className="text-white" />
-                  </button>
-                )}
               </div>
             </section>
           </StreamCall>
