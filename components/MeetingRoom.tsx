@@ -157,8 +157,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                         </Window>
                       </Channel>
                     ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <p>Loading chat...</p>
+                      <div className="flex flex-col h-full items-center justify-center p-8 ">
+                        <p className='text-yellow-400 text-center font-mono'>Hare Krishna Everyone</p>
+                        <p className='font-thin text-sm text-center '>Our chat system is currently being improved for a better experience.</p>
+                        <p className='font-thin text-sm text-center  '> Thank you for your patience and support!😊</p>
                       </div>
                     )}
                   </div>
