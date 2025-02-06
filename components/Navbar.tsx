@@ -25,14 +25,14 @@ const Navbar = () => {
         {/* Social Media Links */}
         <div className="flex gap-4">
           <Link 
-            href="https://instagram.com/your-handle" 
+            href="https://www.instagram.com/kcsociety_india" 
             target="_blank" 
             className="text-white hover:text-gray-300 transition-colors"
           >
             <Instagram size={24} />
           </Link>
           <Link 
-            href="https://t.me/your-channel" 
+            href="https://www.krishnaconsciousnesssociety.com/become-a-volunteer" 
             target="_blank" 
             className="text-white hover:text-gray-300 transition-colors"
           >
