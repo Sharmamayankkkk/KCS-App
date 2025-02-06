@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { Instagram, Send } from 'lucide-react';
 
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { sidebarLinks } from '@/constants';
@@ -24,18 +25,37 @@ const MobileNav = () => {
           />
         </SheetTrigger>
         <SheetContent side="left" className="border-none bg-dark-1">
-          <Link href="/" className="flex items-center gap-1">
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/icons/KCS.png"
-              width={32}
-              height={32}
+              width={48}
+              height={48}
               alt="KCS logo"
             />
-            <p className="text-[26px] font-extrabold text-white">KCS</p>
+            <p className="text-3xl font-extrabold text-white">KCS</p>
           </Link>
           <div className="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto">
             <SheetClose asChild>
-              <section className=" flex h-full flex-col gap-6 pt-16 text-white">
+              <section className="flex h-full flex-col gap-6 pt-16 text-white">
+                {/* Social Media Links */}
+                <div className="flex gap-6 px-4">
+                  <Link 
+                    href="https://instagram.com/your-handle" 
+                    target="_blank" 
+                    className="text-white hover:text-gray-300 transition-colors"
+                  >
+                    <Instagram size={24} />
+                  </Link>
+                  <Link 
+                    href="https://t.me/your-channel" 
+                    target="_blank" 
+                    className="text-white hover:text-gray-300 transition-colors"
+                  >
+                    <Send size={24} />
+                  </Link>
+                </div>
+
+                {/* Navigation Links */}
                 {sidebarLinks.map((item) => {
                   const isActive = pathname === item.route;
 
