@@ -109,7 +109,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
-  const isHost = call?.state.localParticipant?.roles?.includes('host');
+  const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',') || []; 
+  const hostId = userData?.primaryEmailAddress.emailAddress;
+  const isHost = adminEmails.includes(hostId); 
+
 
   /** Step 4: Handle Call Layout */
   const CallLayout = () => {
