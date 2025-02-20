@@ -17,13 +17,12 @@ import {
 
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useRouter } from 'next/navigation';
-import { Users, LayoutList, MessageSquare } from 'lucide-react';
+import { Users, LayoutList, MessageSquare, X } from 'lucide-react';
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import Loader from './Loader';
@@ -133,37 +132,49 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     videoClient && call ? (
       <StreamVideo client={videoClient}>
         <StreamCall call={call}>
-          <section className="relative h-screen w-full overflow-hidden">
-            <div className="flex h-full">
-              <div className={cn('flex-1 transition-all duration-300', {
-                'mr-80': showChat || showParticipants
-              })}>
+          <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
+            <div className="relative flex size-full items-center justify-center">
+              <div
+                className={cn('flex size-full items-center', {
+                  'max-w-[1000px]': !showChat && !showParticipants,
+                  'max-w-[800px]': showChat || showParticipants,
+                })}
+              >
                 <CallLayout />
               </div>
 
               {showParticipants && !showChat && (
-                <div className="fixed right-0 top-0 h-full w-80 bg-black">
-                  <CallParticipantsList onClose={() => setShowParticipants(false)} />
+                <div className="h-[calc(100vh-86px)] w-80 ml-2 bg-black bg-opacity-50">
+                  <div className="flex justify-between items-center p-4">
+                    <h3 className="text-lg font-semibold">Participants</h3>
+                    <button 
+                      onClick={() => setShowParticipants(false)}
+                      className="text-gray-400 hover:text-white"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
+                  <CallParticipantsList />
                 </div>
               )}
 
               {showChat && !showParticipants && (
-                <div className="fixed right-0 top-0 h-full w-80 bg-black">
+                <div className="h-[calc(100vh-86px)] w-80 ml-2 bg-black bg-opacity-50 rounded-lg overflow-hidden">
                   <div className="flex flex-col h-full">
-                    <div className="p-4 flex justify-between items-center border-b border-gray-800">
+                    <div className="flex justify-between items-center p-4 border-b border-gray-800">
                       <h3 className="text-lg font-semibold">Chat</h3>
                       <button
                         onClick={() => setShowChat(false)}
                         className="text-gray-400 hover:text-white"
                       >
-                        ✕
+                        <X size={20} />
                       </button>
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 space-y-4">
                       {messages.map((msg) => (
                         <div
                           key={msg.id}
-                          className="rounded-lg p-3 border border-gray-800"
+                          className="bg-black bg-opacity-50 rounded-lg p-3"
                         >
                           <div className="font-semibold text-sm">{msg.sender}</div>
                           <div className="mt-1">{msg.text}</div>
@@ -174,7 +185,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       <input
                         type="text"
                         placeholder="Type a message..."
-                        className="w-full bg-transparent border border-gray-700 rounded-lg px-4 py-2 focus:outline-none focus:border-blue-500"
+                        className="w-full bg-black bg-opacity-50 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault();
@@ -189,7 +200,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               )}
             </div>
 
-            <div className="fixed bottom-0 left-0 right-0 flex items-center justify-center gap-4 p-4">
+            <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-4 p-4 bg-black bg-opacity-50">
               <CallControls onLeave={() => router.push(`/`)} />
 
               {isHost && (
@@ -200,19 +211,17 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               )}
 
               <DropdownMenu>
-                <DropdownMenuTrigger className="cursor-pointer rounded-lg px-4 py-2">
+                <DropdownMenuTrigger className="cursor-pointer rounded-lg px-4 py-2 hover:bg-black hover:bg-opacity-30">
                   <LayoutList size={20} />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item, index) => (
-                    <div key={index}>
-                      <DropdownMenuItem
-                        onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}
-                      >
-                        {item}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                    </div>
+                    <DropdownMenuItem
+                      key={index}
+                      onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}
+                    >
+                      {item}
+                    </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -224,9 +233,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   setShowParticipants((prev) => !prev);
                   setShowChat(false);
                 }}
-                className="rounded-lg px-4 py-2"
+                className="rounded-lg px-4 py-2 hover:bg-black hover:bg-opacity-30"
               >
-                <Users />
+                <Users size={20} />
               </button>
 
               <button
@@ -234,9 +243,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   setShowChat((prev) => !prev);
                   setShowParticipants(false);
                 }}
-                className="rounded-lg px-4 py-2"
+                className="rounded-lg px-4 py-2 hover:bg-black hover:bg-opacity-30"
               >
-                <MessageSquare />
+                <MessageSquare size={20} />
               </button>
             </div>
           </section>
@@ -249,3 +258,4 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 };
 
 export default MeetingRoom;
+                          
