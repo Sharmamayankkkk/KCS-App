@@ -136,7 +136,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
                         {showSidebar && (
                             <div className="absolute md:fixed top-0 right-0 z-50 h-full md:h-[calc(100vh-86px)] w-full md:w-80 bg-[#19232d] rounded-lg shadow-lg overflow-hidden transition-all duration-300">
-                                {showSidebar == 'chat' && (
+                                {showSidebar === 'chat' && (
                                     <button
                                         className="absolute top-2 right-2 text-white bg-gray-800 p-2 rounded-full hover:bg-gray-700"
                                         onClick={() => setShowSidebar(null)}
