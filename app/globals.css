@@ -138,3 +138,12 @@
 button:hover {
   transform: scale(1.05);
 }
+
+.custom-scrollbar-hidden {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+  }
+  
+  .custom-scrollbar-hidden::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
