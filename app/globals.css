@@ -86,6 +86,11 @@
     color: rgb(14, 14, 14);;
 }
 
+.str-video__speaker-layout__spotlight{
+    align-items: center;
+    height: none;
+}
+
 /* =============================== */
 
 @layer utilities {
