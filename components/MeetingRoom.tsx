@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -33,7 +32,6 @@ import { cn } from '@/lib/utils';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, push, onValue } from 'firebase/database';
 import EndCallButton from './EndCallButton';
-import RecordingControl from './RecordingControl';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
@@ -202,21 +200,14 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             {/* ✅ Controls */}
             <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
-  <CallControls 
-    onLeave={() => router.push('/')}
-    // Remove the default recording control
-    enableRecording={false}  
-  />
-  {isHost && (
-    <>
-      <MuteButton />
-      <EndCallButton />
-      <RecordingControl 
-        isAdmin={isHost} 
-        userId={userData?.id} 
-      />
-    </>
-  )}
+              <CallControls onLeave={() => router.push('/')} />
+              {isHost && (
+                  <>
+                    <MuteButton />
+                    <EndCallButton />
+                  </>
+                )}
+
 
               <DropdownMenu>
                 <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
