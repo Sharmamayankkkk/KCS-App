@@ -150,7 +150,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         <StreamCall call={call}>
           <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
             <div className="relative flex size-full items-center justify-center">
-              <div className={cn('flex size-full max-w-[1000px] items-center', { 'max-w-[800px]': showChat || showParticipants })}>
+              <div className={cn('flex size-full max-w-[1000px] *** ', { 'max-w-[800px]': showChat || showParticipants })}>
                 <CallLayout />
               </div>
 
