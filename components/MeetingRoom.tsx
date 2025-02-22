@@ -173,9 +173,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       </button>
                     </div>
                     <div className="flex-1 overflow-auto custom-scrollbar-hidden">
-                      {messages.map((msg) => (
+                      {{messages.map((msg) => (
                         <div key={msg.id} className="p-2 mb-1 rounded bg-gray-700">
-                          <strong>{msg.sender}:</strong> {msg.text}
+                          <strong className="text-yellow-1">{msg.sender}:</strong> {msg.text}
                         </div>
                       ))}
                       <div ref={chatEndRef} />
