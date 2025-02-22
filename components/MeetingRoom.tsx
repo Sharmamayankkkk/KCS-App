@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   CallControls,
   CallParticipantsList,
@@ -27,10 +27,12 @@ import {
 import Loader from './Loader';
 import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
 
 // Firebase Imports
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, push, onValue } from 'firebase/database';
+import EndCallButton from './EndCallButton';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
@@ -65,6 +67,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const { useCallCallingState } = useCallStateHooks();
   const call = useCall();
   const callingState = useCallCallingState();
+  const chatEndRef = useRef<HTMLDivElement | null>(null);
 
   /** ✅ Step 1: Initialize Video Client */
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
@@ -117,9 +120,18 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     setMessageText(""); // Clear the input field
   };
 
+  useEffect(() => {
+    if (showChat && chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [showChat, messages]);
+
   if (callingState !== CallingState.JOINED) return <Loader />;
 
-  const isHost = call?.state.localParticipant?.roles?.includes('host');
+  const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',') || []; 
+  const hostId = userData?.primaryEmailAddress.emailAddress;
+  const isHost = adminEmails.includes(hostId); 
+
 
   /** ✅ Step 4: Handle Call Layout */
   const CallLayout = () => {
@@ -145,21 +157,29 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
               {/* ✅ Participants List */}
               {showParticipants && !showChat && (
-                <div className="h-[calc(100vh-86px)] w-80 ml-2">
+                <div className="h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] md:relative absolute w-80 sm:w-full ml-2 bg-[#19232d] rounded-lg overflow-hidden p-4 z-[10000] md:z-auto">
                   <CallParticipantsList onClose={() => setShowParticipants(false)} />
                 </div>
               )}
 
               {/* ✅ Chat Panel with Firebase */}
               {showChat && !showParticipants && (
-                <div className="h-[calc(100vh-86px)] w-80 ml-2 bg-[#19232d] rounded-lg overflow-hidden p-4">
-                  <div className="h-full flex flex-col">
-                    <div className="flex-1 overflow-auto">
+                <div className="h-[calc(100vh-100px)] md:h-[calc(100vh-100px)] md:relative absolute max-w-full w-80 sm:w-full ml-2 bg-[#19232d] rounded-lg overflow-hidden p-4 z-[10000] md:z-auto scrollbar-none">
+                  <div className="h-full flex flex-col scrollbar-none">
+                    <div className="close-button w-full flex justify-end items-center mb-2 scrollbar-none">
+                      <button
+                        className="p-2 rounded bg-gray-700 hover:bg-gray-600 text-white"
+                        onClick={() => { setShowChat(!showChat); setShowParticipants(false); }}>
+                        <X size={20} />
+                      </button>
+                    </div>
+                    <div className="flex-1 overflow-auto custom-scrollbar-hidden">
                       {messages.map((msg) => (
                         <div key={msg.id} className="p-2 mb-1 rounded bg-gray-700">
                           <strong>{msg.sender}:</strong> {msg.text}
                         </div>
                       ))}
+                      <div ref={chatEndRef} />
                     </div>
                     <input
                       type="text"
@@ -181,7 +201,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             {/* ✅ Controls */}
             <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
               <CallControls onLeave={() => router.push('/')} />
-              {isHost && <MuteButton />}
+              {isHost && (
+                  <>
+                    <MuteButton />
+                    <EndCallButton />
+                  </>
+                )}
+
 
               <DropdownMenu>
                 <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
