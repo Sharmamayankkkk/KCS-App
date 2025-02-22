@@ -33,6 +33,7 @@ import { cn } from '@/lib/utils';
 import { initializeApp } from 'firebase/app';
 import { getDatabase, ref, push, onValue } from 'firebase/database';
 import EndCallButton from './EndCallButton';
+import RecordingControl from './RecordingControl';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
