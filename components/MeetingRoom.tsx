@@ -201,14 +201,21 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             {/* ✅ Controls */}
             <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
-              <CallControls onLeave={() => router.push('/')} />
-              {isHost && (
-                  <>
-                    <MuteButton />
-                    <EndCallButton />
-                  </>
-                )}
-
+  <CallControls 
+    onLeave={() => router.push('/')}
+    // Remove the default recording control
+    enableRecording={false}  
+  />
+  {isHost && (
+    <>
+      <MuteButton />
+      <EndCallButton />
+      <RecordingControl 
+        isAdmin={isHost} 
+        userId={userData?.id} 
+      />
+    </>
+  )}
 
               <DropdownMenu>
                 <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
