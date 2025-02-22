@@ -17,7 +17,7 @@ import {
 
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useRouter } from 'next/navigation';
-import { Users, LayoutList, MessageSquare } from 'lucide-react';
+import { Users, LayoutList, MessageSquare, X } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -27,7 +27,6 @@ import {
 import Loader from './Loader';
 import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
-import { X } from 'lucide-react';
 
 // Firebase Imports
 import { initializeApp } from 'firebase/app';
