@@ -29,7 +29,7 @@ import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
 import EndCallButton from './EndCallButton';
 
-//supabase import
+// supabase import
 import { supabase } from '@/lib/supabaseClient';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
