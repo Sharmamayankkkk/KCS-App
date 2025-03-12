@@ -33,7 +33,8 @@
     "stream-chat-react": "^12.10.0",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "@supabase/supabase-js": "latest"
   },
   "devDependencies": {
     "@types/node": "^20",
