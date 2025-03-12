@@ -27,11 +27,10 @@ import {
 import Loader from './Loader';
 import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
-
-// Firebase Imports
-import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, push, onValue } from 'firebase/database';
 import EndCallButton from './EndCallButton';
+
+//supabase import
+import { supabase } from '@/lib/supabaseClient';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
@@ -53,9 +52,6 @@ const firebaseConfig = {
   measurementId: "G-4ZDVDPY1C2"
 };
 
-// ✅ Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const database = getDatabase(app);
 
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
@@ -88,42 +84,69 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   /** ✅ Step 2: Firebase Chat State */
   const [messages, setMessages] = useState<{ id: string; text: string; sender: string }[]>([]);
-  const messagesRef = ref(database, `meeting-chat/${call?.id}`);
+  // const messagesRef = ref(database, `meeting-chat/${call?.id}`);
 
   useEffect(() => {
-    const unsubscribe = onValue(messagesRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const messagesArray = Object.entries(data).map(([id, value]: any) => ({
-          id,
-          text: value.text,
-          sender: value.sender,
-        }));
-        setMessages(messagesArray);
+    if (!showChat) return;
+    console.log("Connection to SUPA")
+    const fetchMessages = async () => {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .eq('call_id', call?.id)
+        .order('created_at', { ascending: true });
+  
+      if (error) console.error(error);
+      else {
+        setMessages(
+          data.map((msg) => ({
+            id: msg.id, 
+            text: msg.text, 
+            sender: msg.sender 
+          }))
+        );
       }
-    });
+    };
+  
+    fetchMessages();
+  
+    const subscription = supabase
+      .channel(`messages:${call?.id}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'messages' },
+        (payload) => {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: payload.new.id,
+              text: payload.new.text,
+              sender: payload.new.sender,
+            },
+          ]);
+        }
+      )
+      .subscribe();
+  
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [showChat, call?.id]);
 
-    return () => unsubscribe(); // ✅ Unsubscribe properly
-  }, [call]);
-
-  /** ✅ Step 3: Send Message to Firebase */
-  const sendMessage = (messageText: string) => {
+  const sendMessage = async (messageText: string) => {
     if (!messageText.trim()) return;
-    push(messagesRef, {
-      id: userData?.id,
-      text: messageText,
-      sender: userData?.fullName || 'Anonymous',
-      callId: call?.id,
-      callCid: call?.cid
-    });
-    setMessageText(""); // Clear the input field
+  
+    const { error } = await supabase.from('messages').insert([
+      {
+        call_id: call?.id,
+        text: messageText,
+        sender: userData?.fullName || 'Anonymous',
+      },
+    ]);
+  
+    if (error) console.error(error);
+    else setMessageText(""); // Clear input
   };
-
-  useEffect(() => {
-    if (showChat && chatEndRef.current) {
-      chatEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [showChat, messages]);
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
