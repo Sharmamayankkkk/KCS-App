@@ -28,8 +28,6 @@ import Loader from './Loader';
 import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
 import EndCallButton from './EndCallButton';
-
-//supabase import
 import { supabase } from '@/lib/supabaseClient';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
@@ -40,17 +38,6 @@ interface MeetingRoomProps {
   userData: any;
 }
 
-// ✅ Firebase Configuration (SECURE THIS)
-const firebaseConfig = {
-  apiKey: "AIzaSyBaPUlKg61MfCMUDvy0z5DqihLZhH-M96c",
-  authDomain: "kcs-connect.firebaseapp.com",
-  databaseURL: "https://kcs-connect-default-rtdb.firebaseio.com",
-  projectId: "kcs-connect",
-  storageBucket: "kcs-connect.firebasestorage.app",
-  messagingSenderId: "304321967270",
-  appId: "1:304321967270:web:7891d0dc83ffb94236b067",
-  measurementId: "G-4ZDVDPY1C2"
-};
 
 
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
