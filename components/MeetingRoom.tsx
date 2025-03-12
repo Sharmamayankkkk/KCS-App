@@ -38,8 +38,6 @@ interface MeetingRoomProps {
   userData: any;
 }
 
-
-
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');

@@ -35,7 +35,7 @@ const Home = () => {
   }, []);
 
   return (
-    <section className="flex size-full flex-col gap-5 text-white">
+    <section className="flex flex-col gap-5 size-full text-white">
       <div className="h-80 w-full flex items-center p-4 rounded-[20px] bg-hero bg-cover">
           <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-extrabold lg:text-7xl">{time || 'Loading...'}</h1>
