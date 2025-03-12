@@ -28,8 +28,6 @@ import Loader from './Loader';
 import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
 import EndCallButton from './EndCallButton';
-
-// supabase import
 import { supabase } from '@/lib/supabaseClient';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
@@ -39,7 +37,6 @@ interface MeetingRoomProps {
   userToken: string;
   userData: any;
 }
-
 
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
