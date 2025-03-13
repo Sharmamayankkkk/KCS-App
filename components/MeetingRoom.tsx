@@ -13,7 +13,6 @@ import {
   StreamVideoClient,
   useCallStateHooks,
   useCall,
-  useScreenShare,
 } from '@stream-io/video-react-sdk';
 
 import "@stream-io/video-react-sdk/dist/css/styles.css";
@@ -52,7 +51,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const call = useCall();
   const callingState = useCallCallingState();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
-  const { isScreenShareEnabled } = useScreenShare();
+  const { useScreenShareState } = useCallStateHooks();
+  const { status: isScreenShareEnabled } = useScreenShareState();
 
   /** ✅ Step 1: Initialize Video Client */
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
