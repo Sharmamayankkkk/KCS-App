@@ -308,13 +308,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 "flex flex-wrap items-center justify-center gap-2 md:gap-4 px-3 py-2 md:py-3 rounded-3xl bg-dark-1 bg-opacity-80 glassmorphism2",
                 {'max-w-full overflow-x-auto': isMobile}
               )}>
-                <CallControls
-                  onLeave={() => router.push('/')}
-                  requestedControlPosition="none"
-                  enableExperimentalControls={true}
-                />
-                
-                {isHost && (
+                {/* ✅ Controls */}
+            <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
+              <CallControls onLeave={() => router.push('/')} />
+              {isHost && (
                   <>
                     <MuteButton />
                     <EndCallButton />
