@@ -13,8 +13,8 @@ import {
   StreamVideoClient,
   useCallStateHooks,
   useCall,
+  StreamTheme
 } from '@stream-io/video-react-sdk';
-
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useRouter } from 'next/navigation';
 import { Users, LayoutList, MessageSquare, X } from 'lucide-react';
@@ -28,8 +28,6 @@ import Loader from './Loader';
 import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
 import EndCallButton from './EndCallButton';
-
-// supabase import
 import { supabase } from '@/lib/supabaseClient';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
@@ -40,19 +38,20 @@ interface MeetingRoomProps {
   userData: any;
 }
 
-
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [messageText, setMessageText] = useState("");
-  const { useCallCallingState } = useCallStateHooks();
+  const { useCallCallingState, useParticipants } = useCallStateHooks();
   const call = useCall();
   const callingState = useCallCallingState();
+  const participants = useParticipants();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const [participantsBar, setParticipantsBar] = useState<HTMLDivElement | null>(null);
 
-  /** ✅ Step 1: Initialize Video Client */
+  // Video Client Initialization
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
@@ -70,13 +69,19 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [apiKey, userToken, userData]);
 
-  /** ✅ Step 2: Firebase Chat State */
+  // Viewport Optimization
+  useEffect(() => {
+    if (!participantsBar || !call) return;
+    const cleanup = call.dynascaleManager.setViewport(participantsBar);
+    return () => cleanup();
+  }, [participantsBar, call]);
+
+  // Chat Messages Management
   const [messages, setMessages] = useState<{ id: string; text: string; sender: string }[]>([]);
-  // const messagesRef = ref(database, `meeting-chat/${call?.id}`);
 
   useEffect(() => {
     if (!showChat) return;
-    console.log("Connection to SUPA")
+    
     const fetchMessages = async () => {
       const { data, error } = await supabase
         .from('messages')
@@ -86,32 +91,26 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   
       if (error) console.error(error);
       else {
-        setMessages(
-          data.map((msg) => ({
-            id: msg.id, 
-            text: msg.text, 
-            sender: msg.sender 
-          }))
-        );
+        setMessages(data.map((msg) => ({
+          id: msg.id, 
+          text: msg.text, 
+          sender: msg.sender 
+        })));
       }
     };
-  
+
     fetchMessages();
   
     const subscription = supabase
       .channel(`messages:${call?.id}`)
-      .on(
-        'postgres_changes',
+      .on('postgres_changes', 
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload) => {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              id: payload.new.id,
-              text: payload.new.text,
-              sender: payload.new.sender,
-            },
-          ]);
+          setMessages((prevMessages) => [...prevMessages, {
+            id: payload.new.id,
+            text: payload.new.text,
+            sender: payload.new.sender,
+          }]);
         }
       )
       .subscribe();
@@ -124,125 +123,188 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const sendMessage = async (messageText: string) => {
     if (!messageText.trim()) return;
   
-    const { error } = await supabase.from('messages').insert([
-      {
-        call_id: call?.id,
-        text: messageText,
-        sender: userData?.fullName || 'Anonymous',
-      },
-    ]);
+    const { error } = await supabase.from('messages').insert([{
+      call_id: call?.id,
+      text: messageText,
+      sender: userData?.fullName || 'Anonymous',
+    }]);
   
     if (error) console.error(error);
-    else setMessageText(""); // Clear input
+    else setMessageText("");
+  };
+
+  // Layout Component
+  const CallLayout = () => {
+    switch (layout) {
+      case 'grid':
+        return (
+          <div ref={setParticipantsBar} className="w-full h-full">
+            <PaginatedGridLayout 
+              groupSize={9}
+              mirrorLocalParticipantVideo={true}
+              pageArrowsVisible={true}
+            />
+          </div>
+        );
+      case 'speaker-right':
+        return (
+          <div ref={setParticipantsBar} className="w-full h-full">
+            <SpeakerLayout 
+              participantsBarPosition="left"
+              mirrorLocalParticipantVideo={true}
+              pageArrowsVisible={true}
+            />
+          </div>
+        );
+      default:
+        return (
+          <div ref={setParticipantsBar} className="w-full h-full">
+            <SpeakerLayout 
+              participantsBarPosition="right"
+              mirrorLocalParticipantVideo={true}
+              pageArrowsVisible={true}
+            />
+          </div>
+        );
+    }
   };
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
   const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',') || []; 
   const hostId = userData?.primaryEmailAddress.emailAddress;
-  const isHost = adminEmails.includes(hostId); 
-
-
-  /** ✅ Step 4: Handle Call Layout */
-  const CallLayout = () => {
-    switch (layout) {
-      case 'grid':
-        return <PaginatedGridLayout />;
-      case 'speaker-right':
-        return <SpeakerLayout participantsBarPosition="left" />;
-      default:
-        return <SpeakerLayout participantsBarPosition="right" />;
-    }
-  };
+  const isHost = adminEmails.includes(hostId);
 
   return (
     videoClient && call ? (
       <StreamVideo client={videoClient}>
-        <StreamCall call={call}>
-          <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
-            <div className="relative flex size-full items-center justify-center">
-              <div className={cn('flex size-full max-w-[1000px] *** ', { 'max-w-[800px]': showChat || showParticipants })}>
-                <CallLayout />
-              </div>
-
-              {/* ✅ Participants List */}
-              {showParticipants && !showChat && (
-                <div className="h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] md:relative absolute w-80 sm:w-full ml-2 bg-[#19232d] rounded-lg overflow-hidden p-4 z-[10000] md:z-auto">
-                  <CallParticipantsList onClose={() => setShowParticipants(false)} />
+        <StreamTheme>
+          <StreamCall call={call}>
+            <section className="relative h-screen w-full overflow-hidden pt-4">
+              <div className="relative flex size-full items-center justify-center">
+                <div className={cn(
+                  'flex size-full transition-all duration-300 ease-in-out',
+                  {
+                    'max-w-[1000px]': !showChat && !showParticipants,
+                    'max-w-[800px]': showChat || showParticipants
+                  }
+                )}>
+                  <CallLayout />
                 </div>
-              )}
 
-              {/* ✅ Chat Panel with Firebase */}
-              {showChat && !showParticipants && (
-                <div className="h-[calc(100vh-100px)] md:h-[calc(100vh-100px)] md:relative absolute max-w-full w-80 sm:w-full ml-2 bg-[#19232d] rounded-lg overflow-hidden p-4 z-[10000] md:z-auto scrollbar-none">
-                  <div className="h-full flex flex-col scrollbar-none">
-                    <div className="close-button w-full flex justify-end items-center mb-2 scrollbar-none">
-                      <button
-                        className="p-2 rounded bg-gray-700 hover:bg-gray-600 text-white"
-                        onClick={() => { setShowChat(!showChat); setShowParticipants(false); }}>
-                        <X size={20} />
-                      </button>
-                    </div>
-                    <div className="flex-1 overflow-auto custom-scrollbar-hidden">
-                      {messages.map((msg) => (
-                        <div key={msg.id} className="p-2 mb-1 rounded bg-gray-700">
-                          <strong className="text-yellow-1">{msg.sender}:</strong> {msg.text}
-                        </div>
-                      ))}
-                      
-                      <div ref={chatEndRef} />
-                    </div>
-                    <input
-                      type="text"
-                      placeholder="Type a message..."
-                      className="p-2 mt-2 w-full rounded bg-gray-800 text-white"
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          sendMessage(messageText);
-                        }
-                      }}
-                    />
+                {showParticipants && !showChat && (
+                  <div className="transition-all duration-300 ease-in-out
+                                h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
+                                fixed md:relative right-0 w-[300px] sm:w-[350px]
+                                bg-[#19232d]/95 backdrop-blur-md rounded-lg 
+                                overflow-hidden p-4 z-[100] md:z-auto">
+                    <CallParticipantsList onClose={() => setShowParticipants(false)} />
                   </div>
-                </div>
-              )}
-            </div>
-
-            {/* ✅ Controls */}
-            <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
-              <CallControls onLeave={() => router.push('/')} />
-              {isHost && (
-                  <>
-                    <MuteButton />
-                    <EndCallButton />
-                  </>
                 )}
 
+                {showChat && !showParticipants && (
+                  <div className="transition-all duration-300 ease-in-out
+                                h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
+                                fixed md:relative right-0 w-[300px] sm:w-[350px]
+                                bg-[#19232d]/95 backdrop-blur-md rounded-lg
+                                overflow-hidden p-4 z-[100] md:z-auto">
+                    <div className="h-full flex flex-col">
+                      <div className="flex justify-end mb-2">
+                        <button
+                          className="p-2 rounded hover:bg-gray-700/50 transition"
+                          onClick={() => setShowChat(false)}
+                        >
+                          <X size={20} />
+                        </button>
+                      </div>
+                      
+                      <div className="flex-1 overflow-auto custom-scrollbar-hidden space-y-2">
+                        {messages.map((msg) => (
+                          <div key={msg.id} 
+                               className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
+                            <span className="text-yellow-1 font-semibold">
+                              {msg.sender}:
+                            </span>
+                            <span className="ml-2">{msg.text}</span>
+                          </div>
+                        ))}
+                        <div ref={chatEndRef} />
+                      </div>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
-                  <LayoutList size={20} className="text-white" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
-                    <DropdownMenuItem key={item} onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}>
-                      {item}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      <input
+                        type="text"
+                        placeholder="Type a message..."
+                        className="mt-2 p-2 w-full rounded-lg bg-gray-800/50 
+                                 backdrop-blur-sm focus:outline-none 
+                                 focus:ring-2 focus:ring-blue-500"
+                        value={messageText}
+                        onChange={(e) => setMessageText(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            sendMessage(messageText);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
 
-              <CallStatsButton />
-              <button className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]" onClick={() => { setShowParticipants(!showParticipants); setShowChat(false); }}>
-                <Users />
-              </button>
-              <button className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]" onClick={() => { setShowChat(!showChat); setShowParticipants(false); }}>
-                <MessageSquare />
-              </button>
-            </div>
-          </section>
-        </StreamCall>
+              <div className="fixed bottom-0 w-full pb-4 px-4">
+                <div className="flex flex-wrap items-center justify-center gap-2 
+                              sm:gap-4 bg-[#19232d]/80 backdrop-blur-md p-2 
+                              rounded-lg max-w-max mx-auto">
+                  <CallControls onLeave={() => router.push('/')} />
+                  
+                  {isHost && (
+                    <>
+                      <MuteButton />
+                      <EndCallButton />
+                    </>
+                  )}
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger className="p-2 rounded-lg hover:bg-gray-700/50 transition">
+                      <LayoutList size={20} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
+                        <DropdownMenuItem 
+                          key={item} 
+                          onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}
+                        >
+                          {item}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  <CallStatsButton />
+                  
+                  <button 
+                    className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+                    onClick={() => {
+                      setShowParticipants(!showParticipants);
+                      setShowChat(false);
+                    }}
+                  >
+                    <Users size={20} />
+                  </button>
+                  
+                  <button 
+                    className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+                    onClick={() => {
+                      setShowChat(!showChat);
+                      setShowParticipants(false);
+                    }}
+                  >
+                    <MessageSquare size={20} />
+                  </button>
+                </div>
+              </div>
+            </section>
+          </StreamCall>
+        </StreamTheme>
       </StreamVideo>
     ) : (
       <Loader />
