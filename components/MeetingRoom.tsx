@@ -142,7 +142,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
           <div ref={setParticipantsBar}>
             <SpeakerLayout 
               participantsBarPosition="left"
-              pageArrowsVisible={true}
             />
           </div>
         );
@@ -151,7 +150,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
           <div ref={setParticipantsBar}>
             <SpeakerLayout 
               participantsBarPosition="right"
-              pageArrowsVisible={true}
             />
           </div>
         );
