@@ -63,13 +63,13 @@ const config = {
         'safe-right': 'env(safe-area-inset-right)',
       },
       height: {
-        screen: ['100vh /* fallback */', '100dvh'],
+        'screen': '100dvh',
       },
       minHeight: {
-        screen: ['100vh /* fallback */', '100dvh'],
+        'screen': '100dvh',
       },
       maxHeight: {
-        screen: ['100vh /* fallback */', '100dvh'],
+        'screen': '100dvh',
       },
       borderRadius: {
         'video': '12px',
