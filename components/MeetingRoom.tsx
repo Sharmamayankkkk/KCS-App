@@ -43,10 +43,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [messageText, setMessageText] = useState("");
-  const { useCallCallingState, useParticipants } = useCallStateHooks();
+  const { useCallCallingState } = useCallStateHooks();
   const call = useCall();
   const callingState = useCallCallingState();
-  const participants = useParticipants();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   const [participantsBar, setParticipantsBar] = useState<HTMLDivElement | null>(null);
 
@@ -167,9 +166,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       <StreamVideo client={videoClient}>
         <StreamCall call={call}>
           <section className="relative h-screen w-full overflow-hidden pt-4">
-            <div className="relative flex size-full items-center justify-center">
+            <div className="relative flex items-center size-full justify-center">
               <div className={cn(
-                'flex size-full transition-all duration-300 ease-in-out',
+                'flex size-full transition-all ease-in-out duration-300',
                 {
                   'max-w-[1000px]': !showChat && !showParticipants,
                   'max-w-[800px]': showChat || showParticipants
@@ -179,9 +178,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
 
               {showParticipants && !showChat && (
-                <div className="transition-all duration-300 ease-in-out
+                <div className="fixed transition-all ease-in-out duration-300
                               h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
-                              fixed md:relative right-0 w-[300px] sm:w-[350px]
+                              md:relative right-0 w-[300px] sm:w-[350px]
                               bg-[#19232d]/95 backdrop-blur-md rounded-lg 
                               overflow-hidden p-4 z-[100] md:z-auto">
                   <CallParticipantsList onClose={() => setShowParticipants(false)} />
@@ -189,12 +188,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               )}
 
               {showChat && !showParticipants && (
-                <div className="transition-all duration-300 ease-in-out
+                <div className="fixed transition-all ease-in-out duration-300
                               h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
-                              fixed md:relative right-0 w-[300px] sm:w-[350px]
+                              md:relative right-0 w-[300px] sm:w-[350px]
                               bg-[#19232d]/95 backdrop-blur-md rounded-lg
                               overflow-hidden p-4 z-[100] md:z-auto">
-                  <div className="h-full flex flex-col">
+                  <div className="flex flex-col h-full">
                     <div className="flex justify-end mb-2">
                       <button
                         className="p-2 rounded hover:bg-gray-700/50 transition"
@@ -204,11 +203,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       </button>
                     </div>
                     
-                    <div className="flex-1 overflow-auto custom-scrollbar-hidden space-y-2">
+                    <div className="flex-1 overflow-auto space-y-2 custom-scrollbar-hidden">
                       {messages.map((msg) => (
                         <div key={msg.id} 
                              className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
-                          <span className="text-yellow-1 font-semibold">
+                          <span className="font-semibold text-yellow-1">
                             {msg.sender}:
                           </span>
                           <span className="ml-2">{msg.text}</span>
@@ -220,7 +219,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      className="mt-2 p-2 w-full rounded-lg bg-gray-800/50 
+                      className="w-full mt-2 p-2 rounded-lg bg-gray-800/50 
                                backdrop-blur-sm focus:outline-none 
                                focus:ring-2 focus:ring-blue-500"
                       value={messageText}
