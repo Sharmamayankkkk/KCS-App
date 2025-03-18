@@ -197,7 +197,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                           <span className="text-yellow-1 font-semibold">
                             {msg.sender}:
                           </span>
-                          <span className="ml-2">{msg.text}</span>
+                          <span className="ml-2 text-white">{msg.text}</span>
                         </div>
                       ))}
                       <div ref={chatEndRef} />
