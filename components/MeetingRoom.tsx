@@ -178,7 +178,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 <div className="fixed md:relative right-0 w-[300px] sm:w-[350px]
                               h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
                               bg-[#19232d]/95 backdrop-blur-md rounded-lg
-                              p-4 overflow-hidden z-[100] md:z-auto
+                              p-4 overflow-hidden z-[100] md:z-10
                               transition-all duration-300 ease-in-out">
                   <div className="flex flex-col h-full">
                     <div className="flex justify-end mb-2">
@@ -186,7 +186,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                         className="p-2 rounded hover:bg-gray-700/50 transition"
                         onClick={() => setShowChat(false)}
                       >
-                        <X className="size-5" />
+                        <X className="size-5 text-white" />
                       </button>
                     </div>
                     
@@ -237,7 +237,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger className="p-2 rounded-lg hover:bg-gray-700/50 transition">
-                    <LayoutList className="size-5" />
+                    <LayoutList className="size-5 text-white" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
@@ -260,7 +260,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     setShowChat(false);
                   }}
                 >
-                  <Users className="size-5" />
+                  <Users className="size-5 text-white hover:bg-gray-700/50" />
                 </button>
                 
                 <button 
@@ -270,7 +270,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     setShowParticipants(false);
                   }}
                 >
-                  <MessageSquare className="size-5" />
+                  <MessageSquare className="size-5 text-white" />
                 </button>
               </div>
             </div>
