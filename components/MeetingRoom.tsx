@@ -47,10 +47,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const call = useCall();
   const callingState = useCallCallingState();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
-  const [participantsBar, setParticipantsBar] = useState<HTMLDivElement | null>(null);
 
   // Video Client Initialization
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
+  
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
 
@@ -71,16 +71,16 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [messages, setMessages] = useState<{ id: string; text: string; sender: string }[]>([]);
 
   useEffect(() => {
-    if (!showChat) return;
+    if (!showChat || !call?.id) return;
     
     const fetchMessages = async () => {
       const { data, error } = await supabase
         .from('messages')
         .select('*')
-        .eq('call_id', call?.id)
+        .eq('call_id', call.id)
         .order('created_at', { ascending: true });
   
-      if (error) console.error(error);
+      if (error) console.error('Error fetching messages:', error);
       else {
         setMessages(data.map((msg) => ({
           id: msg.id, 
@@ -93,7 +93,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     fetchMessages();
   
     const subscription = supabase
-      .channel(`messages:${call?.id}`)
+      .channel(`messages:${call.id}`)
       .on('postgres_changes', 
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload) => {
@@ -111,16 +111,22 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [showChat, call?.id]);
 
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   const sendMessage = async (messageText: string) => {
-    if (!messageText.trim()) return;
+    if (!messageText.trim() || !call?.id) return;
   
     const { error } = await supabase.from('messages').insert([{
-      call_id: call?.id,
+      call_id: call.id,
       text: messageText,
       sender: userData?.fullName || 'Anonymous',
     }]);
   
-    if (error) console.error(error);
+    if (error) console.error('Error sending message:', error);
     else setMessageText("");
   };
 
@@ -128,47 +134,28 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const CallLayout = () => {
     switch (layout) {
       case 'grid':
-        return (
-          <div ref={setParticipantsBar}>
-            <PaginatedGridLayout 
-              groupSize={9}
-              pageArrowsVisible={true}
-            />
-          </div>
-        );
+        return <PaginatedGridLayout groupSize={9} pageArrowsVisible={true} />;
       case 'speaker-right':
-        return (
-          <div ref={setParticipantsBar}>
-            <SpeakerLayout 
-              participantsBarPosition="left"
-            />
-          </div>
-        );
+        return <SpeakerLayout participantsBarPosition="left" />;
       default:
-        return (
-          <div ref={setParticipantsBar}>
-            <SpeakerLayout 
-              participantsBarPosition="right"
-            />
-          </div>
-        );
+        return <SpeakerLayout participantsBarPosition="right" />;
     }
   };
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
   const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',') || []; 
-  const hostId = userData?.primaryEmailAddress.emailAddress;
+  const hostId = userData?.primaryEmailAddress?.emailAddress;
   const isHost = adminEmails.includes(hostId);
 
   return (
     videoClient && call ? (
       <StreamVideo client={videoClient}>
         <StreamCall call={call}>
-          <section className="relative h-screen w-full overflow-hidden pt-4">
-            <div className="relative flex items-center size-full justify-center">
+          <section className="h-screen w-full overflow-hidden pt-4 relative">
+            <div className="flex items-center justify-center relative size-full">
               <div className={cn(
-                'flex size-full transition-all ease-in-out duration-300',
+                'flex size-full transition-all duration-300 ease-in-out',
                 {
                   'max-w-[1000px]': !showChat && !showParticipants,
                   'max-w-[800px]': showChat || showParticipants
@@ -178,28 +165,28 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
 
               {showParticipants && !showChat && (
-                <div className="fixed transition-all ease-in-out duration-300
+                <div className="fixed md:relative right-0 w-[300px] sm:w-[350px] 
                               h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
-                              md:relative right-0 w-[300px] sm:w-[350px]
                               bg-[#19232d]/95 backdrop-blur-md rounded-lg 
-                              overflow-hidden p-4 z-[100] md:z-auto">
+                              p-4 overflow-hidden z-[100] md:z-auto
+                              transition-all duration-300 ease-in-out">
                   <CallParticipantsList onClose={() => setShowParticipants(false)} />
                 </div>
               )}
 
               {showChat && !showParticipants && (
-                <div className="fixed transition-all ease-in-out duration-300
+                <div className="fixed md:relative right-0 w-[300px] sm:w-[350px]
                               h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
-                              md:relative right-0 w-[300px] sm:w-[350px]
                               bg-[#19232d]/95 backdrop-blur-md rounded-lg
-                              overflow-hidden p-4 z-[100] md:z-auto">
+                              p-4 overflow-hidden z-[100] md:z-auto
+                              transition-all duration-300 ease-in-out">
                   <div className="flex flex-col h-full">
                     <div className="flex justify-end mb-2">
                       <button
                         className="p-2 rounded hover:bg-gray-700/50 transition"
                         onClick={() => setShowChat(false)}
                       >
-                        <X size={20} />
+                        <X className="size-5" />
                       </button>
                     </div>
                     
@@ -207,7 +194,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       {messages.map((msg) => (
                         <div key={msg.id} 
                              className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
-                          <span className="font-semibold text-yellow-1">
+                          <span className="text-yellow-1 font-semibold">
                             {msg.sender}:
                           </span>
                           <span className="ml-2">{msg.text}</span>
@@ -219,7 +206,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      className="w-full mt-2 p-2 rounded-lg bg-gray-800/50 
+                      className="w-full p-2 mt-2 rounded-lg bg-gray-800/50 
                                backdrop-blur-sm focus:outline-none 
                                focus:ring-2 focus:ring-blue-500"
                       value={messageText}
@@ -238,7 +225,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             <div className="fixed bottom-0 w-full pb-4 px-4">
               <div className="flex flex-wrap items-center justify-center gap-2 
                             sm:gap-4 bg-[#19232d]/80 backdrop-blur-md p-2 
-                            rounded-lg max-w-max mx-auto">
+                            rounded-lg mx-auto max-w-max">
                 <CallControls onLeave={() => router.push('/')} />
                 
                 {isHost && (
@@ -250,7 +237,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
                 <DropdownMenu>
                   <DropdownMenuTrigger className="p-2 rounded-lg hover:bg-gray-700/50 transition">
-                    <LayoutList size={20} />
+                    <LayoutList className="size-5" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
@@ -273,7 +260,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     setShowChat(false);
                   }}
                 >
-                  <Users size={20} />
+                  <Users className="size-5" />
                 </button>
                 
                 <button 
@@ -283,7 +270,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     setShowParticipants(false);
                   }}
                 >
-                  <MessageSquare size={20} />
+                  <MessageSquare className="size-5" />
                 </button>
               </div>
             </div>
