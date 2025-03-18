@@ -206,7 +206,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      className="w-full p-2 mt-2 rounded-lg bg-gray-800/50 
+                      className="w-full p-2 mt-2 rounded-lg bg-gray-800/50 text-white
                                backdrop-blur-sm focus:outline-none 
                                focus:ring-2 focus:ring-blue-500"
                       value={messageText}
