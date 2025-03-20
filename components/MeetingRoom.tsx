@@ -28,6 +28,8 @@ import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
 import EndCallButton from './EndCallButton';
 import { supabase } from '@/lib/supabaseClient';
+import CreatePollModal from './CreatePollModal';
+import ShowPollModal from './ShowPollModal';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
@@ -47,6 +49,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const call = useCall();
   const callingState = useCallCallingState();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  const [showPolls, setShowPolls] = useState(false);
+  const [pollExists, setPollExists] = useState(false);
+  const [modalType, setModalType] = useState(""); // "create" or "show"
+  const [pollId, setPollId] = useState(null);
 
   // Video Client Initialization
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
@@ -116,6 +122,81 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
+
+  const handleCloseModal = () => {
+    setShowPolls(false);
+    setModalType(""); // Reset modalType to prevent it from reopening
+  };
+
+
+
+
+useEffect(() => {
+    const fetchPolls = async () => {
+      if (!call?.id) return; // Ensure call ID exists before querying
+
+      const { data, error } = await supabase
+        .from("polls")
+        .select("id") // Selecting only the ID to check if any poll exists
+        .eq("call_id", call.id)
+        .limit(1); // We only need to check if at least one poll exists
+
+      if (error) {
+        console.error("Error fetching polls:", error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setPollId(data[0].id);
+        setPollExists(true);
+      } else {
+        setPollExists(false);
+      }
+
+      // If we have at least one poll, set showPolls to true
+      setShowPolls(data.length > 0);
+    };
+
+    fetchPolls();
+
+    const subscription = supabase
+      .channel(`polls:${call?.id}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "polls" },
+        (payload) => {
+          setPollExists(true);
+          setShowPolls(true);
+          setPollId(payload.new.id);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [call?.id]); // Run when `call.id` changes
+
+  useEffect(() => {
+    const fetchPoll = async () => {
+      const { data, error } = await supabase
+        .from("polls")
+        .select("id") // Selecting only the ID to check if any poll exists
+        .eq("call_id", call?.id)
+        .limit(1); // We only need to check if at least one poll exists
+
+      if (error) {
+        console.error("Error fetching poll:", error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setPollId(data[0].id); // Updates pollId asynchronously
+      }
+    };
+
+    fetchPoll();
+  }, []); // Runs only once when the component mounts
 
   const sendMessage = async (messageText: string) => {
     if (!messageText.trim() || !call?.id) return;
@@ -189,7 +270,34 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                         <X className="size-5 text-white" />
                       </button>
                     </div>
-                    
+                    <div className="text-center">
+                        {!pollExists ? (
+                          isHost && ( // Only show "Create Poll" if the user is an admin
+                            <button
+                              onClick={() => {
+                                setShowPolls(true);
+                                setModalType("create");
+                              }}
+                              className="p-2 bg-blue-500 text-white rounded mb-2.5"
+                            >
+                              Create Poll
+                            </button>
+                          )
+                        ) : (
+                          <button
+                            onClick={() => {
+                              setShowPolls(true);
+                              setModalType("show");
+                            }}
+                            className="p-2 bg-green-500 text-white rounded mb-2.5"
+                          >
+                            Show Poll
+                          </button>
+                        )}
+
+                        {showPolls && modalType === "create" && <CreatePollModal userId={userData.id} callId={call?.id} onClose={handleCloseModal} />}
+                        {showPolls && modalType === "show" && <ShowPollModal pollId={pollId ?? 0} userData={userData} onClose={handleCloseModal} />}
+                      </div>
                     <div className="flex-1 overflow-auto space-y-2 custom-scrollbar-hidden">
                       {messages.map((msg) => (
                         <div key={msg.id} 
