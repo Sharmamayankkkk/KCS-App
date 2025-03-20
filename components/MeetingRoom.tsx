@@ -14,7 +14,6 @@ import {
   useCallStateHooks,
   useCall,
 } from '@stream-io/video-react-sdk';
-
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useRouter } from 'next/navigation';
 import { Users, LayoutList, MessageSquare, X } from 'lucide-react';
@@ -55,8 +54,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [modalType, setModalType] = useState(""); // "create" or "show"
   const [pollId, setPollId] = useState(null);
 
-  /** ✅ Step 1: Initialize Video Client */
+  // Video Client Initialization
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
+  
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
 
@@ -73,47 +73,42 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [apiKey, userToken, userData]);
 
-  /** ✅ Step 2: Firebase Chat State */
+  // Chat Messages Management
   const [messages, setMessages] = useState<{ id: string; text: string; sender: string }[]>([]);
-  // const messagesRef = ref(database, `meeting-chat/${call?.id}`);
 
   useEffect(() => {
-    if (!showChat) return;
+
+    if (!showChat || !call?.id) return;
+    
     const fetchMessages = async () => {
       const { data, error } = await supabase
         .from('messages')
         .select('*')
-        .eq('call_id', call?.id)
+        .eq('call_id', call.id)
         .order('created_at', { ascending: true });
   
-      if (error) console.error(error);
+      if (error) console.error('Error fetching messages:', error);
       else {
-        setMessages(
-          data.map((msg) => ({
-            id: msg.id, 
-            text: msg.text, 
-            sender: msg.sender 
-          }))
-        );
+        setMessages(data.map((msg) => ({
+          id: msg.id, 
+          text: msg.text, 
+          sender: msg.sender 
+        })));
       }
     };
-  
+
     fetchMessages();
   
     const subscription = supabase
-      .channel(`messages:${call?.id}`)
-      .on(
-        'postgres_changes',
+      .channel(`messages:${call.id}`)
+      .on('postgres_changes', 
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload) => {
-          setMessages((prevMessages) => [
-            ...prevMessages,
-            {
-              id: payload.new.id,
-              text: payload.new.text,
-              sender: payload.new.sender,
-            },
-          ]);
+          setMessages((prevMessages) => [...prevMessages, {
+            id: payload.new.id,
+            text: payload.new.text,
+            sender: payload.new.sender,
+          }]);
         }
       )
       .subscribe();
@@ -197,19 +192,23 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   }, [pollId]);
 
+  useEffect(() => {
+    if (chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   const sendMessage = async (messageText: string) => {
-    if (!messageText.trim()) return;
+    if (!messageText.trim() || !call?.id) return;
   
-    const { error } = await supabase.from('messages').insert([
-      {
-        call_id: call?.id,
-        text: messageText,
-        sender: userData?.fullName || 'Anonymous',
-      },
-    ]);
+    const { error } = await supabase.from('messages').insert([{
+      call_id: call.id,
+      text: messageText,
+      sender: userData?.fullName || 'Anonymous',
+    }]);
   
-    if (error) console.error(error);
-    else setMessageText(""); // Clear input
+    if (error) console.error('Error sending message:', error);
+    else setMessageText("");
   };
 
   const handleCloseModal = () => {
@@ -225,10 +224,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
 
   /** ✅ Step 4: Handle Call Layout */
+  // Layout Component
   const CallLayout = () => {
     switch (layout) {
       case 'grid':
-        return <PaginatedGridLayout />;
+        return <PaginatedGridLayout groupSize={9} pageArrowsVisible={true} />;
       case 'speaker-right':
         return <SpeakerLayout participantsBarPosition="left" />;
       default:
@@ -236,32 +236,51 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   };
 
+  if (callingState !== CallingState.JOINED) return <Loader />;
+
+  const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',') || []; 
+  const hostId = userData?.primaryEmailAddress?.emailAddress;
+  const isHost = adminEmails.includes(hostId);
+
   return (
     videoClient && call ? (
       <StreamVideo client={videoClient}>
         <StreamCall call={call}>
-          <section className="relative h-screen w-full overflow-hidden pt-4 text-white">
-            <div className="relative flex size-full items-center justify-center">
-              <div className={cn('flex size-full max-w-[1000px] *** ', { 'max-w-[800px]': showChat || showParticipants })}>
+          <section className="h-screen w-full overflow-hidden pt-4 relative">
+            <div className="flex items-center justify-center relative size-full">
+              <div className={cn(
+                'flex size-full transition-all duration-300 ease-in-out',
+                {
+                  'max-w-[1000px]': !showChat && !showParticipants,
+                  'max-w-[800px]': showChat || showParticipants
+                }
+              )}>
                 <CallLayout />
               </div>
 
-              {/* ✅ Participants List */}
               {showParticipants && !showChat && (
-                <div className="h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] md:relative absolute w-80 sm:w-full ml-2 bg-[#19232d] rounded-lg overflow-hidden p-4 z-[10000] md:z-auto">
+                <div className="fixed md:relative right-0 w-[300px] sm:w-[350px] 
+                              h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
+                              bg-[#19232d]/95 backdrop-blur-md rounded-lg 
+                              p-4 overflow-hidden z-[100] md:z-auto
+                              transition-all duration-300 ease-in-out">
                   <CallParticipantsList onClose={() => setShowParticipants(false)} />
                 </div>
               )}
 
-              {/* ✅ Chat Panel with Firebase */}
               {showChat && !showParticipants && (
-                <div className="h-[calc(100vh-100px)] md:h-[calc(100vh-100px)] md:relative absolute max-w-full w-80 sm:w-full ml-2 bg-[#19232d] rounded-lg overflow-hidden p-4 z-[10000] md:z-auto scrollbar-none">
-                  <div className="h-full flex flex-col scrollbar-none">
-                    <div className="close-button w-full flex justify-end items-center mb-2 scrollbar-none">
+                <div className="fixed md:relative right-0 w-[300px] sm:w-[350px]
+                              h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
+                              bg-[#19232d]/95 backdrop-blur-md rounded-lg
+                              p-4 overflow-hidden z-[100] md:z-10
+                              transition-all duration-300 ease-in-out">
+                  <div className="flex flex-col h-full">
+                    <div className="flex justify-end mb-2">
                       <button
-                        className="p-2 rounded bg-gray-700 hover:bg-gray-600 text-white"
-                        onClick={() => { setShowChat(!showChat); setShowParticipants(false); }}>
-                        <X size={20} />
+                        className="p-2 rounded hover:bg-gray-700/50 transition"
+                        onClick={() => setShowChat(false)}
+                      >
+                        <X className="size-5 text-white" />
                       </button>
                     </div>
                     <div className="flex-1 overflow-auto custom-scrollbar-hidden">
@@ -294,19 +313,26 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                         {showPolls && modalType === "create" && <CreatePollModal userId={userData.id} callId={call?.id} onClose={handleCloseModal} />}
                         {showPolls && modalType === "show" && <ShowPollModal pollId={pollId ?? 0} userData={userData} onClose={handleCloseModal} />}
                       </div>
-
+                    
+                    <div className="flex-1 overflow-auto space-y-2 custom-scrollbar-hidden">
                       {messages.map((msg) => (
-                        <div key={msg.id} className="p-2 mb-1 rounded bg-gray-700">
-                          <strong className="text-yellow-1">{msg.sender}:</strong> {msg.text}
+                        <div key={msg.id} 
+                             className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
+                          <span className="text-yellow-1 font-semibold">
+                            {msg.sender}:
+                          </span>
+                          <span className="ml-2 text-white">{msg.text}</span>
                         </div>
                       ))}
-                      
                       <div ref={chatEndRef} />
                     </div>
+
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      className="p-2 mt-2 w-full rounded bg-gray-800 text-white"
+                      className="w-full p-2 mt-2 rounded-lg bg-gray-800/50 text-white
+                               backdrop-blur-sm focus:outline-none 
+                               focus:ring-2 focus:ring-blue-500"
                       value={messageText}
                       onChange={(e) => setMessageText(e.target.value)}
                       onKeyDown={(e) => {
@@ -320,37 +346,57 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               )}
             </div>
 
-            {/* ✅ Controls */}
-            <div className="fixed bottom-0 flex flex-wrap w-full items-center justify-center gap-5">
-              <CallControls onLeave={() => router.push('/')} />
-              {isHost && (
+            <div className="fixed bottom-0 w-full pb-4 px-4">
+              <div className="flex flex-wrap items-center justify-center gap-2 
+                            sm:gap-4 bg-[#19232d]/80 backdrop-blur-md p-2 
+                            rounded-lg mx-auto max-w-max">
+                <CallControls onLeave={() => router.push('/')} />
+                
+                {isHost && (
                   <>
                     <MuteButton />
                     <EndCallButton />
                   </>
                 )}
 
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="p-2 rounded-lg hover:bg-gray-700/50 transition">
+                    <LayoutList className="size-5 text-white" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
+                      <DropdownMenuItem 
+                        key={item} 
+                        onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}
+                      >
+                        {item}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
-                  <LayoutList size={20} className="text-white" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
-                    <DropdownMenuItem key={item} onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}>
-                      {item}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              <CallStatsButton />
-              <button className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]" onClick={() => { setShowParticipants(!showParticipants); setShowChat(false); }}>
-                <Users />
-              </button>
-              <button className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]" onClick={() => { setShowChat(!showChat); setShowParticipants(false); }}>
-                <MessageSquare />
-              </button>
+                <CallStatsButton />
+                
+                <button 
+                  className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+                  onClick={() => {
+                    setShowParticipants(!showParticipants);
+                    setShowChat(false);
+                  }}
+                >
+                  <Users className="size-5 text-white hover:bg-gray-700/50" />
+                </button>
+                
+                <button 
+                  className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+                  onClick={() => {
+                    setShowChat(!showChat);
+                    setShowParticipants(false);
+                  }}
+                >
+                  <MessageSquare className="size-5 text-white" />
+                </button>
+              </div>
             </div>
           </section>
         </StreamCall>

@@ -2,153 +2,268 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* Base Reset & Variables */
+:root {
+  --video-primary-color: #1a1a1a;
+  --video-secondary-color: #2a2a2a;
+  --video-accent-color: #0E78F9;
+  --video-text-color: #ffffff;
 }
 
-/* ======== stream css overrides ======== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Stream Video Component Overrides */
 .str-video__call-stats {
-    max-width: 500px;
-    position: relative;
+  max-width: min(500px, 90vw);
+  position: relative;
+  background: var(--video-secondary-color);
+  border-radius: 12px;
+  padding: 1rem;
+  color: var(--video-text-color);
 }
 
 .str-video__speaker-layout__wrapper {
-    max-height: 700px;
+  max-height: min(700px, 90vh);
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.str-video__speaker-layout__spotlight {
+  align-items: center;
+  height: auto !important;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Participant View Styling */
+.str-video__participant-view {
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--video-primary-color);
 }
 
 .str-video__participant-details {
-    color: white;
+  color: var(--video-text-color);
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
 }
 
+.str-video__participant-details__name {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Menu & Controls */
 .str-video__menu-container {
-    color: white;
+  color: var(--video-text-color);
+  background: var(--video-secondary-color);
+  border-radius: 8px;
 }
 
 .str-video__notification {
-    color: white;
+  color: var(--video-text-color);
+  background: var(--video-secondary-color);
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
 }
 
+/* Participant List */
 .str-video__participant-list {
-    background-color: #1c1f2e;
-    padding: 10px;
-    border-radius: 10px;
-    color: white;
-    height: 100%;
+  background-color: rgba(28, 31, 46, 0.95);
+  padding: clamp(8px, 2vw, 16px);
+  border-radius: 12px;
+  color: var(--video-text-color);
+  height: 100%;
+  overflow-y: auto;
 }
 
-.str-video__call-controls{
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.str-video__call-controls__button {
-    height: 40px;
-}
-
-.glassmorphism {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
-
-.glassmorphism2 {
-    background: rgba(18, 17, 17, 0.25);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-}
-
-/* ==== clerk class override ===== */
-
-.cl-userButtonPopoverActionButtonIcon {
-    color: rgb(14, 14, 14);
-}
-
-.cl-logoBox {
-    height: 40px;
-}
-
-.cl-dividerLine {
-    background: #252a41;
-    height: 2px;
-}
-
-.cl-socialButtonsIconButton {
-    border: 3px solid #565761;
-}
-
-.cl-internal-wkkub3 {
-    color: rgb(14, 14, 14);;
-}
-
-.cl-userButtonPopoverActionButton {
-    color: rgb(14, 14, 14);;
-}
-
-.str-video__speaker-layout__spotlight{
-    align-items: center;
-    height: none;
-}
-
-/* =============================== */
-
-@layer utilities {
-    .flex-center {
-        @apply flex justify-center items-center;
-    }
-
-    .flex-between {
-        @apply flex justify-between items-center;
-    }
-}
-
-/* animation */
-
-.show-block {
-    width: 100%;
-    max-width: 350px;
-    display: block;
-    animation: show 0.7s forwards linear;
-}
-
-@keyframes show {
-    0% {
-        animation-timing-function: ease-in;
-        width: 0%;
-    }
-
-    100% {
-        animation-timing-function: ease-in;
-        width: 100%;
-    }
-}
-
-/* Smooth animations for chat & participant panels */
-.chat-panel, .participants-panel {
-  transition: transform 0.3s ease-in-out, opacity 0.3s;
-}
-
-/* Dark background for modals */
-.bg-dark-1 {
-  background-color: #19232d;
-}
-
-/* Slight border radius for a modern look */
-.rounded-2xl {
+/* Call Controls */
+.str-video__call-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  padding: clamp(8px, 2vw, 16px);
+  background: rgba(26, 26, 26, 0.8);
+  backdrop-filter: blur(8px);
   border-radius: 12px;
 }
 
-/* Custom hover effect */
-button:hover {
+.str-video__call-controls__button {
+  height: clamp(36px, 5vw, 44px);
+  aspect-ratio: 1;
+  min-width: auto;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease-in-out;
+}
+
+.str-video__call-controls__button:hover {
+  background: rgba(255, 255, 255, 0.2);
   transform: scale(1.05);
 }
 
-.custom-scrollbar-hidden {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
+/* Responsive Design */
+@media (max-width: 768px) {
+  .str-video__participant-details__name {
+    font-size: 14px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
-  .custom-scrollbar-hidden::-webkit-scrollbar {
-    display: none; /* Chrome, Safari */
+  .str-video__speaker-layout__spotlight {
+    max-height: 60vh;
   }
+  
+  .str-video__speaker-layout__participant-tile {
+    min-width: 80px !important;
+    max-width: 120px;
+    aspect-ratio: 16/9;
+  }
+
+  .str-video__call-controls {
+    padding: 8px;
+    gap: 4px;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 320px) {
+  .str-video__participant-details__name {
+    width: 60px !important;
+    font-size: 12px;
+  }
+  
+  .str-video__participant-view > .str-video__call-controls__button {
+    padding: 4px;
+  }
+  
+  .str-video__video-placeholder__avatar {
+    width: 32px !important;
+    height: 32px !important;
+  }
+}
+
+/* Utility Classes */
+.flex-center {
+  @apply flex justify-center items-center;
+}
+
+.flex-between {
+  @apply flex justify-between items-center;
+}
+
+/* Custom Animations */
+.show-block {
+  width: 100%;
+  max-width: 350px;
+  display: block;
+  animation: show 0.3s ease-in-out forwards;
+}
+
+@keyframes show {
+  from { 
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Panel Transitions */
+.chat-panel,
+.participants-panel {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.custom-scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+/* Glassmorphism Effects */
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glassmorphism2 {
+  background: rgba(18, 17, 17, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Clerk Override */
+.cl-userButtonPopoverActionButtonIcon,
+.cl-internal-wkkub3,
+.cl-userButtonPopoverActionButton {
+  color: rgb(14, 14, 14);
+}
+
+.cl-logoBox {
+  height: 40px;
+}
+
+.cl-dividerLine {
+  background: #252a41;
+  height: 2px;
+}
+
+.cl-socialButtonsIconButton {
+  border: 3px solid #565761;
+}
+
+/* Layout Animations */
+@layer utilities {
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+/* Stream Theme Customization */
+.str-video {
+  --str-video__primary-color: var(--video-accent-color);
+  --str-video__secondary-color: var(--video-secondary-color);
+  --str-video__text-color1: var(--video-text-color);
+  --str-video__border-radius-circle: 8px;
+}
