@@ -13,7 +13,7 @@ const MuteButton: React.FC = () => {
     video: true
   });
 
-  const toggleControl = (type) => {
+  const toggleControl = (type: 'audio' | 'video') => {
     setControlOptions(prev => ({
       ...prev,
       [type]: !prev[type]
