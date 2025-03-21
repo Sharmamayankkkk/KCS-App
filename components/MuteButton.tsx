@@ -90,30 +90,30 @@ const MuteButton: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center border border-gray-300 rounded-lg p-1.5 shadow-md">
       <div className="flex space-x-2 mb-2">
-        <label className="flex items-center cursor-pointer">
+        <label className="flex items-center cursor-pointer border border-gray-100 rounded-3xl px-2 py-1 shadow-md ">
           <input
             type="checkbox"
             checked={controlOptions.audio}
             onChange={() => toggleControl('audio')}
-            className="mr-1"
+            className="mr-1 w-3 h-3 accent-green-400 rounded-md border-2 border-gray-300 shadow-lg"
           />
-          <span className="text-sm">Audio</span>
+          <span className="text-sm text-white">Audio</span>
         </label>
-        <label className="flex items-center cursor-pointer">
+        <label className="flex items-center cursor-pointer border border-gray-100 rounded-3xl px-2 py-1 shadow-md">
           <input
             type="checkbox"
             checked={controlOptions.video}
             onChange={() => toggleControl('video')}
-            className="mr-1"
+            className="mr-1 accent-green-400 rounded-md border-2 border-gray-300 shadow-lg"
           />
-          <span className="text-sm">Video</span>
+          <span className="text-sm text-white">Video</span>
         </label>
       </div>
       <button
         onClick={muteAllExceptHost}
-        className="bg-red-500 px-4 py-2 rounded-lg text-white disabled:bg-red-300"
+        className="bg-red-500 px-2 py-1 rounded-lg text-white disabled:bg-red-300"
         disabled={isProcessing}
       >
         {isProcessing ? 'Processing...' : 'Control All Except Host'}
