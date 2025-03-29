@@ -13,6 +13,7 @@ import {
   StreamVideoClient,
   useCallStateHooks,
   useCall,
+  useCallEgress,
 } from '@stream-io/video-react-sdk';
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useRouter } from 'next/navigation';
@@ -49,9 +50,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [messageText, setMessageText] = useState("");
-  const { useCallCallingState } = useCallStateHooks();
+  const { useCallCallingState, useCallEgress } = useCallStateHooks();
   const call = useCall();
   const callingState = useCallCallingState();
+  const egress = useCallEgress();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   
   // Broadcast States
@@ -85,12 +87,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const startBroadcast = async (platform: BroadcastPlatform) => {
     try {
       setBroadcastError('');
-      await call?.startBroadcast({
-        broadcasts: [{
-          name: platform.name,
+      await call?.goLive({
+        start_rtmp: true,
+        rtmp: {
           stream_url: platform.streamUrl,
-          stream_key: platform.streamKey
-        }]
+          stream_key: platform.streamKey,
+        },
       });
       setActiveBroadcasts(prev => [...prev, platform.name]);
     } catch (error) {
@@ -103,7 +105,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const stopBroadcast = async (platformName: string) => {
     try {
       setBroadcastError('');
-      await call?.stopBroadcast(platformName);
+      // The stop method might be different, ensure to use the correct one from the SDK documentation
+      await call?.stopLive({
+        stop_rtmp: true,
+      });
       setActiveBroadcasts(prev => prev.filter(name => name !== platformName));
     } catch (error) {
       console.error('Error stopping broadcast:', error);
