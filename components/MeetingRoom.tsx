@@ -7,7 +7,7 @@ import {
   CallStatsButton,
   CallingState,
   PaginatedGridLayout,
-  SpeakerLayout,
+  SpeakerLayout, 
   StreamCall,
   StreamVideo,
   StreamVideoClient,
@@ -16,7 +16,7 @@ import {
 } from '@stream-io/video-react-sdk';
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useRouter } from 'next/navigation';
-import { Users, LayoutList, MessageSquare, X } from 'lucide-react';
+import { Users, LayoutList, MessageSquare, X, Cast } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +28,12 @@ import MuteButton from './MuteButton';
 import { cn } from '@/lib/utils';
 import EndCallButton from './EndCallButton';
 import { supabase } from '@/lib/supabaseClient';
+
+interface BroadcastPlatform {
+  name: string;
+  streamUrl: string;
+  streamKey: string;
+}
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
@@ -47,10 +53,80 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const call = useCall();
   const callingState = useCallCallingState();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
+  
+  // Broadcast States
+  const [broadcastPlatforms, setBroadcastPlatforms] = useState<{[key: string]: BroadcastPlatform}>({});
+  const [activeBroadcasts, setActiveBroadcasts] = useState<string[]>([]);
+  const [broadcastError, setBroadcastError] = useState<string>('');
+  const [showBroadcastForm, setShowBroadcastForm] = useState(false);
+  const [newBroadcast, setNewBroadcast] = useState({
+    name: '',
+    streamUrl: '',
+    streamKey: ''
+  });
+
+  // Add new broadcast platform
+  const addBroadcastPlatform = () => {
+    if (!newBroadcast.name || !newBroadcast.streamUrl || !newBroadcast.streamKey) {
+      setBroadcastError('All fields are required');
+      return;
+    }
+    
+    setBroadcastPlatforms(prev => ({
+      ...prev,
+      [newBroadcast.name]: newBroadcast
+    }));
+    
+    setNewBroadcast({ name: '', streamUrl: '', streamKey: '' });
+    setShowBroadcastForm(false);
+  };
+
+  // Start RTMP broadcast
+  const startBroadcast = async (platform: BroadcastPlatform) => {
+    try {
+      setBroadcastError('');
+      await call?.startRTMPBroadcasts({
+        broadcasts: [{
+          name: platform.name,
+          stream_url: platform.streamUrl,
+          stream_key: platform.streamKey
+        }]
+      });
+      setActiveBroadcasts(prev => [...prev, platform.name]);
+    } catch (error) {
+      console.error('Error starting broadcast:', error);
+      setBroadcastError(`Failed to start ${platform.name} broadcast`);
+    }
+  };
+
+  // Stop RTMP broadcast
+  const stopBroadcast = async (platformName: string) => {
+    try {
+      setBroadcastError('');
+      await call?.stopRTMPBroadcast(platformName);
+      setActiveBroadcasts(prev => prev.filter(name => name !== platformName));
+    } catch (error) {
+      console.error('Error stopping broadcast:', error);
+      setBroadcastError(`Failed to stop ${platformName} broadcast`);
+    }
+  };
+
+  // Check broadcast status
+  useEffect(() => {
+    if (!call) return;
+
+    const checkBroadcastStatus = async () => {
+      const resp = await call.get();
+      const rtmpBroadcasts = resp.call.egress.rtmps;
+      setActiveBroadcasts(rtmpBroadcasts.map(broadcast => broadcast.name));
+    };
+
+    checkBroadcastStatus();
+  }, [call]);
 
   // Video Client Initialization
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
-  
+
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
 
@@ -59,6 +135,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       user: userData,
       token: userToken,
     });
+
     setVideoClient(_client);
 
     return () => {
@@ -83,9 +160,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       if (error) console.error('Error fetching messages:', error);
       else {
         setMessages(data.map((msg) => ({
-          id: msg.id, 
-          text: msg.text, 
-          sender: msg.sender 
+          id: msg.id,
+          text: msg.text,
+          sender: msg.sender
         })));
       }
     };
@@ -94,7 +171,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   
     const subscription = supabase
       .channel(`messages:${call.id}`)
-      .on('postgres_changes', 
+      .on('postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload) => {
           setMessages((prevMessages) => [...prevMessages, {
@@ -130,6 +207,39 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     else setMessageText("");
   };
 
+  // Broadcast Control Component
+  const BroadcastControl = () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger 
+        className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+        disabled={!!broadcastError}
+      >
+        <Cast className="size-5 text-white" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent>
+        <DropdownMenuItem onClick={() => setShowBroadcastForm(true)}>
+          Add New Platform
+        </DropdownMenuItem>
+        {Object.values(broadcastPlatforms).map(platform => (
+          <DropdownMenuItem
+            key={platform.name}
+            onClick={() => {
+              if (!activeBroadcasts.includes(platform.name)) {
+                startBroadcast(platform);
+              } else {
+                stopBroadcast(platform.name);
+              }
+            }}
+          >
+            {activeBroadcasts.includes(platform.name) 
+              ? `Stop ${platform.name} Broadcast` 
+              : `Start ${platform.name} Broadcast`}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+
   // Layout Component
   const CallLayout = () => {
     switch (layout) {
@@ -144,7 +254,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
-  const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',') || []; 
+  const adminEmails = process.env.NEXT_PUBLIC_ADMIN_EMAILS?.split(',') || [];
   const hostId = userData?.primaryEmailAddress?.emailAddress;
   const isHost = adminEmails.includes(hostId);
 
@@ -222,6 +332,59 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               )}
             </div>
 
+            {/* Broadcast Form Modal */}
+            {showBroadcastForm && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+                <div className="bg-[#19232d] p-6 rounded-lg w-[400px]">
+                  <h3 className="text-white mb-4">Add Broadcast Platform</h3>
+                  <input
+                    type="text"
+                    placeholder="Platform Name"
+                    className="w-full p-2 mb-2 rounded bg-gray-800 text-white"
+                    value={newBroadcast.name}
+                    onChange={(e) => setNewBroadcast(prev => ({
+                      ...prev,
+                      name: e.target.value
+                    }))}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Stream URL"
+                    className="w-full p-2 mb-2 rounded bg-gray-800 text-white"
+                    value={newBroadcast.streamUrl}
+                    onChange={(e) => setNewBroadcast(prev => ({
+                      ...prev,
+                      streamUrl: e.target.value
+                    }))}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Stream Key"
+                    className="w-full p-2 mb-4 rounded bg-gray-800 text-white"
+                    value={newBroadcast.streamKey}
+                    onChange={(e) => setNewBroadcast(prev => ({
+                      ...prev,
+                      streamKey: e.target.value
+                    }))}
+                  />
+                  <div className="flex justify-end gap-2">
+                    <button
+                      className="px-4 py-2 rounded bg-gray-700 text-white"
+                      onClick={() => setShowBroadcastForm(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="px-4 py-2 rounded bg-blue-600 text-white"
+                      onClick={addBroadcastPlatform}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="fixed bottom-0 w-full pb-4 px-4">
               <div className="flex flex-wrap items-center justify-center gap-2 
                             sm:gap-4 bg-[#19232d]/80 backdrop-blur-md p-2 
@@ -232,6 +395,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <>
                     <MuteButton />
                     <EndCallButton />
+                    <BroadcastControl />
+                    {broadcastError && (
+                      <span className="text-red-500 text-sm">{broadcastError}</span>
+                    )}
                   </>
                 )}
 
@@ -280,6 +447,67 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     ) : (
       <Loader />
     )
+  );
+};
+
+// Utility components
+
+const BroadcastFormModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  newBroadcast,
+  setNewBroadcast
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit: () => void;
+  newBroadcast: { name: string; streamUrl: string; streamKey: string };
+  setNewBroadcast: (broadcast: { name: string; streamUrl: string; streamKey: string }) => void;
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-[#19232d] p-6 rounded-lg w-[400px]">
+        <h3 className="text-white mb-4">Add Broadcast Platform</h3>
+        <input
+          type="text"
+          placeholder="Platform Name"
+          className="w-full p-2 mb-2 rounded bg-gray-800 text-white"
+          value={newBroadcast.name}
+          onChange={(e) => setNewBroadcast({ ...newBroadcast, name: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Stream URL"
+          className="w-full p-2 mb-2 rounded bg-gray-800 text-white"
+          value={newBroadcast.streamUrl}
+          onChange={(e) => setNewBroadcast({ ...newBroadcast, streamUrl: e.target.value })}
+        />
+        <input
+          type="text"
+          placeholder="Stream Key"
+          className="w-full p-2 mb-4 rounded bg-gray-800 text-white"
+          value={newBroadcast.streamKey}
+          onChange={(e) => setNewBroadcast({ ...newBroadcast, streamKey: e.target.value })}
+        />
+        <div className="flex justify-end gap-2">
+          <button
+            className="px-4 py-2 rounded bg-gray-700 text-white"
+            onClick={onClose}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-4 py-2 rounded bg-blue-600 text-white"
+            onClick={onSubmit}
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };
 
