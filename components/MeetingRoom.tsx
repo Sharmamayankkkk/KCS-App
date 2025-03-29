@@ -13,7 +13,6 @@ import {
   StreamVideoClient,
   useCallStateHooks,
   useCall,
-  useCallEgress,
 } from '@stream-io/video-react-sdk';
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { useRouter } from 'next/navigation';
@@ -50,10 +49,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showParticipants, setShowParticipants] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [messageText, setMessageText] = useState("");
-  const { useCallCallingState, useCallEgress } = useCallStateHooks();
+  const { useCallCallingState } = useCallStateHooks();
   const call = useCall();
   const callingState = useCallCallingState();
-  const egress = useCallEgress();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
   
   // Broadcast States
@@ -105,7 +103,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const stopBroadcast = async (platformName: string) => {
     try {
       setBroadcastError('');
-      // The stop method might be different, ensure to use the correct one from the SDK documentation
       await call?.stopLive({
         stop_rtmp: true,
       });
@@ -216,10 +213,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const BroadcastControl = () => (
     <DropdownMenu>
       <DropdownMenuTrigger 
-        className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+        className="p-2 rounded-lg transition hover:bg-gray-700/50"
         disabled={!!broadcastError}
       >
-        <Cast className="size-5 text-white" />
+        <Cast className="text-white size-5" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem onClick={() => setShowBroadcastForm(true)}>
@@ -267,8 +264,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     videoClient && call ? (
       <StreamVideo client={videoClient}>
         <StreamCall call={call}>
-          <section className="h-screen w-full overflow-hidden pt-4 relative">
-            <div className="flex items-center justify-center relative size-full">
+          <section className="relative w-full h-screen overflow-hidden pt-4">
+            <div className="relative flex items-center justify-center size-full">
               <div className={cn(
                 'flex size-full transition-all duration-300 ease-in-out',
                 {
@@ -298,18 +295,18 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <div className="flex flex-col h-full">
                     <div className="flex justify-end mb-2">
                       <button
-                        className="p-2 rounded hover:bg-gray-700/50 transition"
+                        className="p-2 rounded transition hover:bg-gray-700/50"
                         onClick={() => setShowChat(false)}
                       >
-                        <X className="size-5 text-white" />
+                        <X className="text-white size-5" />
                       </button>
                     </div>
                     
                     <div className="flex-1 overflow-auto space-y-2 custom-scrollbar-hidden">
                       {messages.map((msg) => (
                         <div key={msg.id} 
-                             className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
-                          <span className="text-yellow-1 font-semibold">
+                             className="p-2 rounded-lg backdrop-blur-sm bg-gray-700/50">
+                          <span className="font-semibold text-yellow-1">
                             {msg.sender}:
                           </span>
                           <span className="ml-2 text-white">{msg.text}</span>
@@ -321,7 +318,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     <input
                       type="text"
                       placeholder="Type a message..."
-                      className="w-full p-2 mt-2 rounded-lg bg-gray-800/50 text-white
+                      className="w-full p-2 mt-2 rounded-lg text-white bg-gray-800/50
                                backdrop-blur-sm focus:outline-none 
                                focus:ring-2 focus:ring-blue-500"
                       value={messageText}
@@ -339,13 +336,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             {/* Broadcast Form Modal */}
             {showBroadcastForm && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-[#19232d] p-6 rounded-lg w-[400px]">
-                  <h3 className="text-white mb-4">Add Broadcast Platform</h3>
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                <div className="w-[400px] p-6 rounded-lg bg-[#19232d]">
+                  <h3 className="mb-4 text-white">Add Broadcast Platform</h3>
                   <input
                     type="text"
                     placeholder="Platform Name"
-                    className="w-full p-2 mb-2 rounded bg-gray-800 text-white"
+                    className="w-full p-2 mb-2 rounded text-white bg-gray-800"
                     value={newBroadcast.name}
                     onChange={(e) => setNewBroadcast(prev => ({
                       ...prev,
@@ -355,7 +352,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <input
                     type="text"
                     placeholder="Stream URL"
-                    className="w-full p-2 mb-2 rounded bg-gray-800 text-white"
+                    className="w-full p-2 mb-2 rounded text-white bg-gray-800"
                     value={newBroadcast.streamUrl}
                     onChange={(e) => setNewBroadcast(prev => ({
                       ...prev,
@@ -365,7 +362,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <input
                     type="text"
                     placeholder="Stream Key"
-                    className="w-full p-2 mb-4 rounded bg-gray-800 text-white"
+                    className="w-full p-2 mb-4 rounded text-white bg-gray-800"
                     value={newBroadcast.streamKey}
                     onChange={(e) => setNewBroadcast(prev => ({
                       ...prev,
@@ -392,8 +389,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             <div className="fixed bottom-0 w-full pb-4 px-4">
               <div className="flex flex-wrap items-center justify-center gap-2 
-                            sm:gap-4 bg-[#19232d]/80 backdrop-blur-md p-2 
-                            rounded-lg mx-auto max-w-max">
+                            sm:gap-4 p-2 rounded-lg bg-[#19232d]/80 backdrop-blur-md mx-auto max-w-max">
                 <CallControls onLeave={() => router.push('/')} />
                 
                 {isHost && (
@@ -402,14 +398,14 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     <EndCallButton />
                     <BroadcastControl />
                     {broadcastError && (
-                      <span className="text-red-500 text-sm">{broadcastError}</span>
+                      <span className="text-sm text-red-500">{broadcastError}</span>
                     )}
                   </>
                 )}
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="p-2 rounded-lg hover:bg-gray-700/50 transition">
-                    <LayoutList className="size-5 text-white" />
+                  <DropdownMenuTrigger className="p-2 rounded-lg transition hover:bg-gray-700/50">
+                    <LayoutList className="text-white size-5" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     {['Grid', 'Speaker-Left', 'Speaker-Right'].map((item) => (
@@ -426,23 +422,23 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 <CallStatsButton />
                 
                 <button 
-                  className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+                  className="p-2 rounded-lg transition hover:bg-gray-700/50"
                   onClick={() => {
                     setShowParticipants(!showParticipants);
                     setShowChat(false);
                   }}
                 >
-                  <Users className="size-5 text-white hover:bg-gray-700/50" />
+                  <Users className="text-white size-5 hover:bg-gray-700/50" />
                 </button>
                 
                 <button 
-                  className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+                  className="p-2 rounded-lg transition hover:bg-gray-700/50"
                   onClick={() => {
                     setShowChat(!showChat);
                     setShowParticipants(false);
                   }}
                 >
-                  <MessageSquare className="size-5 text-white" />
+                  <MessageSquare className="text-white size-5" />
                 </button>
               </div>
             </div>
@@ -452,67 +448,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     ) : (
       <Loader />
     )
-  );
-};
-
-// Utility components
-
-const BroadcastFormModal = ({
-  isOpen,
-  onClose,
-  onSubmit,
-  newBroadcast,
-  setNewBroadcast
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: () => void;
-  newBroadcast: { name: string; streamUrl: string; streamKey: string };
-  setNewBroadcast: (broadcast: { name: string; streamUrl: string; streamKey: string }) => void;
-}) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-[#19232d] p-6 rounded-lg w-[400px]">
-        <h3 className="text-white mb-4">Add Broadcast Platform</h3>
-        <input
-          type="text"
-          placeholder="Platform Name"
-          className="w-full p-2 mb-2 rounded bg-gray-800 text-white"
-          value={newBroadcast.name}
-          onChange={(e) => setNewBroadcast({ ...newBroadcast, name: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Stream URL"
-          className="w-full p-2 mb-2 rounded bg-gray-800 text-white"
-          value={newBroadcast.streamUrl}
-          onChange={(e) => setNewBroadcast({ ...newBroadcast, streamUrl: e.target.value })}
-        />
-        <input
-          type="text"
-          placeholder="Stream Key"
-          className="w-full p-2 mb-4 rounded bg-gray-800 text-white"
-          value={newBroadcast.streamKey}
-          onChange={(e) => setNewBroadcast({ ...newBroadcast, streamKey: e.target.value })}
-        />
-        <div className="flex justify-end gap-2">
-          <button
-            className="px-4 py-2 rounded bg-gray-700 text-white"
-            onClick={onClose}
-          >
-            Cancel
-          </button>
-          <button
-            className="px-4 py-2 rounded bg-blue-600 text-white"
-            onClick={onSubmit}
-          >
-            Add
-          </button>
-        </div>
-      </div>
-    </div>
   );
 };
 
