@@ -85,7 +85,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const startBroadcast = async (platform: BroadcastPlatform) => {
     try {
       setBroadcastError('');
-      await call?.startRTMPBroadcasts({
+      await call?.startBroadcast({
         broadcasts: [{
           name: platform.name,
           stream_url: platform.streamUrl,
@@ -103,7 +103,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const stopBroadcast = async (platformName: string) => {
     try {
       setBroadcastError('');
-      await call?.stopRTMPBroadcast(platformName);
+      await call?.stopBroadcast(platformName);
       setActiveBroadcasts(prev => prev.filter(name => name !== platformName));
     } catch (error) {
       console.error('Error stopping broadcast:', error);
