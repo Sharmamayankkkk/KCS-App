@@ -24,12 +24,6 @@ import { cn } from "@/lib/utils"
 import EndCallButton from "./EndCallButton"
 import { supabase } from "@/lib/supabaseClient"
 
-interface BroadcastPlatform {
-  name: string
-  streamUrl: string
-  streamKey: string
-}
-
 const defaultBroadcastPlatforms = [
   { name: "youtube", label: "YouTube" },
   { name: "facebook", label: "Facebook" },
@@ -83,16 +77,16 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   }
 
   // Stop RTMP broadcast
-   const stopBroadcast = async (platformName: string) => {
-     try {
-       setBroadcastError("")
-       await call?.stopLive() // Corrected: Called without arguments
-       setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
-     } catch (error) {
-       console.error("Error stopping broadcast:", error)
-       setBroadcastError(`Failed to stop ${platformName} broadcast`)
-     }
-   }
+  const stopBroadcast = async (platformName: string) => {
+    try {
+      setBroadcastError("")
+      await call?.stopLive()
+      setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
+    } catch (error) {
+      console.error("Error stopping broadcast:", error)
+      setBroadcastError(`Failed to stop ${platformName} broadcast`)
+    }
+  }
 
   // Check broadcast status
   useEffect(() => {
@@ -213,8 +207,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const BroadcastControl = () => (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger className="p-2 rounded-lg hover:bg-gray-700/50 transition" disabled={!!broadcastError}>
-          <Cast className="size-5 text-white" />
+        <DropdownMenuTrigger className="p-2 rounded-lg transition hover:bg-gray-700/50" disabled={!!broadcastError}>
+          <Cast className="text-white size-5" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           {defaultBroadcastPlatforms.map((platform) => (
@@ -239,45 +233,45 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
       {/* Broadcast Form Modal */}
       {showBroadcastForm && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-          <div className="bg-[#19232d] p-6 rounded-lg w-full max-w-md">
-            <h3 className="text-xl font-bold mb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+          <div className="w-full p-6 rounded-lg bg-[#19232d] max-w-md">
+            <h3 className="mb-4 text-xl font-bold">
               Start {selectedPlatform.charAt(0).toUpperCase() + selectedPlatform.slice(1)} Broadcast
             </h3>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Stream URL</label>
+                <label className="block mb-1 text-sm font-medium">Stream URL</label>
                 <input
                   type="text"
                   value={streamUrl}
                   onChange={(e) => setStreamUrl(e.target.value)}
                   placeholder="rtmp://..."
-                  className="w-full p-2 rounded-lg bg-gray-800/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Stream Key</label>
+                <label className="block mb-1 text-sm font-medium">Stream Key</label>
                 <input
                   type="text"
                   value={streamKey}
                   onChange={(e) => setStreamKey(e.target.value)}
                   placeholder="Enter stream key..."
-                  className="w-full p-2 rounded-lg bg-gray-800/50 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
-              <div className="flex justify-end space-x-2 mt-6">
+              <div className="flex justify-end mt-6 space-x-2">
                 <button
                   onClick={() => setShowBroadcastForm(false)}
-                  className="px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 transition"
+                  className="px-4 py-2 transition rounded-lg bg-gray-700 hover:bg-gray-600"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={startBroadcast}
-                  className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 transition"
+                  className="px-4 py-2 transition rounded-lg bg-blue-600 hover:bg-blue-500"
                 >
                   Start Broadcast
                 </button>
@@ -298,10 +292,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   return videoClient && call ? (
     <StreamVideo client={videoClient}>
       <StreamCall call={call}>
-        <section className="h-screen w-full overflow-hidden pt-4 relative">
-          <div className="flex items-center justify-center relative size-full">
+        <section className="relative w-full h-screen pt-4 overflow-hidden">
+          <div className="relative flex items-center justify-center size-full">
             <div
-              className={cn("flex size-full transition-all duration-300 ease-in-out", {
+              className={cn("flex transition-all duration-300 ease-in-out size-full", {
                 "max-w-[1000px]": !showChat && !showParticipants,
                 "max-w-[800px]": showChat || showParticipants,
               })}
@@ -311,11 +305,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             {showParticipants && !showChat && (
               <div
-                className="fixed md:relative right-0 w-[300px] sm:w-[350px] 
-                              h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
-                              bg-[#19232d]/95 backdrop-blur-md rounded-lg 
-                              p-4 overflow-hidden z-[100] md:z-auto
-                              transition-all duration-300 ease-in-out"
+                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden"
               >
                 <CallParticipantsList onClose={() => setShowParticipants(false)} />
               </div>
@@ -323,23 +313,19 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             {showChat && !showParticipants && (
               <div
-                className="fixed md:relative right-0 w-[300px] sm:w-[350px]
-                              h-[calc(100vh-100px)] md:h-[calc(100vh-86px)]
-                              bg-[#19232d]/95 backdrop-blur-md rounded-lg
-                              p-4 overflow-hidden z-[100] md:z-10
-                              transition-all duration-300 ease-in-out"
+                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden"
               >
                 <div className="flex flex-col h-full">
                   <div className="flex justify-end mb-2">
-                    <button className="p-2 rounded hover:bg-gray-700/50 transition" onClick={() => setShowChat(false)}>
-                      <X className="size-5 text-white" />
+                    <button className="p-2 transition rounded hover:bg-gray-700/50" onClick={() => setShowChat(false)}>
+                      <X className="text-white size-5" />
                     </button>
                   </div>
 
-                  <div className="flex-1 overflow-auto space-y-2 custom-scrollbar-hidden">
+                  <div className="flex-1 space-y-2 overflow-auto custom-scrollbar-hidden">
                     {messages.map((msg) => (
                       <div key={msg.id} className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
-                        <span className="text-yellow-1 font-semibold">{msg.sender}:</span>
+                        <span className="font-semibold text-yellow-1">{msg.sender}:</span>
                         <span className="ml-2 text-white">{msg.text}</span>
                       </div>
                     ))}
@@ -349,9 +335,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <input
                     type="text"
                     placeholder="Type a message..."
-                    className="w-full p-2 mt-2 rounded-lg bg-gray-800/50 text-white
-                               backdrop-blur-sm focus:outline-none 
-                               focus:ring-2 focus:ring-blue-500"
+                    className="w-full p-2 mt-2 text-white rounded-lg bg-gray-800/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                     value={messageText}
                     onChange={(e) => setMessageText(e.target.value)}
                     onKeyDown={(e) => {
@@ -365,11 +349,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             )}
           </div>
 
-          <div className="fixed bottom-0 w-full pb-4 px-4">
+          <div className="fixed bottom-0 w-full px-4 pb-4">
             <div
-              className="flex flex-wrap items-center justify-center gap-2 
-                            sm:gap-4 bg-[#19232d]/80 backdrop-blur-md p-2 
-                            rounded-lg mx-auto max-w-max"
+              className="flex flex-wrap items-center justify-center gap-2 p-2 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/80 backdrop-blur-md max-w-max"
             >
               <CallControls onLeave={() => router.push("/")} />
 
@@ -378,13 +360,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <MuteButton />
                   <EndCallButton />
                   <BroadcastControl />
-                  {broadcastError && <span className="text-red-500 text-sm">{broadcastError}</span>}
+                  {broadcastError && <span className="text-sm text-red-500">{broadcastError}</span>}
                 </>
               )}
 
               <DropdownMenu>
-                <DropdownMenuTrigger className="p-2 rounded-lg hover:bg-gray-700/50 transition">
-                  <LayoutList className="size-5 text-white" />
+                <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
+                  <LayoutList className="text-white size-5" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   {["Grid", "Speaker-Left", "Speaker-Right"].map((item) => (
@@ -398,23 +380,23 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               <CallStatsButton />
 
               <button
-                className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+                className="p-2 transition rounded-lg hover:bg-gray-700/50"
                 onClick={() => {
                   setShowParticipants(!showParticipants)
                   setShowChat(false)
                 }}
               >
-                <Users className="size-5 text-white hover:bg-gray-700/50" />
+                <Users className="text-white size-5 hover:bg-gray-700/50" />
               </button>
 
               <button
-                className="p-2 rounded-lg hover:bg-gray-700/50 transition"
+                className="p-2 transition rounded-lg hover:bg-gray-700/50"
                 onClick={() => {
                   setShowChat(!showChat)
                   setShowParticipants(false)
                 }}
               >
-                <MessageSquare className="size-5 text-white" />
+                <MessageSquare className="text-white size-5" />
               </button>
             </div>
           </div>
