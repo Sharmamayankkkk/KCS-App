@@ -69,14 +69,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     try {
       setBroadcastError("")
-      await call?.startRTMPBroadcasts({
-        broadcasts: [
-          {
-            name: selectedPlatform,
-            stream_url: streamUrl,
-            stream_key: streamKey,
-          },
-        ],
+      await call?.startRTMPBroadcast({
+        name: selectedPlatform,
+        stream_url: streamUrl,
+        stream_key: streamKey,
       })
       setActiveBroadcasts((prev) => [...prev, selectedPlatform])
       setShowBroadcastForm(false)
@@ -399,7 +395,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <CallStatsButton />
+                            <CallStatsButton />
 
               <button
                 className="p-2 rounded-lg hover:bg-gray-700/50 transition"
