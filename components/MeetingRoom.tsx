@@ -29,8 +29,8 @@ const defaultBroadcastPlatforms = [
   { name: "facebook", label: "Facebook" },
 ]
 
-const YOUTUBE_KEY = process.env.NEXT_PUBLIC_YOUTUBE_KEY
-const FACEBOOK_KEY = process.env.NEXT_PUBLIC_FACEBOOK_KEY
+const YOUTUBE_KEY = process.env.NEXT_PUBLIC_YOUTUBE_KEY || ""
+const FACEBOOK_KEY = process.env.NEXT_PUBLIC_FACEBOOK_KEY || ""
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right"
 
