@@ -29,6 +29,9 @@ const defaultBroadcastPlatforms = [
   { name: "facebook", label: "Facebook" },
 ]
 
+const YOUTUBE_KEY = process.env.NEXT_PUBLIC_YOUTUBE_KEY
+const FACEBOOK_KEY = process.env.NEXT_PUBLIC_FACEBOOK_KEY
+
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right"
 
 interface MeetingRoomProps {
@@ -56,8 +59,30 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   // Start RTMP broadcast
   const startBroadcast = async () => {
-    if (!streamUrl || !streamKey || !selectedPlatform) {
-      setBroadcastError("Please fill all the broadcast details")
+    if (!selectedPlatform) {
+      setBroadcastError("Please select a platform")
+      return
+    }
+
+    let streamUrl = ""
+    let streamKey = ""
+
+    switch (selectedPlatform) {
+      case "youtube":
+        streamUrl = "rtmp://a.rtmp.youtube.com/live2"
+        streamKey = YOUTUBE_KEY
+        break
+      case "facebook":
+        streamUrl = "rtmp://live-api-s.facebook.com:80/rtmp/"
+        streamKey = FACEBOOK_KEY
+        break
+      default:
+        setBroadcastError("Unsupported platform")
+        return
+    }
+
+    if (!streamUrl || !streamKey) {
+      setBroadcastError("Missing stream details")
       return
     }
 
@@ -68,8 +93,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       setShowBroadcastForm(false)
       // Reset form
       setSelectedPlatform("")
-      setStreamUrl("")
-      setStreamKey("")
     } catch (error) {
       console.error("Error starting broadcast:", error)
       setBroadcastError(`Failed to start ${selectedPlatform} broadcast`)
@@ -240,28 +263,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             </h3>
 
             <div className="space-y-4">
-              <div>
-                <label className="block mb-1 text-sm font-medium">Stream URL</label>
-                <input
-                  type="text"
-                  value={streamUrl}
-                  onChange={(e) => setStreamUrl(e.target.value)}
-                  placeholder="rtmp://..."
-                  className="w-full p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-1 text-sm font-medium">Stream Key</label>
-                <input
-                  type="text"
-                  value={streamKey}
-                  onChange={(e) => setStreamKey(e.target.value)}
-                  placeholder="Enter stream key..."
-                  className="w-full p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-
               <div className="flex justify-end mt-6 space-x-2">
                 <button
                   onClick={() => setShowBroadcastForm(false)}
@@ -305,7 +306,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             {showParticipants && !showChat && (
               <div
-                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden"
+                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-100px)]"
               >
                 <CallParticipantsList onClose={() => setShowParticipants(false)} />
               </div>
@@ -313,7 +314,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             {showChat && !showParticipants && (
               <div
-                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden"
+                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-100px)]"
               >
                 <div className="flex flex-col h-full">
                   <div className="flex justify-end mb-2">
