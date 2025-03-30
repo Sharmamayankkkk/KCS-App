@@ -83,16 +83,16 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   }
 
   // Stop RTMP broadcast
-  const stopBroadcast = async (platformName: string) => {
-    try {
-      setBroadcastError("")
-      await call?.stopLive({ continue_hls: false })
-      setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
-    } catch (error) {
-      console.error("Error stopping broadcast:", error)
-      setBroadcastError(`Failed to stop ${platformName} broadcast`)
-    }
-  }
+   const stopBroadcast = async (platformName: string) => {
+     try {
+       setBroadcastError("")
+       await call?.stopLive() // Corrected: Called without arguments
+       setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
+     } catch (error) {
+       console.error("Error stopping broadcast:", error)
+       setBroadcastError(`Failed to stop ${platformName} broadcast`)
+     }
+   }
 
   // Check broadcast status
   useEffect(() => {
