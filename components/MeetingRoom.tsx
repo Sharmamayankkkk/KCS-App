@@ -69,11 +69,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     try {
       setBroadcastError("")
-      await call?.startRTMPBroadcast({
-        name: selectedPlatform,
-        stream_url: streamUrl,
-        stream_key: streamKey,
-      })
+      await call?.goLive({ start_hls: true })
       setActiveBroadcasts((prev) => [...prev, selectedPlatform])
       setShowBroadcastForm(false)
       // Reset form
@@ -90,7 +86,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const stopBroadcast = async (platformName: string) => {
     try {
       setBroadcastError("")
-      await call?.stopRTMPBroadcast(platformName)
+      await call?.stopLive({ continue_hls: false })
       setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
     } catch (error) {
       console.error("Error stopping broadcast:", error)
@@ -104,8 +100,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     const checkBroadcastStatus = async () => {
       const resp = await call.get()
-      const rtmpBroadcasts = resp.call.egress.rtmps
-      setActiveBroadcasts(rtmpBroadcasts.map((broadcast) => broadcast.name))
+      const isBroadcasting = resp.call.egress.broadcasting
+      if (isBroadcasting) {
+        setActiveBroadcasts(prev => [...prev])
+      } else {
+        setActiveBroadcasts([])
+      }
     }
 
     checkBroadcastStatus()
@@ -395,7 +395,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-                            <CallStatsButton />
+              <CallStatsButton />
 
               <button
                 className="p-2 rounded-lg hover:bg-gray-700/50 transition"
