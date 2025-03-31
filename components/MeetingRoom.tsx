@@ -23,10 +23,9 @@ import MuteButton from "./MuteButton"
 import { cn } from "@/lib/utils"
 import EndCallButton from "./EndCallButton"
 import { supabase } from "@/lib/supabaseClient"
-import StreamTheme from "./StreamTheme"
 
 const defaultBroadcastPlatforms = [
-  { name: "youtube_channel", label: "YouTube" },
+  { name: "youtube", label: "YouTube" },
   { name: "facebook", label: "Facebook" },
 ]
 
@@ -53,115 +52,135 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showBroadcastForm, setShowBroadcastForm] = useState(false)
   const [selectedPlatform, setSelectedPlatform] = useState("")
 
-  const youtubeStreamUrl = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_URL || "rtmps://x.rtmps.youtube.com/live2"
-  const youtubeStreamKey = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_KEY || ""
+  // Add these lines around line 91-92
+  const youtubeStreamUrl = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_URL || "";
+  const youtubeStreamKey = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_KEY || "";
 
-  const [streamUrl, setStreamUrl] = useState(youtubeStreamUrl)
-  const [streamKey, setStreamKey] = useState(youtubeStreamKey)
+  // Modify the state initialization of `streamUrl` and `streamKey` to use the environment variables
+  const [streamUrl, setStreamUrl] = useState(youtubeStreamUrl);
+  const [streamKey, setStreamKey] = useState(youtubeStreamKey);
 
+  // Start RTMP broadcast
   const startBroadcast = async () => {
     if (!streamUrl || !streamKey || !selectedPlatform) {
-      setBroadcastError("Please fill all the broadcast details")
-      return
+      setBroadcastError("Please fill in all the broadcast details.");
+      return;
     }
 
     try {
-      setBroadcastError("")
-      
-      // First enable broadcasting with settings_override
-      await call?.getOrCreate({
-        data: {
-          settings_override: {
-            broadcasting: {
-              enabled: true,
-              rtmp: {
-                enabled: true,
-                quality: "1080p",
-                layout: {
-                  name: "spotlight"
-                }
-              }
-            }
-          }
-        }
-      });
+      setBroadcastError("");
 
-      // Start RTMP broadcast
-      await call?.startRTMPBroadcasts({
+      if (!call) {
+        console.error("Call object is not available");
+        setBroadcastError("Call is not active. Please start a call first.");
+        return;
+      }
+
+      console.log("Starting Live Broadcast for:", selectedPlatform);
+
+      // Start the RTMP stream
+      await call.startRTMPBroadcasts({
         broadcasts: [
           {
             name: selectedPlatform,
             stream_url: streamUrl,
-            stream_key: streamKey
-          }
-        ]
+            stream_key: streamKey,
+          },
+        ],
       });
 
-      setActiveBroadcasts((prev) => [...prev, selectedPlatform])
-      setShowBroadcastForm(false)
-      setSelectedPlatform("")
-      setStreamUrl(youtubeStreamUrl)
-      setStreamKey("")
-    } catch (error) {
-      console.error("Error starting broadcast:", error)
-      setBroadcastError(`Failed to start ${selectedPlatform} broadcast`)
-    }
-  }
+      console.log("Broadcast started successfully!");
+      setActiveBroadcasts((prev) => [...prev, selectedPlatform]);
+      setShowBroadcastForm(false);
 
+      // Reset form fields
+      setSelectedPlatform("");
+      setStreamUrl("");
+      setStreamKey("");
+    } catch (error: any) {
+      console.error("Error starting broadcast:", error);
+      
+      if (error.message?.includes("Invalid stream key")) {
+        setBroadcastError("Invalid stream key. Please check your details.");
+      } else if (error.message?.includes("Unauthorized")) {
+        setBroadcastError("Authorization error. Please check your permissions.");
+      } else {
+        setBroadcastError(`Failed to start ${selectedPlatform} broadcast.`);
+      }
+    }
+  };
+
+
+  // Stop RTMP broadcast
   const stopBroadcast = async (platformName: string) => {
     try {
-      setBroadcastError("")
-      await call?.stopRTMPBroadcast(platformName)
-      setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
+      if (!call) {
+        setBroadcastError("Call object is not available.");
+        return;
+      }
+  
+      if (!activeBroadcasts.includes(platformName)) {
+        setBroadcastError(`No active broadcast found for ${platformName}.`);
+        return;
+      }
+  
+      setBroadcastError("");
+      
+      // Check if stopLive() is available in the SDK
+      if (typeof call.stopLive !== "function") {
+        setBroadcastError("Stop live function is not available in this SDK version.");
+        return;
+      }
+  
+      await call.stopLive();
+  
+      setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName));
+  
+      console.log(`${platformName} broadcast stopped successfully.`);
     } catch (error) {
-      console.error("Error stopping broadcast:", error)
-      setBroadcastError(`Failed to stop ${platformName} broadcast`)
+      console.error("Error stopping broadcast:", error);
+      setBroadcastError(`Failed to stop ${platformName} broadcast.`);
     }
-  }
-
+  };
+  
+ 
+  // Check broadcast status
   useEffect(() => {
     if (!call) return
 
     const checkBroadcastStatus = async () => {
-      try {
-        const resp = await call.get()
-        const rtmpBroadcasts = resp.call.egress.rtmps
-        if (rtmpBroadcasts && rtmpBroadcasts.length > 0) {
-          const activePlatforms = rtmpBroadcasts.map(broadcast => broadcast.name)
-          setActiveBroadcasts(activePlatforms)
-        } else {
-          setActiveBroadcasts([])
-        }
-      } catch (error) {
-        console.error("Error checking broadcast status:", error)
+      const resp = await call.get()
+      const isBroadcasting = resp.call.egress.broadcasting
+      if (isBroadcasting) {
+        setActiveBroadcasts(prev => [...prev])
+      } else {
+        setActiveBroadcasts([])
       }
     }
 
     checkBroadcastStatus()
-    
-    const interval = setInterval(checkBroadcastStatus, 10000)
-    return () => clearInterval(interval)
   }, [call])
 
+  // Video Client Initialization
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null)
 
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return
 
-    const client = new StreamVideoClient({
+    const _client = new StreamVideoClient({
       apiKey,
       user: userData,
       token: userToken,
     })
-
-    setVideoClient(client)
+    setVideoClient(_client)
 
     return () => {
-      client.disconnectUser()
+      _client.disconnectUser()
       setVideoClient(null)
     }
   }, [apiKey, userToken, userData])
 
+  // Chat Messages Management
   const [messages, setMessages] = useState<{ id: string; text: string; sender: string }[]>([])
 
   useEffect(() => {
@@ -181,7 +200,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             id: msg.id,
             text: msg.text,
             sender: msg.sender,
-          }))
+          })),
         )
       }
     }
@@ -228,6 +247,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     else setMessageText("")
   }
 
+  // Layout Component
   const CallLayout = () => {
     switch (layout) {
       case "grid":
@@ -239,13 +259,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   }
 
+  // Add Broadcast Control Button in admin controls
   const BroadcastControl = () => (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger 
-          className="p-2 rounded-lg transition hover:bg-gray-700/50" 
-          disabled={!!broadcastError}
-        >
+        <DropdownMenuTrigger className="p-2 rounded-lg transition hover:bg-gray-700/50" disabled={!!broadcastError}>
           <Cast className="text-white size-5" />
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -269,27 +287,28 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         </DropdownMenuContent>
       </DropdownMenu>
 
+      {/* Broadcast Form Modal */}
       {showBroadcastForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-          <div className="w-full p-6 rounded-lg bg-[#19232d] max-w-md">
-            <h3 className="mb-4 text-xl font-bold">
-              Start {selectedPlatform === 'youtube_channel' ? 'YouTube' : 'Facebook'} Broadcast
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 shadow-xl border border-spacing-1">
+          <div className="w-full p-6 rounded-lg bg-[#243341] max-w-md absolute bottom-4">
+            <h3 className="mb-4 text-xl font-bold text-white">
+              Start {selectedPlatform.charAt(0).toUpperCase() + selectedPlatform.slice(1)} Broadcast
             </h3>
 
             <div className="space-y-4">
               <div>
-                <label className="block mb-1 text-sm font-medium">Stream URL</label>
+                <label className="block mb-1 text-sm font-medium text-red-500">Stream URL</label>
                 <input
                   type="text"
                   value={streamUrl}
                   onChange={(e) => setStreamUrl(e.target.value)}
-                  placeholder="rtmps://..."
+                  placeholder="rtmp://..."
                   className="w-full p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
 
               <div>
-                <label className="block mb-1 text-sm font-medium">Stream Key</label>
+                <label className="block mb-1 text-sm font-medium text-red-500">Stream Key</label>
                 <input
                   type="text"
                   value={streamKey}
@@ -301,18 +320,14 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
               <div className="flex justify-end mt-6 space-x-2">
                 <button
-                  onClick={() => {
-                    setShowBroadcastForm(false)
-                    setStreamUrl(youtubeStreamUrl)
-                    setStreamKey(youtubeStreamKey)
-                  }}
-                  className="px-4 py-2 transition rounded-lg bg-gray-700 hover:bg-gray-600"
+                  onClick={() => setShowBroadcastForm(false)}
+                  className="px-4 py-2 transition rounded-lg bg-gray-700 hover:bg-gray-600 text-white"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={startBroadcast}
-                  className="px-4 py-2 transition rounded-lg bg-blue-600 hover:bg-blue-500"
+                  className="px-4 py-2 transition text-white rounded-lg bg-red-400 hover:bg-red-500"
                 >
                   Start Broadcast
                 </button>
@@ -333,117 +348,115 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   return videoClient && call ? (
     <StreamVideo client={videoClient}>
       <StreamCall call={call}>
-        <StreamTheme>
-          <section className="relative w-full h-screen pt-4 overflow-hidden">
-            <div className="relative flex items-center justify-center size-full">
+        <section className="relative w-full h-screen pt-4 overflow-hidden">
+          <div className="relative flex items-center justify-center size-full">
+            <div
+              className={cn("flex transition-all duration-300 ease-in-out size-full", {
+                "max-w-[1000px]": !showChat && !showParticipants,
+                "max-w-[800px]": showChat || showParticipants,
+              })}
+            >
+              <CallLayout />
+            </div>
+
+            {showParticipants && !showChat && (
               <div
-                className={cn("flex transition-all duration-300 ease-in-out size-full", {
-                  "max-w-[1000px]": !showChat && !showParticipants,
-                  "max-w-[800px]": showChat || showParticipants,
-                })}
+                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden"
               >
-                <CallLayout />
+                <CallParticipantsList onClose={() => setShowParticipants(false)} />
               </div>
+            )}
 
-              {showParticipants && !showChat && (
-                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden">
-                  <CallParticipantsList onClose={() => setShowParticipants(false)} />
-                </div>
-              )}
-
-              {showChat && !showParticipants && (
-                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
-                  <div className="flex flex-col h-full">
-                    <div className="flex justify-end mb-2">
-                      <button 
-                        className="p-2 transition rounded hover:bg-gray-700/50" 
-                        onClick={() => setShowChat(false)}
-                      >
-                        <X className="text-white size-5" />
-                      </button>
-                    </div>
-
-                    <div className="flex-1 space-y-2 overflow-auto custom-scrollbar-hidden">
-                      {messages.map((msg) => (
-                        <div key={msg.id} className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
-                          <span className="font-semibold text-yellow-1">{msg.sender}:</span>
-                          <span className="ml-2 text-white">{msg.text}</span>
-                        </div>
-                      ))}
-                      <div ref={chatEndRef} />
-                    </div>
-
-                    <input
-                      type="text"
-                      placeholder="Type a message..."
-                      className="w-full p-2 mt-2 text-white rounded-lg bg-gray-800/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      value={messageText}
-                      onChange={(e) => setMessageText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          sendMessage(messageText)
-                        }
-                      }}
-                    />
+            {showChat && !showParticipants && (
+              <div
+                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden"
+              >
+                <div className="flex flex-col h-full">
+                  <div className="flex justify-end mb-2">
+                    <button className="p-2 transition rounded hover:bg-gray-700/50" onClick={() => setShowChat(false)}>
+                      <X className="text-white size-5" />
+                    </button>
                   </div>
+
+                  <div className="flex-1 space-y-2 overflow-auto custom-scrollbar-hidden">
+                    {messages.map((msg) => (
+                      <div key={msg.id} className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
+                        <span className="font-semibold text-yellow-1">{msg.sender}:</span>
+                        <span className="ml-2 text-white">{msg.text}</span>
+                      </div>
+                    ))}
+                    <div ref={chatEndRef} />
+                  </div>
+
+                  <input
+                    type="text"
+                    placeholder="Type a message..."
+                    className="w-full p-2 mt-2 text-white rounded-lg bg-gray-800/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={messageText}
+                    onChange={(e) => setMessageText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        sendMessage(messageText)
+                      }
+                    }}
+                  />
                 </div>
-              )}
-            </div>
-
-            <div className="fixed bottom-0 w-full px-4 pb-4">
-              <div className="flex flex-wrap items-center justify-center gap-2 p-2 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/80 backdrop-blur-md max-w-max">
-                <CallControls onLeave={() => router.push("/")} />
-
-                {isHost && (
-  <>
-    <MuteButton />
-    <EndCallButton />
-    <BroadcastControl />
-    {broadcastError && <span className="text-sm text-red-500">{broadcastError}</span>}
-  </>
-)}
-
-<DropdownMenu>
-  <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
-    <LayoutList className="text-white size-5" />
-  </DropdownMenuTrigger>
-  <DropdownMenuContent>
-    {["Grid", "Speaker-Left", "Speaker-Right"].map((item) => (
-      <DropdownMenuItem 
-        key={item} 
-        onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}
-      >
-        {item}
-      </DropdownMenuItem>
-    ))}
-  </DropdownMenuContent>
-</DropdownMenu>
-
-<CallStatsButton />
-
-<button
-  className="p-2 transition rounded-lg hover:bg-gray-700/50"
-  onClick={() => {
-    setShowParticipants(!showParticipants)
-    setShowChat(false)
-  }}
->
-  <Users className="text-white size-5 hover:bg-gray-700/50" />
-</button>
-
-<button
-  className="p-2 transition rounded-lg hover:bg-gray-700/50"
-  onClick={() => {
-    setShowChat(!showChat)
-    setShowParticipants(false)
-  }}
->
-  <MessageSquare className="text-white size-5" />
-</button>
               </div>
+            )}
+          </div>
+
+          <div className="fixed bottom-0 w-full px-4 pb-4">
+            <div
+              className="flex flex-wrap items-center justify-center gap-2 p-2 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/80 backdrop-blur-md max-w-max"
+            >
+              <CallControls onLeave={() => router.push("/")} />
+
+              {isHost && (
+                <>
+                  <MuteButton />
+                  <EndCallButton />
+                  <BroadcastControl />
+                  {broadcastError && <span className="text-sm text-red-500">{broadcastError}</span>}
+                </>
+              )}
+
+              <DropdownMenu>
+                <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
+                  <LayoutList className="text-white size-5" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  {["Grid", "Speaker-Left", "Speaker-Right"].map((item) => (
+                    <DropdownMenuItem key={item} onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}>
+                      {item}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <CallStatsButton />
+
+              <button
+                className="p-2 transition rounded-lg hover:bg-gray-700/50"
+                onClick={() => {
+                  setShowParticipants(!showParticipants)
+                  setShowChat(false)
+                }}
+              >
+                <Users className="text-white size-5 hover:bg-gray-700/50" />
+              </button>
+
+              <button
+                className="p-2 transition rounded-lg hover:bg-gray-700/50"
+                onClick={() => {
+                  setShowChat(!showChat)
+                  setShowParticipants(false)
+                }}
+              >
+                <MessageSquare className="text-white size-5" />
+              </button>
             </div>
-          </section>
-        </StreamTheme>
+          </div>
+        </section>
       </StreamCall>
     </StreamVideo>
   ) : (
