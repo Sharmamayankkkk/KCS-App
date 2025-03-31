@@ -1,4 +1,4 @@
-"use call"
+"use client"
 
 import { useState, useEffect, useRef } from "react"
 import {
@@ -54,11 +54,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showBroadcastForm, setShowBroadcastForm] = useState(false)
   const [selectedPlatform, setSelectedPlatform] = useState("")
 
-  // Add these lines around line 91-92
   const youtubeStreamUrl = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_URL || "";
   const youtubeStreamKey = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_KEY || "";
 
-  // Modify the state initialization of `streamUrl` and `streamKey` to use the environment variables
   const [streamUrl, setStreamUrl] = useState(youtubeStreamUrl);
   const [streamKey, setStreamKey] = useState(youtubeStreamKey);
 
@@ -86,7 +84,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       });
 
       // Start HLS broadcasting
-      await call?.startHLSBroadcasting();
+      await call?.startHLS();
       
       setActiveBroadcasts((prev) => [...prev, selectedPlatform])
       setShowBroadcastForm(false)
@@ -104,7 +102,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const stopBroadcast = async (platformName: string) => {
     try {
       setBroadcastError("")
-      await call?.stopHLSBroadcasting()
+      await call?.stopHLS()
       setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
     } catch (error) {
       console.error("Error stopping broadcast:", error)
