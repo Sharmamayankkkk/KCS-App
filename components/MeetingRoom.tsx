@@ -68,7 +68,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     try {
       setBroadcastError("")
       
-      // First enable broadcasting with the correct settings structure
+      // First enable broadcasting with settings_override
       await call?.getOrCreate({
         data: {
           settings_override: {
@@ -119,7 +119,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   }
 
-  // Check broadcast status
   useEffect(() => {
     if (!call) return
 
@@ -140,12 +139,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     checkBroadcastStatus()
     
-    // Optional: Set up polling to check status periodically
-    const interval = setInterval(checkBroadcastStatus, 10000) // every 10 seconds
+    const interval = setInterval(checkBroadcastStatus, 10000)
     return () => clearInterval(interval)
   }, [call])
 
-  // Video Client Initialization
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null)
 
   useEffect(() => {
@@ -165,7 +162,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   }, [apiKey, userToken, userData])
 
-  // Chat Messages Management
   const [messages, setMessages] = useState<{ id: string; text: string; sender: string }[]>([])
 
   useEffect(() => {
@@ -350,13 +346,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
 
               {showParticipants && !showChat && (
-                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[cal[...]
+                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden">
                   <CallParticipantsList onClose={() => setShowParticipants(false)} />
                 </div>
               )}
 
               {showChat && !showParticipants && (
-                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[cal[...]
+                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
                   <div className="flex flex-col h-full">
                     <div className="flex justify-end mb-2">
                       <button 
