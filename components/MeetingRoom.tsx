@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -51,28 +52,30 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [broadcastError, setBroadcastError] = useState<string>("")
   const [showBroadcastForm, setShowBroadcastForm] = useState(false)
   const [selectedPlatform, setSelectedPlatform] = useState("")
-  const [streamUrl, setStreamUrl] = useState("")
-  const [streamKey, setStreamKey] = useState("")
+  const [streamUrl, setStreamUrl] = useState(process.env.NEXT_PUBLIC_STREAM_URL || "")
+  const [streamKey, setStreamKey] = useState(process.env.NEXT_PUBLIC_STREAM_KEY || "")
 
   // Start RTMP broadcast
-  const startBroadcast = async () => {
-    if (!streamUrl || !streamKey || !selectedPlatform) {
-      setBroadcastError("Please fill all the broadcast details")
-      return
-    }
-
+  const startBroadcast = async (platform: { name: string, streamUrl: string, streamKey: string }) => {
     try {
-      setBroadcastError("")
-      await call?.goLive({ start_hls: true })
-      setActiveBroadcasts((prev) => [...prev, selectedPlatform])
-      setShowBroadcastForm(false)
-      // Reset form
-      setSelectedPlatform("")
-      setStreamUrl("")
-      setStreamKey("")
+      setBroadcastError('')
+      
+      console.log("Starting broadcast with:", platform);
+
+      await call?.startRTMPBroadcasts({
+        broadcasts: [
+          {
+            name: platform.name,
+            stream_url: platform.streamUrl,
+            stream_key: platform.streamKey,
+          },
+        ],
+      });
+
+      setActiveBroadcasts(prev => [...prev, platform.name]);
     } catch (error) {
-      console.error("Error starting broadcast:", error)
-      setBroadcastError(`Failed to start ${selectedPlatform} broadcast`)
+      console.error('Error starting broadcast:', error);
+      setBroadcastError(`Failed to start ${platform.name} broadcast`);
     }
   }
 
@@ -270,7 +273,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   Cancel
                 </button>
                 <button
-                  onClick={startBroadcast}
+                  onClick={() => startBroadcast({ name: selectedPlatform, streamUrl, streamKey })}
                   className="px-4 py-2 transition rounded-lg bg-blue-600 hover:bg-blue-500"
                 >
                   Start Broadcast
