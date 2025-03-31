@@ -68,10 +68,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     try {
       setBroadcastError("")
       
-      // Enable broadcasting with RTMP settings
+      // First enable broadcasting with the correct settings structure
       await call?.getOrCreate({
         data: {
-          settings: {
+          settings_override: {
             broadcasting: {
               enabled: true,
               rtmp: {
@@ -84,7 +84,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             }
           }
         }
-      })
+      });
 
       // Start RTMP broadcast
       await call?.startRTMPBroadcasts({
@@ -95,7 +95,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             stream_key: streamKey
           }
         ]
-      })
+      });
 
       setActiveBroadcasts((prev) => [...prev, selectedPlatform])
       setShowBroadcastForm(false)
@@ -350,13 +350,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
 
               {showParticipants && !showChat && (
-                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden">
+                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[cal[...]
                   <CallParticipantsList onClose={() => setShowParticipants(false)} />
                 </div>
               )}
 
               {showChat && !showParticipants && (
-                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
+                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[cal[...]
                   <div className="flex flex-col h-full">
                     <div className="flex justify-end mb-2">
                       <button 
