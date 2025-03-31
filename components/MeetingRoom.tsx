@@ -53,11 +53,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showBroadcastForm, setShowBroadcastForm] = useState(false)
   const [selectedPlatform, setSelectedPlatform] = useState("")
 
-  const youtubeStreamUrl = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_URL || "";
-  const youtubeStreamKey = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_KEY || "";
+  const youtubeStreamUrl = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_URL || ""
+  const youtubeStreamKey = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_KEY || ""
 
-  const [streamUrl, setStreamUrl] = useState(youtubeStreamUrl);
-  const [streamKey, setStreamKey] = useState(youtubeStreamKey);
+  const [streamUrl, setStreamUrl] = useState(youtubeStreamUrl)
+  const [streamKey, setStreamKey] = useState(youtubeStreamKey)
 
   // Start RTMP broadcast
   const startBroadcast = async () => {
@@ -68,26 +68,37 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     try {
       setBroadcastError("")
-      // First get or create the call
+      // First enable broadcasting in call settings
       await call?.getOrCreate({
         data: {
-          settings_override: {
+          settings: {
             broadcasting: {
               enabled: true,
-              hls: {
-                quality_tracks: ["720p", "480p", "360p"],
+              rtmp: {
+                enabled: true,
+                quality: "1080p",
+                layout: {
+                  name: "spotlight",
+                },
               },
             },
           },
         },
-      });
+      })
 
-      // Start HLS broadcasting
-      await call?.startHLS();
-      
+      // Start RTMP broadcast
+      await call?.startRTMPBroadcasts({
+        broadcasts: [
+          {
+            name: selectedPlatform,
+            stream_url: streamUrl,
+            stream_key: streamKey,
+          },
+        ],
+      })
+
       setActiveBroadcasts((prev) => [...prev, selectedPlatform])
       setShowBroadcastForm(false)
-      // Reset form
       setSelectedPlatform("")
       setStreamUrl("")
       setStreamKey("")
@@ -101,7 +112,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const stopBroadcast = async (platformName: string) => {
     try {
       setBroadcastError("")
-      await call?.stopHLS()
+      await call?.stopRTMPBroadcast(platformName)
       setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
     } catch (error) {
       console.error("Error stopping broadcast:", error)
@@ -115,9 +126,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     const checkBroadcastStatus = async () => {
       const resp = await call.get()
-      const isBroadcasting = resp.call.egress.broadcasting
-      if (isBroadcasting) {
-        setActiveBroadcasts(prev => [...prev])
+      const rtmpBroadcasts = resp.call.egress.rtmps
+      const isRtmpBroadcasting = rtmpBroadcasts.length > 0
+
+      if (isRtmpBroadcasting) {
+        const activePlatforms = rtmpBroadcasts.map((broadcast) => broadcast.name)
+        setActiveBroadcasts(activePlatforms)
       } else {
         setActiveBroadcasts([])
       }
@@ -268,7 +282,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   type="text"
                   value={streamUrl}
                   onChange={(e) => setStreamUrl(e.target.value)}
-                  placeholder="rtmp://..."
+                  placeholder="rtmps://..."
                   className="w-full p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
@@ -327,17 +341,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
 
               {showParticipants && !showChat && (
-                <div
-                  className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden"
-                >
+                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden">
                   <CallParticipantsList onClose={() => setShowParticipants(false)} />
                 </div>
               )}
 
               {showChat && !showParticipants && (
-                <div
-                  className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden"
-                >
+                <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
                   <div className="flex flex-col h-full">
                     <div className="flex justify-end mb-2">
                       <button className="p-2 transition rounded hover:bg-gray-700/50" onClick={() => setShowChat(false)}>
@@ -373,9 +383,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             </div>
 
             <div className="fixed bottom-0 w-full px-4 pb-4">
-              <div
-                className="flex flex-wrap items-center justify-center gap-2 p-2 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/80 backdrop-blur-md max-w-max"
-              >
+              <div className="flex flex-wrap items-center justify-center gap-2 p-2 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/80 backdrop-blur-md max-w-max">
                 <CallControls onLeave={() => router.push("/")} />
 
                 {isHost && (
