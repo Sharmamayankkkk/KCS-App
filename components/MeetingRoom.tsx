@@ -1,4 +1,3 @@
-
 "use client"
 
 import { useState, useEffect, useRef } from "react"
@@ -52,8 +51,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [broadcastError, setBroadcastError] = useState<string>("")
   const [showBroadcastForm, setShowBroadcastForm] = useState(false)
   const [selectedPlatform, setSelectedPlatform] = useState("")
-  const [streamUrl, setStreamUrl] = useState(process.env.NEXT_PUBLIC_STREAM_URL || "")
-  const [streamKey, setStreamKey] = useState(process.env.NEXT_PUBLIC_STREAM_KEY || "")
+  const [streamUrl, setStreamUrl] = useState("")
+  const [streamKey, setStreamKey] = useState("")
 
   // Start RTMP broadcast
   const startBroadcast = async (platform: { name: string, streamUrl: string, streamKey: string }) => {
@@ -62,14 +61,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       
       console.log("Starting broadcast with:", platform);
 
-      await call?.startRTMPBroadcasts({
-        broadcasts: [
-          {
-            name: platform.name,
-            stream_url: platform.streamUrl,
-            stream_key: platform.streamKey,
-          },
-        ],
+      await call?.goLive({
+        start_hls: true,
+        rtmp: {
+          stream_url: platform.streamUrl,
+          stream_key: platform.streamKey,
+        },
       });
 
       setActiveBroadcasts(prev => [...prev, platform.name]);
