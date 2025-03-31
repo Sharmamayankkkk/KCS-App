@@ -23,6 +23,7 @@ import MuteButton from "./MuteButton"
 import { cn } from "@/lib/utils"
 import EndCallButton from "./EndCallButton"
 import { supabase } from "@/lib/supabaseClient"
+import StreamTheme from "./StreamTheme" // Add this import
 
 const defaultBroadcastPlatforms = [
   { name: "youtube", label: "YouTube" },
