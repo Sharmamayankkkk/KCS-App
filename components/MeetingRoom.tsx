@@ -51,28 +51,34 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [broadcastError, setBroadcastError] = useState<string>("")
   const [showBroadcastForm, setShowBroadcastForm] = useState(false)
   const [selectedPlatform, setSelectedPlatform] = useState("")
-  const [streamUrl, setStreamUrl] = useState("")
-  const [streamKey, setStreamKey] = useState("")
+
+  // Add these lines around line 91-92
+  const youtubeStreamUrl = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_URL || "";
+  const youtubeStreamKey = process.env.NEXT_PUBLIC_YOUTUBE_STREAM_KEY || "";
+
+  // Modify the state initialization of `streamUrl` and `streamKey` to use the environment variables
+  const [streamUrl, setStreamUrl] = useState(youtubeStreamUrl);
+  const [streamKey, setStreamKey] = useState(youtubeStreamKey);
 
   // Start RTMP broadcast
-  const startBroadcast = async (platform: { name: string, streamUrl: string, streamKey: string }) => {
+  const startBroadcast = async () => {
+    if (!streamUrl || !streamKey || !selectedPlatform) {
+      setBroadcastError("Please fill all the broadcast details")
+      return
+    }
+
     try {
-      setBroadcastError('')
-      
-      console.log("Starting broadcast with:", platform);
-
-      await call?.goLive({
-        start_hls: true,
-        rtmp: {
-          stream_url: platform.streamUrl,
-          stream_key: platform.streamKey,
-        },
-      });
-
-      setActiveBroadcasts(prev => [...prev, platform.name]);
+      setBroadcastError("")
+      await call?.goLive({ start_hls: true })
+      setActiveBroadcasts((prev) => [...prev, selectedPlatform])
+      setShowBroadcastForm(false)
+      // Reset form
+      setSelectedPlatform("")
+      setStreamUrl("")
+      setStreamKey("")
     } catch (error) {
-      console.error('Error starting broadcast:', error);
-      setBroadcastError(`Failed to start ${platform.name} broadcast`);
+      console.error("Error starting broadcast:", error)
+      setBroadcastError(`Failed to start ${selectedPlatform} broadcast`)
     }
   }
 
@@ -270,7 +276,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   Cancel
                 </button>
                 <button
-                  onClick={() => startBroadcast({ name: selectedPlatform, streamUrl, streamKey })}
+                  onClick={startBroadcast}
                   className="px-4 py-2 transition rounded-lg bg-blue-600 hover:bg-blue-500"
                 >
                   Start Broadcast
@@ -408,4 +414,4 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   )
 }
 
-export default MeetingRoom;
+export default MeetingRoom
