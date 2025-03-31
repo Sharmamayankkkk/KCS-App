@@ -1,4 +1,4 @@
-"use client"
+"use call"
 
 import { useState, useEffect, useRef } from "react"
 import {
@@ -44,8 +44,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showChat, setShowChat] = useState(false)
   const [messageText, setMessageText] = useState("")
   const { useCallCallingState } = useCallStateHooks()
+  const { useCallEgress } = useCallStateHooks()
   const call = useCall()
   const callingState = useCallCallingState()
+  const egress = useCallEgress()
   const chatEndRef = useRef<HTMLDivElement | null>(null)
   const [activeBroadcasts, setActiveBroadcasts] = useState<string[]>([])
   const [broadcastError, setBroadcastError] = useState<string>("")
@@ -69,18 +71,23 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     try {
       setBroadcastError("")
-      // First, get or create the call with backstage enabled
+      // First get or create the call
       await call?.getOrCreate({
         data: {
           settings_override: {
-            backstage: {
-              enabled: true
-            }
-          }
-        }
-      })
-      // Then start HLS
-      await call?.startHLS()
+            broadcasting: {
+              enabled: true,
+              hls: {
+                quality_tracks: ["720p", "480p", "360p"],
+              },
+            },
+          },
+        },
+      });
+
+      // Start HLS broadcasting
+      await call?.startHLSBroadcasting();
+      
       setActiveBroadcasts((prev) => [...prev, selectedPlatform])
       setShowBroadcastForm(false)
       // Reset form
@@ -97,7 +104,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const stopBroadcast = async (platformName: string) => {
     try {
       setBroadcastError("")
-      await call?.stopHLS()
+      await call?.stopHLSBroadcasting()
       setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
     } catch (error) {
       console.error("Error stopping broadcast:", error)
@@ -128,15 +135,16 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return
 
-    const _client = new StreamVideoClient({
+    const client = new StreamVideoClient({
       apiKey,
       user: userData,
       token: userToken,
     })
-    setVideoClient(_client)
+
+    setVideoClient(client)
 
     return () => {
-      _client.disconnectUser()
+      client.disconnectUser()
       setVideoClient(null)
     }
   }, [apiKey, userToken, userData])
@@ -309,115 +317,117 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   return videoClient && call ? (
     <StreamVideo client={videoClient}>
       <StreamCall call={call}>
-        <section className="relative w-full h-screen pt-4 overflow-hidden">
-          <div className="relative flex items-center justify-center size-full">
-            <div
-              className={cn("flex transition-all duration-300 ease-in-out size-full", {
-                "max-w-[1000px]": !showChat && !showParticipants,
-                "max-w-[800px]": showChat || showParticipants,
-              })}
-            >
-              <CallLayout />
-            </div>
-
-            {showParticipants && !showChat && (
+        <StreamTheme>
+          <section className="relative w-full h-screen pt-4 overflow-hidden">
+            <div className="relative flex items-center justify-center size-full">
               <div
-                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden"
+                className={cn("flex transition-all duration-300 ease-in-out size-full", {
+                  "max-w-[1000px]": !showChat && !showParticipants,
+                  "max-w-[800px]": showChat || showParticipants,
+                })}
               >
-                <CallParticipantsList onClose={() => setShowParticipants(false)} />
+                <CallLayout />
               </div>
-            )}
 
-            {showChat && !showParticipants && (
-              <div
-                className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden"
-              >
-                <div className="flex flex-col h-full">
-                  <div className="flex justify-end mb-2">
-                    <button className="p-2 transition rounded hover:bg-gray-700/50" onClick={() => setShowChat(false)}>
-                      <X className="text-white size-5" />
-                    </button>
-                  </div>
-
-                  <div className="flex-1 space-y-2 overflow-auto custom-scrollbar-hidden">
-                    {messages.map((msg) => (
-                      <div key={msg.id} className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
-                        <span className="font-semibold text-yellow-1">{msg.sender}:</span>
-                        <span className="ml-2 text-white">{msg.text}</span>
-                      </div>
-                    ))}
-                    <div ref={chatEndRef} />
-                  </div>
-
-                  <input
-                    type="text"
-                    placeholder="Type a message..."
-                    className="w-full p-2 mt-2 text-white rounded-lg bg-gray-800/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    value={messageText}
-                    onChange={(e) => setMessageText(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        sendMessage(messageText)
-                      }
-                    }}
-                  />
+              {showParticipants && !showChat && (
+                <div
+                  className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden"
+                >
+                  <CallParticipantsList onClose={() => setShowParticipants(false)} />
                 </div>
-              </div>
-            )}
-          </div>
-
-          <div className="fixed bottom-0 w-full px-4 pb-4">
-            <div
-              className="flex flex-wrap items-center justify-center gap-2 p-2 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/80 backdrop-blur-md max-w-max"
-            >
-              <CallControls onLeave={() => router.push("/")} />
-
-              {isHost && (
-                <>
-                  <MuteButton />
-                  <EndCallButton />
-                  <BroadcastControl />
-                  {broadcastError && <span className="text-sm text-red-500">{broadcastError}</span>}
-                </>
               )}
 
-              <DropdownMenu>
-                <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
-                  <LayoutList className="text-white size-5" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {["Grid", "Speaker-Left", "Speaker-Right"].map((item) => (
-                    <DropdownMenuItem key={item} onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}>
-                      {item}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {showChat && !showParticipants && (
+                <div
+                  className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden"
+                >
+                  <div className="flex flex-col h-full">
+                    <div className="flex justify-end mb-2">
+                      <button className="p-2 transition rounded hover:bg-gray-700/50" onClick={() => setShowChat(false)}>
+                        <X className="text-white size-5" />
+                      </button>
+                    </div>
 
-              <CallStatsButton />
+                    <div className="flex-1 space-y-2 overflow-auto custom-scrollbar-hidden">
+                      {messages.map((msg) => (
+                        <div key={msg.id} className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
+                          <span className="font-semibold text-yellow-1">{msg.sender}:</span>
+                          <span className="ml-2 text-white">{msg.text}</span>
+                        </div>
+                      ))}
+                      <div ref={chatEndRef} />
+                    </div>
 
-              <button
-                className="p-2 transition rounded-lg hover:bg-gray-700/50"
-                onClick={() => {
-                  setShowParticipants(!showParticipants)
-                  setShowChat(false)
-                }}
-              >
-                <Users className="text-white size-5 hover:bg-gray-700/50" />
-              </button>
-
-              <button
-                className="p-2 transition rounded-lg hover:bg-gray-700/50"
-                onClick={() => {
-                  setShowChat(!showChat)
-                  setShowParticipants(false)
-                }}
-              >
-                <MessageSquare className="text-white size-5" />
-              </button>
+                    <input
+                      type="text"
+                      placeholder="Type a message..."
+                      className="w-full p-2 mt-2 text-white rounded-lg bg-gray-800/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          sendMessage(messageText)
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        </section>
+
+            <div className="fixed bottom-0 w-full px-4 pb-4">
+              <div
+                className="flex flex-wrap items-center justify-center gap-2 p-2 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/80 backdrop-blur-md max-w-max"
+              >
+                <CallControls onLeave={() => router.push("/")} />
+
+                {isHost && (
+                  <>
+                    <MuteButton />
+                    <EndCallButton />
+                    <BroadcastControl />
+                    {broadcastError && <span className="text-sm text-red-500">{broadcastError}</span>}
+                  </>
+                )}
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
+                    <LayoutList className="text-white size-5" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    {["Grid", "Speaker-Left", "Speaker-Right"].map((item) => (
+                      <DropdownMenuItem key={item} onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}>
+                        {item}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                <CallStatsButton />
+
+                <button
+                  className="p-2 transition rounded-lg hover:bg-gray-700/50"
+                  onClick={() => {
+                    setShowParticipants(!showParticipants)
+                    setShowChat(false)
+                  }}
+                >
+                  <Users className="text-white size-5 hover:bg-gray-700/50" />
+                </button>
+
+                <button
+                  className="p-2 transition rounded-lg hover:bg-gray-700/50"
+                  onClick={() => {
+                    setShowChat(!showChat)
+                    setShowParticipants(false)
+                  }}
+                >
+                  <MessageSquare className="text-white size-5" />
+                </button>
+              </div>
+            </div>
+          </section>
+        </StreamTheme>
       </StreamCall>
     </StreamVideo>
   ) : (
@@ -425,4 +435,4 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   )
 }
 
-export default MeetingRoom
+export default MeetingRoom;
