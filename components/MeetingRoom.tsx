@@ -69,7 +69,18 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     try {
       setBroadcastError("")
-      await call?.goLive({ start_hls: true })
+      // First, get or create the call with backstage enabled
+      await call?.getOrCreate({
+        data: {
+          settings_override: {
+            backstage: {
+              enabled: true
+            }
+          }
+        }
+      })
+      // Then start HLS
+      await call?.startHLS()
       setActiveBroadcasts((prev) => [...prev, selectedPlatform])
       setShowBroadcastForm(false)
       // Reset form
@@ -86,7 +97,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const stopBroadcast = async (platformName: string) => {
     try {
       setBroadcastError("")
-      await call?.stopLive()
+      await call?.stopHLS()
       setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
     } catch (error) {
       console.error("Error stopping broadcast:", error)
