@@ -63,37 +63,87 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   // Start RTMP broadcast
   const startBroadcast = async () => {
     if (!streamUrl || !streamKey || !selectedPlatform) {
-      setBroadcastError("Please fill all the broadcast details")
-      return
+      setBroadcastError("Please fill in all the broadcast details.");
+      return;
     }
 
     try {
-      setBroadcastError("")
-      await call?.goLive({ start_hls: true })
-      setActiveBroadcasts((prev) => [...prev, selectedPlatform])
-      setShowBroadcastForm(false)
-      // Reset form
-      setSelectedPlatform("")
-      setStreamUrl("")
-      setStreamKey("")
-    } catch (error) {
-      console.error("Error starting broadcast:", error)
-      setBroadcastError(`Failed to start ${selectedPlatform} broadcast`)
+      setBroadcastError("");
+
+      if (!call) {
+        console.error("Call object is not available");
+        setBroadcastError("Call is not active. Please start a call first.");
+        return;
+      }
+
+      console.log("Starting Live Broadcast for:", selectedPlatform);
+
+      // Start the RTMP stream
+      await call.startRTMPBroadcasts({
+        broadcasts: [
+          {
+            name: selectedPlatform,
+            stream_url: streamUrl,
+            stream_key: streamKey,
+          },
+        ],
+      });
+
+      console.log("Broadcast started successfully!");
+      setActiveBroadcasts((prev) => [...prev, selectedPlatform]);
+      setShowBroadcastForm(false);
+
+      // Reset form fields
+      setSelectedPlatform("");
+      setStreamUrl("");
+      setStreamKey("");
+    } catch (error: any) {
+      console.error("Error starting broadcast:", error);
+      
+      if (error.message?.includes("Invalid stream key")) {
+        setBroadcastError("Invalid stream key. Please check your details.");
+      } else if (error.message?.includes("Unauthorized")) {
+        setBroadcastError("Authorization error. Please check your permissions.");
+      } else {
+        setBroadcastError(`Failed to start ${selectedPlatform} broadcast.`);
+      }
     }
-  }
+  };
+
 
   // Stop RTMP broadcast
   const stopBroadcast = async (platformName: string) => {
     try {
-      setBroadcastError("")
-      await call?.stopLive()
-      setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
+      if (!call) {
+        setBroadcastError("Call object is not available.");
+        return;
+      }
+  
+      if (!activeBroadcasts.includes(platformName)) {
+        setBroadcastError(`No active broadcast found for ${platformName}.`);
+        return;
+      }
+  
+      setBroadcastError("");
+      
+      // Check if stopLive() is available in the SDK
+      if (typeof call.stopLive !== "function") {
+        setBroadcastError("Stop live function is not available in this SDK version.");
+        return;
+      }
+  
+      await call.stopLive();
+  
+      setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName));
+  
+      console.log(`${platformName} broadcast stopped successfully.`);
     } catch (error) {
-      console.error("Error stopping broadcast:", error)
-      setBroadcastError(`Failed to stop ${platformName} broadcast`)
+      console.error("Error stopping broadcast:", error);
+      setBroadcastError(`Failed to stop ${platformName} broadcast.`);
     }
-  }
-
+  };
+  
+ 
   // Check broadcast status
   useEffect(() => {
     if (!call) return
@@ -239,15 +289,15 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
       {/* Broadcast Form Modal */}
       {showBroadcastForm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-          <div className="w-full p-6 rounded-lg bg-[#19232d] max-w-md">
-            <h3 className="mb-4 text-xl font-bold">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 shadow-xl border border-spacing-1">
+          <div className="w-full p-6 rounded-lg bg-[#243341] max-w-md absolute bottom-4">
+            <h3 className="mb-4 text-xl font-bold text-white">
               Start {selectedPlatform.charAt(0).toUpperCase() + selectedPlatform.slice(1)} Broadcast
             </h3>
 
             <div className="space-y-4">
               <div>
-                <label className="block mb-1 text-sm font-medium">Stream URL</label>
+                <label className="block mb-1 text-sm font-medium text-red-500">Stream URL</label>
                 <input
                   type="text"
                   value={streamUrl}
@@ -258,7 +308,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
 
               <div>
-                <label className="block mb-1 text-sm font-medium">Stream Key</label>
+                <label className="block mb-1 text-sm font-medium text-red-500">Stream Key</label>
                 <input
                   type="text"
                   value={streamKey}
@@ -271,13 +321,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               <div className="flex justify-end mt-6 space-x-2">
                 <button
                   onClick={() => setShowBroadcastForm(false)}
-                  className="px-4 py-2 transition rounded-lg bg-gray-700 hover:bg-gray-600"
+                  className="px-4 py-2 transition rounded-lg bg-gray-700 hover:bg-gray-600 text-white"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={startBroadcast}
-                  className="px-4 py-2 transition rounded-lg bg-blue-600 hover:bg-blue-500"
+                  className="px-4 py-2 transition text-white rounded-lg bg-red-400 hover:bg-red-500"
                 >
                   Start Broadcast
                 </button>
