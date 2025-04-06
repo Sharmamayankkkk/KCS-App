@@ -44,6 +44,14 @@ const MeetingSetup = ({
     }
   }, [isMicCamToggled, call.camera, call.microphone]);
 
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9082594150892887";
+    script.crossOrigin = "anonymous";
+    document.body.appendChild(script);
+  }, []);
+
   if (callTimeNotArrived)
     return (
       <Alert
@@ -78,7 +86,6 @@ const MeetingSetup = ({
         className="rounded-md bg-green-500 hover:bg-green-700 px-4 py-2.5"
         onClick={() => {
           call.join();
-
           setIsSetupComplete(true);
         }}
       >
