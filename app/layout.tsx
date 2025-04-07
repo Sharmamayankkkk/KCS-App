@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "KCS Meet - Divine Connections Beyond Boundaries",
-  description: "Experience spiritual connection through technology with KCS Meet - a video calling platform inspired by Krishna's universal vision. Connect with fellow seekers, share wisdom, and transcend physical distances through secure, real-time meetings.",
+  description: "Experience spiritual connection through technology with KCS Meet - a video calling platform inspired by Krishna's universal vision. Connect with fellow seekers, share wisdom, and transcend boundaries.",
   keywords: [
     "spiritual video conferencing",
     "divine connections",
@@ -80,7 +80,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <meta name="google-adsense-account" content="ca-pub-9082594150892887">
+        <meta name="google-adsense-account" content="ca-pub-9082594150892887" />
       </head>
       <body className={`${inter.className} bg-white dark:bg-gray-900`}>
         <ClerkProvider
@@ -106,4 +106,4 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       </body>
     </html>
   );
-  }
+}
