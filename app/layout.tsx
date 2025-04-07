@@ -79,6 +79,9 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
+      <head>
+        <meta name="google-adsense-account" content="ca-pub-9082594150892887">
+      </head>
       <body className={`${inter.className} bg-white dark:bg-gray-900`}>
         <ClerkProvider
           appearance={{
