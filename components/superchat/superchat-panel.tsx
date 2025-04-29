@@ -135,7 +135,7 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
           <Button
             variant="outline"
             size="sm"
-            className={`text-xs ${showPinnedOnly ? "bg-yellow-800/50" : "bg-transparent"}`}
+            className={`text-xs text-white ${showPinnedOnly ? "bg-yellow-800/50" : "bg-transparent"}`}
             onClick={() => setShowPinnedOnly(!showPinnedOnly)}
           >
             {showPinnedOnly ? "Show All" : "Pinned Only"}
