@@ -652,4 +652,4 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   )
 }
 
-export default MeetingRoom
+export default MeetingRoom;
