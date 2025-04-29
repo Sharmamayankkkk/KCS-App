@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { BarChart2, PlusCircle, ArrowRight, Clock } from "lucide-react"
+import { BarChart2, PlusCircle, ArrowRight, Clock, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { CreatePollModal } from "./create-poll-modal"
 import { ActivePoll } from "./active-poll"
@@ -28,7 +28,6 @@ export const PollsManager = ({ callId, userId, isAdmin, onClose }: PollsManagerP
   const [activePollId, setActivePollId] = useState<string | null>(null)
   const [showPollDetails, setShowPollDetails] = useState(false)
 
-  // Fetch polls
   useEffect(() => {
     const fetchPolls = async () => {
       try {
@@ -42,7 +41,6 @@ export const PollsManager = ({ callId, userId, isAdmin, onClose }: PollsManagerP
 
         setPolls(data || [])
 
-        // Find the active poll
         const activePolls = data?.filter((poll) => poll.is_active) || []
         if (activePolls.length > 0) {
           setActivePollId(activePolls[0].id)
@@ -54,7 +52,6 @@ export const PollsManager = ({ callId, userId, isAdmin, onClose }: PollsManagerP
 
     fetchPolls()
 
-    // Subscribe to poll changes
     const subscription = supabase
       .channel(`polls-channel-${callId}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "polls", filter: `call_id=eq.${callId}` }, () => {
@@ -76,14 +73,12 @@ export const PollsManager = ({ callId, userId, isAdmin, onClose }: PollsManagerP
   const handleEndPoll = async (pollId: string) => {
     try {
       const { error } = await supabase.from("polls").update({ is_active: false }).eq("id", pollId)
-
       if (error) throw error
     } catch (err) {
       console.error("Error ending poll:", err)
     }
   }
 
-  // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
     return new Intl.DateTimeFormat("en-US", {
@@ -99,7 +94,17 @@ export const PollsManager = ({ callId, userId, isAdmin, onClose }: PollsManagerP
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#19232d]/95 backdrop-blur-md rounded-lg p-4">
+    <div className="relative flex flex-col h-full bg-[#19232d]/95 backdrop-blur-md rounded-lg p-4">
+
+      {/* Close Button */}
+      <button
+        onClick={onClose}
+        className="absolute top-[1.25rem] right-[9.50rem] bg-slate-900 text-white hover:text-red-500 transition"
+        aria-label="Close"
+      >
+        <X size={20} />
+      </button>
+
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <BarChart2 className="text-blue-400 mr-2" size={20} />
