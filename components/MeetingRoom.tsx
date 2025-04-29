@@ -288,28 +288,15 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   // Layout Component
   const CallLayout = () => {
-  const { useParticipants } = useCallStateHooks();
-  const participants = useParticipants();
-  const pinnedParticipant = participants.find(isPinned);
-  
-  if (pinnedParticipant) {
-    return (
-      <div className="fixed inset-0 z-50">
-        <SpeakerLayout />
-      </div>
-    );
+    switch (layout) {
+      case "grid":
+        return <PaginatedGridLayout groupSize={9} pageArrowsVisible={true} />
+      case "speaker-right":
+        return <SpeakerLayout participantsBarPosition="left" />
+      default:
+        return <SpeakerLayout participantsBarPosition="right" />
+    }
   }
-  
-  // Your existing layout logic for unpinned state
-  switch (layout) {
-    case "grid":
-      return <PaginatedGridLayout groupSize={9} pageArrowsVisible={true} />
-    case "speaker-right":
-      return <SpeakerLayout participantsBarPosition="left" />
-    default:
-      return <SpeakerLayout participantsBarPosition="right" />
-  }
-}
 
   // Improved admin check
   const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || "").split(",").map((email) => email.trim())
@@ -665,4 +652,4 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   )
 }
 
-export default MeetingRoom
+export default MeetingRoom;
