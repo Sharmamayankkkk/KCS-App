@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Loader2, X, AlertCircle } from "lucide-react"
 import { supabase } from "@/lib/supabaseClient"
@@ -22,12 +22,67 @@ const AMOUNT_TIERS = [
   { value: 1000, label: "₹1000", color: "bg-red-500", duration: "5m" },
 ]
 
+// Declare Cashfree types
+declare global {
+  interface Window {
+    Cashfree: any
+  }
+}
+
 export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSuccess }: SendSuperchatModalProps) => {
   const [message, setMessage] = useState("")
   const [selectedAmount, setSelectedAmount] = useState(AMOUNT_TIERS[0].value)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [paymentStatus, setPaymentStatus] = useState<"pending" | "processing" | "success" | "failed">("pending")
+  const [orderId, setOrderId] = useState("")
+
+  // Load Cashfree SDK
+  useEffect(() => {
+    const loadCashfreeSDK = () => {
+      if (typeof window !== "undefined" && !window.Cashfree) {
+        const script = document.createElement("script")
+        script.src = "https://sdk.cashfree.com/js/ui/2.0.0/cashfree.sandbox.js" // Change to production URL for prod
+        script.async = true
+        document.body.appendChild(script)
+      }
+    }
+    loadCashfreeSDK()
+  }, [])
+
+  // Set up payment status listener
+  useEffect(() => {
+    const paymentStatusListener = async () => {
+      if (orderId && paymentStatus === "processing") {
+        try {
+          const response = await fetch(`/api/check-payment-status?orderId=${orderId}`)
+          if (response.ok) {
+            const data = await response.json()
+            
+            if (data.status === "PAID" || data.status === "SUCCESS") {
+              await createSuperchatEntry(orderId)
+            } else if (data.status === "FAILED" || data.status === "CANCELLED") {
+              setPaymentStatus("failed")
+              setError("Payment was not completed")
+              setLoading(false)
+            }
+          }
+        } catch (err) {
+          console.error("Error checking payment status:", err)
+        }
+      }
+    }
+
+    // Set up interval to check payment status if in processing state
+    let interval: NodeJS.Timeout
+    if (paymentStatus === "processing" && orderId) {
+      interval = setInterval(paymentStatusListener, 3000)
+    }
+
+    return () => {
+      if (interval) clearInterval(interval)
+    }
+  }, [orderId, paymentStatus])
 
   const handleAmountSelect = (amount: number) => {
     setSelectedAmount(amount)
@@ -41,7 +96,8 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
 
     try {
       // Generate a unique order ID
-      const orderId = `SC-${callId.substring(0, 8)}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`
+      const newOrderId = `SC-${callId.substring(0, 8)}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`
+      setOrderId(newOrderId)
 
       // 1. Create payment order on your backend
       const response = await fetch("/api/create-cashfree-order", {
@@ -53,7 +109,7 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
           amount: selectedAmount,
           userId,
           callId,
-          orderId,
+          orderId: newOrderId,
           currency: "INR",
         }),
       })
@@ -64,24 +120,48 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
       }
 
       const orderData = await response.json()
-
-      // In production, integrate with Cashfree's SDK
-      // This is where you would initialize the Cashfree SDK and show the payment form
-      // For example:
-      //
-      // if (typeof window.Cashfree !== 'undefined') {
-      //   const cashfree = new window.Cashfree(orderData.order_token);
-      //   cashfree.redirect();
-      // }
-
-      // For development purposes, we'll simulate the payment flow
+      
+      // Set payment to processing state
       setPaymentStatus("processing")
 
-      // Simulate payment processing
-      setTimeout(() => {
-        // Record successful payment
-        createSuperchatEntry(orderData.cf_order_id)
-      }, 2000)
+      // Initialize Cashfree SDK and show payment form
+      if (typeof window.Cashfree !== "undefined") {
+        const cashfree = new window.Cashfree(orderData.order_token)
+        
+        // Configure payment popup
+        const paymentConfig = {
+          components: ["order-details", "card", "upi", "netbanking", "app", "credicards"],
+          callbacks: {
+            onPaymentSuccess: async (data: any) => {
+              // Payment was successful, create superchat entry
+              await createSuperchatEntry(data.order.orderId)
+            },
+            onPaymentFailure: (data: any) => {
+              setPaymentStatus("failed")
+              setError("Payment failed: " + (data.transaction?.txMsg || "Unknown error"))
+              setLoading(false)
+            },
+            onError: (data: any) => {
+              setPaymentStatus("failed")
+              setError("Payment error: " + data.message)
+              setLoading(false)
+            },
+            onClose: () => {
+              // Only reset if payment was not completed
+              if (paymentStatus !== "success") {
+                setPaymentStatus("failed")
+                setError("Payment was cancelled")
+                setLoading(false)
+              }
+            }
+          }
+        }
+        
+        // Render payment popup
+        cashfree.drop(paymentConfig)
+      } else {
+        throw new Error("Cashfree SDK not loaded. Please refresh and try again.")
+      }
     } catch (err: any) {
       setError(err.message || "Payment initialization failed")
       setLoading(false)
@@ -101,7 +181,7 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
           currency: "INR",
           timestamp: new Date().toISOString(),
           is_pinned: false,
-          order_reference: orderReference, // Store the order reference for reconciliation
+          order_reference: orderReference,
         },
       ])
 
@@ -211,7 +291,7 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
           <div className="py-8 text-center">
             <Loader2 size={40} className="mx-auto mb-4 animate-spin text-blue-400" />
             <h4 className="text-lg font-semibold text-white mb-2">Processing Payment</h4>
-            <p className="text-gray-300">Please wait while we process your payment...</p>
+            <p className="text-gray-300">Please complete the payment in the payment window</p>
             <p className="text-xs text-gray-400 mt-4">Do not close this window</p>
           </div>
         )}
