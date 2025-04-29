@@ -42,7 +42,7 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
     const loadCashfreeSDK = () => {
       if (typeof window !== "undefined" && !window.Cashfree) {
         const script = document.createElement("script")
-        script.src = "https://sdk.cashfree.com/js/ui/2.0.0/cashfree.production.js" // Change to production URL for prod
+        script.src = "https://sdk.cashfree.com/js/v3/cashfree.js" // Change to production URL for prod
         script.async = true
         document.body.appendChild(script)
       }
