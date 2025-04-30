@@ -22,10 +22,21 @@ const AMOUNT_TIERS = [
   { value: 1000, label: "₹1000", color: "bg-red-500", duration: "5m" },
 ]
 
-// Declare Cashfree types
+// Declare Cashfree types for v3 SDK
 declare global {
   interface Window {
-    Cashfree: any; // Using 'any' for now to avoid mismatched type issues
+    Cashfree: {
+      init: (options: { orderToken: string }) => Promise<{
+        renderDropin: (config: {
+          container: HTMLElement;
+          components: string[];
+          style?: any;
+          onSuccess: (data: any) => void;
+          onFailure: (data: any) => void;
+          onClose: () => void;
+        }) => void;
+      }>;
+    };
   }
 }
 
@@ -53,7 +64,7 @@ export const SendSuperchatModal = ({
     if (window.Cashfree) return;
     
     const script = document.createElement("script");
-    script.src = "https://sdk.cashfree.com/js/ui/2.0.0/cashfree.sandbox.js"; // Use the correct SDK URL for your environment
+    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js"; // Using v3 SDK
     script.async = true;
     script.onload = () => {
       console.log("Cashfree SDK loaded successfully");
@@ -141,20 +152,27 @@ export const SendSuperchatModal = ({
         throw new Error("Cashfree SDK not loaded. Please refresh and try again.");
       }
 
-      // Use Cashfree SDK directly
-      window.Cashfree.initPromise = window.Cashfree.initPromise || window.Cashfree.initialise({
-        mode: "production" // or "sandbox" for testing
+      // Use Cashfree v3 SDK
+      const cashfree = await window.Cashfree.init({
+        orderToken: order_token
       });
       
-      await window.Cashfree.initPromise;
-      
-      window.Cashfree.dropinCreate({
+      cashfree.renderDropin({
+        container: document.getElementById("cashfree-dropin-container") || document.body,
         components: ["order-details", "card", "upi", "netbanking"],
-        orderToken: order_token,
+        style: {
+          backgroundColor: "#243341",
+          color: "#FFFFFF",
+          fontSize: "14px",
+          errorColor: "#ff0000",
+          theme: "dark" // or "light"
+        },
         onSuccess: async (data: any) => {
+          console.log("Payment success", data);
           await createSuperchatEntry(newOrderId);
         },
         onFailure: (data: any) => {
+          console.error("Payment failed", data);
           setPaymentStatus("failed");
           setError("Payment failed: " + (data?.reason || "Unknown error"));
           setLoading(false);
@@ -301,13 +319,19 @@ export const SendSuperchatModal = ({
         )}
 
         {paymentStatus === "processing" && (
-          <div className="py-8 text-center">
+          <div className="py-6 text-center">
             <Loader2 size={40} className="mx-auto mb-4 animate-spin text-blue-400" />
             <h4 className="mb-2 text-lg font-semibold text-white">
               Processing Payment
             </h4>
-            <p className="text-gray-300">Complete payment in the popup</p>
+            <p className="text-gray-300">Complete payment in the options below</p>
             <p className="mt-4 text-xs text-gray-400">Don't close this window</p>
+            
+            {/* Add container for Cashfree dropin UI */}
+            <div 
+              id="cashfree-dropin-container" 
+              className="mt-4 p-4 rounded-lg border border-gray-700"
+            ></div>
           </div>
         )}
 
