@@ -20,6 +20,7 @@
     "@supabase/supabase-js": "latest",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
+    "cashfree-sdk": "^0.1.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^3.4.0",
