@@ -25,11 +25,7 @@ const AMOUNT_TIERS = [
 // Declare Cashfree types
 declare global {
   interface Window {
-    Cashfree?: {
-      init: (options: { orderToken: string }) => Promise<{
-        renderDropin: (config: any) => void
-      }>
-    }
+    Cashfree: any; // Using 'any' for now to avoid mismatched type issues
   }
 }
 
@@ -51,11 +47,27 @@ export const SendSuperchatModal = ({
 
   // Load Cashfree SDK
   useEffect(() => {
-    if (typeof window === "undefined" || window.Cashfree) return
-    const script = document.createElement("script")
-    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js"
-    script.async = true
-    document.body.appendChild(script)
+    if (typeof window === "undefined") return;
+    
+    // Don't load if already loaded
+    if (window.Cashfree) return;
+    
+    const script = document.createElement("script");
+    script.src = "https://sdk.cashfree.com/js/ui/2.0.0/cashfree.sandbox.js"; // Use the correct SDK URL for your environment
+    script.async = true;
+    script.onload = () => {
+      console.log("Cashfree SDK loaded successfully");
+    };
+    script.onerror = () => {
+      console.error("Failed to load Cashfree SDK");
+    };
+    document.body.appendChild(script);
+    
+    return () => {
+      // Clean up if component unmounts before script loads
+      script.onload = null;
+      script.onerror = null;
+    };
   }, [])
 
   // Polling for backend payment status if drop-in was bypassed
@@ -94,15 +106,15 @@ export const SendSuperchatModal = ({
   }
 
   const initiateCashfreePayment = async () => {
-    setLoading(true)
-    setError("")
+    setLoading(true);
+    setError("");
 
     try {
       // 1️⃣ generate a unique order ID
       const newOrderId = `SC-${callId.slice(0, 8)}-${Date.now()}-${Math.random()
         .toString(36)
-        .slice(2, 7)}`
-      setOrderId(newOrderId)
+        .slice(2, 7)}`;
+      setOrderId(newOrderId);
 
       // 2️⃣ create order on backend
       const res = await fetch("/api/create-cashfree-order", {
@@ -115,43 +127,50 @@ export const SendSuperchatModal = ({
           orderId: newOrderId,
           currency: "INR",
         }),
-      })
+      });
       if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.message || "Could not create order")
+        const err = await res.json();
+        throw new Error(err.message || "Could not create order");
       }
-      const { order_token } = await res.json()
-      setOrderToken(order_token)
-      setPaymentStatus("processing")
+      const { order_token } = await res.json();
+      setOrderToken(order_token);
+      setPaymentStatus("processing");
 
-      // 3️⃣ init & render drop-in
-      if (!window.Cashfree) {
-        throw new Error("Cashfree SDK failed to load")
+      // 3️⃣ Make sure Cashfree is loaded properly
+      if (typeof window.Cashfree === "undefined") {
+        throw new Error("Cashfree SDK not loaded. Please refresh and try again.");
       }
-      const cf = await window.Cashfree.init({ orderToken: order_token })
-      cf.renderDropin({
+
+      // Use Cashfree SDK directly
+      window.Cashfree.initPromise = window.Cashfree.initPromise || window.Cashfree.initialise({
+        mode: "production" // or "sandbox" for testing
+      });
+      
+      await window.Cashfree.initPromise;
+      
+      window.Cashfree.dropinCreate({
         components: ["order-details", "card", "upi", "netbanking"],
-        style: {},
-        onSuccess: async (payload: any) => {
-          await createSuperchatEntry(newOrderId)
+        orderToken: order_token,
+        onSuccess: async (data: any) => {
+          await createSuperchatEntry(newOrderId);
         },
-        onFailure: (err: any) => {
-          setPaymentStatus("failed")
-          setError("Payment failed: " + err.reason || "Unknown")
-          setLoading(false)
+        onFailure: (data: any) => {
+          setPaymentStatus("failed");
+          setError("Payment failed: " + (data?.reason || "Unknown error"));
+          setLoading(false);
         },
         onClose: () => {
           if (paymentStatus !== "success") {
-            setPaymentStatus("failed")
-            setError("Payment was cancelled")
-            setLoading(false)
+            setPaymentStatus("failed");
+            setError("Payment was cancelled");
+            setLoading(false);
           }
         },
-      })
+      });
     } catch (err: any) {
-      setError(err.message || "Payment initialization error")
-      setPaymentStatus("failed")
-      setLoading(false)
+      setError(err.message || "Payment initialization error");
+      setPaymentStatus("failed");
+      setLoading(false);
     }
   }
 
