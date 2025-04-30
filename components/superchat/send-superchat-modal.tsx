@@ -22,21 +22,11 @@ const AMOUNT_TIERS = [
   { value: 1000, label: "₹1000", color: "bg-red-500", duration: "5m" },
 ]
 
-// Declare Cashfree types for v3 SDK
+// Declare Cashfree types
+// Using a minimal declaration to avoid version-specific differences
 declare global {
   interface Window {
-    Cashfree: {
-      init: (options: { orderToken: string }) => Promise<{
-        renderDropin: (config: {
-          container: HTMLElement;
-          components: string[];
-          style?: any;
-          onSuccess: (data: any) => void;
-          onFailure: (data: any) => void;
-          onClose: () => void;
-        }) => void;
-      }>;
-    };
+    Cashfree: any; // Use any to work with different versions
   }
 }
 
@@ -55,22 +45,28 @@ export const SendSuperchatModal = ({
     useState<"pending" | "processing" | "success" | "failed">("pending")
   const [orderId, setOrderId] = useState("")
   const [orderToken, setOrderToken] = useState<string>("")
+  const [scriptLoaded, setScriptLoaded] = useState(false)
 
   // Load Cashfree SDK
   useEffect(() => {
     if (typeof window === "undefined") return;
     
     // Don't load if already loaded
-    if (window.Cashfree) return;
+    if (window.Cashfree) {
+      setScriptLoaded(true);
+      return;
+    }
     
     const script = document.createElement("script");
     script.src = "https://sdk.cashfree.com/js/v3/cashfree.js"; // Using v3 SDK
     script.async = true;
     script.onload = () => {
       console.log("Cashfree SDK loaded successfully");
+      setScriptLoaded(true);
     };
     script.onerror = () => {
       console.error("Failed to load Cashfree SDK");
+      setError("Failed to load payment gateway");
     };
     document.body.appendChild(script);
     
@@ -139,11 +135,19 @@ export const SendSuperchatModal = ({
           currency: "INR",
         }),
       });
+      
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.message || "Could not create order");
+        const errData = await res.json();
+        throw new Error(errData.message || "Could not create order");
       }
-      const { order_token } = await res.json();
+      
+      const data = await res.json();
+      const order_token = data.order_token;
+      
+      if (!order_token) {
+        throw new Error("No order token received from server");
+      }
+      
       setOrderToken(order_token);
       setPaymentStatus("processing");
 
@@ -152,40 +156,92 @@ export const SendSuperchatModal = ({
         throw new Error("Cashfree SDK not loaded. Please refresh and try again.");
       }
 
-      // Use Cashfree v3 SDK
-      const cashfree = await window.Cashfree.init({
-        orderToken: order_token
-      });
+      // Log the Cashfree object to see its structure (helpful for debugging)
+      console.log("Cashfree SDK object:", window.Cashfree);
       
-      cashfree.renderDropin({
-        container: document.getElementById("cashfree-dropin-container") || document.body,
-        components: ["order-details", "card", "upi", "netbanking"],
-        style: {
-          backgroundColor: "#243341",
-          color: "#FFFFFF",
-          fontSize: "14px",
-          errorColor: "#ff0000",
-          theme: "dark" // or "light"
-        },
-        onSuccess: async (data: any) => {
-          console.log("Payment success", data);
-          await createSuperchatEntry(newOrderId);
-        },
-        onFailure: (data: any) => {
-          console.error("Payment failed", data);
-          setPaymentStatus("failed");
-          setError("Payment failed: " + (data?.reason || "Unknown error"));
-          setLoading(false);
-        },
-        onClose: () => {
-          if (paymentStatus !== "success") {
-            setPaymentStatus("failed");
-            setError("Payment was cancelled");
-            setLoading(false);
-          }
-        },
-      });
+      // Try multiple initialization approaches to handle different SDK versions
+      try {
+        // First attempt - for newer v3 versions with checkout.init
+        if (typeof window.Cashfree.checkout?.init === 'function') {
+          console.log("Using Cashfree checkout.init");
+          const cashfree = await window.Cashfree.checkout.init({
+            orderToken: order_token
+          });
+          
+          await cashfree.pay();
+        } 
+        // Second attempt - for versions with direct init
+        else if (typeof window.Cashfree.init === 'function') {
+          console.log("Using Cashfree direct init");
+          const cashfree = await window.Cashfree.init({
+            orderToken: order_token
+          });
+          
+          cashfree.renderDropin({
+            container: document.getElementById("cashfree-dropin-container") || document.body,
+            components: ["order-details", "card", "upi", "netbanking"],
+            style: {
+              backgroundColor: "#243341",
+              color: "#FFFFFF",
+              fontSize: "14px",
+              errorColor: "#ff0000",
+              theme: "dark"
+            },
+            onSuccess: async (data: any) => {
+              console.log("Payment success", data);
+              await createSuperchatEntry(newOrderId);
+            },
+            onFailure: (data: any) => {
+              console.error("Payment failed", data);
+              setPaymentStatus("failed");
+              setError("Payment failed: " + (data?.reason || "Unknown error"));
+              setLoading(false);
+            },
+            onClose: () => {
+              if (paymentStatus !== "success") {
+                setPaymentStatus("failed");
+                setError("Payment was cancelled");
+                setLoading(false);
+              }
+            },
+          });
+        }
+        // Third attempt - for older v2 versions
+        else if (typeof window.Cashfree.initialise === 'function') {
+          console.log("Using Cashfree v2 initialise");
+          await window.Cashfree.initialise({
+            mode: "production" 
+          });
+          
+          window.Cashfree.dropinCreate({
+            components: ["order-details", "card", "upi", "netbanking"],
+            orderToken: order_token,
+            onSuccess: async (data: any) => {
+              await createSuperchatEntry(newOrderId);
+            },
+            onFailure: (data: any) => {
+              setPaymentStatus("failed");
+              setError("Payment failed: " + (data?.reason || "Unknown error"));
+              setLoading(false);
+            },
+            onClose: () => {
+              if (paymentStatus !== "success") {
+                setPaymentStatus("failed");
+                setError("Payment was cancelled");
+                setLoading(false);
+              }
+            },
+          });
+        } else {
+          throw new Error("Unknown Cashfree SDK version. Please contact support.");
+        }
+      } catch (sdkError: any) {
+        console.error("Cashfree SDK error:", sdkError);
+        throw new Error(`Payment SDK error: ${sdkError.message || "Unknown error"}`);
+      }
+      
     } catch (err: any) {
+      console.error("Payment error:", err);
       setError(err.message || "Payment initialization error");
       setPaymentStatus("failed");
       setLoading(false);
@@ -240,7 +296,14 @@ export const SendSuperchatModal = ({
 
         <h3 className="mb-6 text-xl font-bold text-white">Send a Superchat</h3>
 
-        {paymentStatus === "pending" && (
+        {!scriptLoaded && (
+          <div className="py-4 text-center">
+            <Loader2 size={24} className="mx-auto mb-2 animate-spin text-blue-400" />
+            <p className="text-gray-300">Loading payment gateway...</p>
+          </div>
+        )}
+
+        {scriptLoaded && paymentStatus === "pending" && (
           <>
             <div className="mb-4">
               <label className="block mb-2 text-sm font-medium text-white">
@@ -321,17 +384,17 @@ export const SendSuperchatModal = ({
         {paymentStatus === "processing" && (
           <div className="py-6 text-center">
             <Loader2 size={40} className="mx-auto mb-4 animate-spin text-blue-400" />
-            <h4 className="mb-2 text-lg font-semibold text-white">
+            <h4 className="mb-4 text-lg font-semibold text-white">
               Processing Payment
             </h4>
-            <p className="text-gray-300">Complete payment in the options below</p>
-            <p className="mt-4 text-xs text-gray-400">Don't close this window</p>
             
-            {/* Add container for Cashfree dropin UI */}
+            {/* Container for Cashfree payment UI */}
             <div 
               id="cashfree-dropin-container" 
               className="mt-4 p-4 rounded-lg border border-gray-700"
             ></div>
+            
+            <p className="mt-6 text-xs text-gray-400">Don't close this window</p>
           </div>
         )}
 
@@ -382,4 +445,4 @@ export const SendSuperchatModal = ({
       </div>
     </div>
   )
-}
+  }
