@@ -49,7 +49,7 @@ export async function POST(request: Request) {
     // Documentation: https://docs.cashfree.com/reference/createorder
 
     // For production, uncomment and use this code:
-    /*
+    
     const response = await fetch('https://api.cashfree.com/pg/orders', {
       method: 'POST',
       headers: {
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
     
     const responseData = await response.json();
     return NextResponse.json(responseData);
-    */
+    
 
     // This is a mock response for development purposes
     const orderTime = new Date().toISOString()
