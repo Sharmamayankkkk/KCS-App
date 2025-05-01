@@ -23,9 +23,10 @@ const AMOUNT_TIERS = [
 ]
 
 // Declare Cashfree types
+// Using a minimal declaration to avoid version-specific differences
 declare global {
   interface Window {
-    Cashfree: any
+    Cashfree: any // Use any to work with different versions
   }
 }
 
@@ -34,8 +35,9 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
   const [selectedAmount, setSelectedAmount] = useState(AMOUNT_TIERS[0].value)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [paymentStatus, setPaymentStatus] = useState<"pending" | "processing" | "success" | "failed">("pending")
+  const [paymentStatus, setPaymentStatus] = useState < "pending" | "processing" | "success" | "failed" > ("pending")
   const [orderId, setOrderId] = useState("")
+  const [orderToken, setOrderToken] = useState < string > ("")
   const [scriptLoaded, setScriptLoaded] = useState(false)
 
   // Load Cashfree SDK
@@ -49,7 +51,7 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
     }
 
     const script = document.createElement("script")
-    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js" // Latest v3 SDK
+    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js"
     script.async = true
     script.onload = () => {
       console.log("Cashfree SDK loaded successfully")
@@ -106,11 +108,11 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
     setError("")
 
     try {
-      // 1️⃣ generate a unique order ID
+      // Generate unique order ID
       const newOrderId = `SC-${callId.slice(0, 8)}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
       setOrderId(newOrderId)
 
-      // 2️⃣ create order on backend
+      // Create order on backend
       const res = await fetch("/api/create-cashfree-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -131,53 +133,50 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
       const data = await res.json()
       console.log("Cashfree API response:", data)
 
-      // Check for payment_session_id
       const sessionId = data.payment_session_id
       if (!sessionId) {
         throw new Error("No payment session ID received from server")
       }
 
+      setOrderToken(sessionId)
       setPaymentStatus("processing")
 
-      // 3️⃣ Make sure Cashfree is loaded properly
-      if (typeof window.Cashfree === "undefined") {
-        throw new Error("Cashfree SDK not loaded. Please refresh and try again.")
+      // Initialize Cashfree SDK
+      const { load } = await import('@cashfreepayments/cashfree-js')
+      const cashfree = await load({
+        mode: "production"
+      })
+
+      // Configure checkout
+      const checkoutOptions = {
+        paymentSessionId: sessionId,
+        redirectTarget: "_modal",
+        theme: {
+          backgroundColor: "#243341",
+          color: "#FFFFFF",
+          font: "14px",
+          errorColor: "#ff0000"
+        }
       }
 
-      // Initialize Cashfree checkout using v3 SDK
-      try {
-        // Correct initialization for Cashfree v3 SDK
-        const cashfree = await window.Cashfree.checkout.init({
-          sessionId: sessionId,
-        })
+      // Process payment
+      const result = await cashfree.checkout(checkoutOptions)
 
-        if (!cashfree) {
-          throw new Error("Failed to initialize Cashfree checkout")
+      if (result.error) {
+        console.error("Payment error:", result.error)
+        setPaymentStatus("failed")
+        setError("Payment failed: " + result.error.message)
+        setLoading(false)
+      } else if (result.paymentDetails) {
+        console.log("Payment completed:", result.paymentDetails)
+        if (result.paymentDetails.transaction.status === "SUCCESS") {
+          await createSuperchatEntry(newOrderId)
+        } else {
+          setPaymentStatus("failed")
+          setError("Payment was not successful")
+          setLoading(false)
         }
-
-        // Set up callbacks
-        const paymentCallback = {
-          onSuccess: async (data: any) => {
-            console.log("Payment success", data)
-            await createSuperchatEntry(newOrderId)
-          },
-          onFailure: (data: any) => {
-            console.error("Payment failed", data)
-            setPaymentStatus("failed")
-            setError("Payment failed: " + (data?.error?.message || "Unknown error"))
-            setLoading(false)
-          },
-          onClose: () => {
-            if (paymentStatus !== "success") {
-              setPaymentStatus("failed")
-              setError("Payment was cancelled")
-              setLoading(false)
-            }
-          },
-        }
-
-        // Render the payment UI
-        await cashfree.pay(paymentCallback)
+      }
       } catch (sdkError) {
         console.error("Cashfree SDK error:", sdkError)
         throw new Error(`Payment SDK error: ${sdkError instanceof Error ? sdkError.message : "Unknown error"}`)
@@ -193,18 +192,17 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
   const createSuperchatEntry = async (orderRef: string) => {
     try {
       const { error: dbErr } = await supabase.from("superchats").insert([
-        {
-          call_id: callId,
-          sender_id: userId,
-          sender_name: senderName,
-          message,
-          amount: selectedAmount,
-          currency: "INR",
-          timestamp: new Date().toISOString(),
-          is_pinned: false,
-          order_reference: orderRef,
-        },
-      ])
+      {
+        call_id: callId,
+        sender_id: userId,
+        sender_name: senderName,
+        message,
+        amount: selectedAmount,
+        currency: "INR",
+        timestamp: new Date().toISOString(),
+        is_pinned: false,
+        order_reference: orderRef,
+      }, ])
       if (dbErr) throw dbErr
 
       setPaymentStatus("success")
@@ -311,8 +309,16 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
           <div className="py-6 text-center">
             <Loader2 size={40} className="mx-auto mb-4 animate-spin text-blue-400" />
             <h4 className="mb-4 text-lg font-semibold text-white">Processing Payment</h4>
-            <p className="text-gray-300">Please complete the payment in the popup window.</p>
-            <p className="mt-6 text-xs text-gray-400">If no payment window appears, please check your popup blocker.</p>
+
+            {/* Container for Cashfree payment UI */}
+            <div
+              id="cashfree-dropin-container"
+              className="mt-4 p-4 rounded-lg border border-gray-700 min-h-[300px] flex items-center justify-center"
+            >
+              <p className="text-gray-400">Loading payment options...</p>
+            </div>
+
+            <p className="mt-6 text-xs text-gray-400">Please complete the payment process. Don't close this window.</p>
           </div>
         )}
 
@@ -348,4 +354,4 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
       </div>
     </div>
   )
-        }
+}
