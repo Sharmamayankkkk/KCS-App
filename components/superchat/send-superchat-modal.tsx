@@ -35,192 +35,189 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
   const [selectedAmount, setSelectedAmount] = useState(AMOUNT_TIERS[0].value)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
-  const [paymentStatus, setPaymentStatus] = useState < "pending" | "processing" | "success" | "failed" > ("pending")
+  const [paymentStatus, setPaymentStatus] = useState<"pending" | "processing" | "success" | "failed">("pending")
   const [orderId, setOrderId] = useState("")
-  const [orderToken, setOrderToken] = useState < string > ("")
+  const [orderToken, setOrderToken] = useState<string>("")
   const [scriptLoaded, setScriptLoaded] = useState(false)
 
   // Load Cashfree SDK
   useEffect(() => {
     if (typeof window === "undefined") return
 
-    // Don't load if already loaded
-    if (window.Cashfree) {
-      setScriptLoaded(true)
-      return
-    }
-
-    const script = document.createElement("script")
-    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js"
-    script.async = true
-    script.onload = () => {
-      console.log("Cashfree SDK loaded successfully")
-      setScriptLoaded(true)
-    }
-    script.onerror = () => {
-      console.error("Failed to load Cashfree SDK")
-      setError("Failed to load payment gateway")
-    }
-    document.body.appendChild(script)
-
-    return () => {
-      // Clean up if component unmounts before script loads
-      script.onload = null
-      script.onerror = null
+    // Don't load if already loaded  
+    if (window.Cashfree) {  
+      setScriptLoaded(true)  
+      return  
+    }  
+    
+    const script = document.createElement("script")  
+    script.src = "https://sdk.cashfree.com/js/v3/cashfree.js"  
+    script.async = true  
+    script.onload = () => {  
+      console.log("Cashfree SDK loaded successfully")  
+      setScriptLoaded(true)  
+    }  
+    script.onerror = () => {  
+      console.error("Failed to load Cashfree SDK")  
+      setError("Failed to load payment gateway")  
+    }  
+    document.body.appendChild(script)  
+    
+    return () => {  
+      // Clean up if component unmounts before script loads  
+      script.onload = null  
+      script.onerror = null  
     }
   }, [])
 
   // Polling for backend payment status if drop-in was bypassed
   useEffect(() => {
-    let iv: NodeJS.Timeout
+    let iv: NodeJS.Timeout;
     if (paymentStatus === "processing" && orderId) {
       iv = setInterval(async () => {
         try {
-          const res = await fetch(`/api/check-payment-status?orderId=${orderId}`)
-          const data = await res.json()
+          const res = await fetch(`/api/check-payment-status?orderId=${orderId}`);
+          const data = await res.json();
           if (data.status === "PAID" || data.status === "SUCCESS") {
-            clearInterval(iv)
-            await createSuperchatEntry(orderId)
+            clearInterval(iv);
+            await createSuperchatEntry(orderId);
           } else if (data.status === "FAILED" || data.status === "CANCELLED") {
-            clearInterval(iv)
-            setPaymentStatus("failed")
-            setError("Payment did not complete")
-            setLoading(false)
+            clearInterval(iv);
+            setPaymentStatus("failed");
+            setError("Payment did not complete");
+            setLoading(false);
           }
         } catch {
           // ignore transient errors
         }
-      }, 3000)
+      }, 3000);
     }
     return () => {
-      if (iv) clearInterval(iv)
+      if (iv) clearInterval(iv);
     }
-  }, [orderId, paymentStatus])
+  }, [orderId, paymentStatus]);
 
   const selectedTier = AMOUNT_TIERS.find((tier) => tier.value === selectedAmount) || AMOUNT_TIERS[0]
 
   const handleAmountSelect = (amt: number) => {
-    setSelectedAmount(amt)
+    setSelectedAmount(amt);
   }
 
   const initiateCashfreePayment = async () => {
-    setLoading(true)
-    setError("")
+    setLoading(true);
+    setError("");
 
-    try {
-      // Generate unique order ID
-      const newOrderId = `SC-${callId.slice(0, 8)}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
-      setOrderId(newOrderId)
+    try {  
+      // Generate unique order ID  
+      const newOrderId = `SC-${callId.slice(0, 8)}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;  
+      setOrderId(newOrderId);  
 
-      // Create order on backend
-      const res = await fetch("/api/create-cashfree-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          amount: selectedAmount,
-          userId,
-          callId,
-          orderId: newOrderId,
-          currency: "INR",
-        }),
-      })
+      // Create order on backend  
+      const res = await fetch("/api/create-cashfree-order", {  
+        method: "POST",  
+        headers: { "Content-Type": "application/json" },  
+        body: JSON.stringify({  
+          amount: selectedAmount,  
+          userId,  
+          callId,  
+          orderId: newOrderId,  
+          currency: "INR",  
+        }),  
+      });  
 
-      if (!res.ok) {
-        const errData = await res.json()
-        throw new Error(errData.message || "Could not create order")
-      }
+      if (!res.ok) {  
+        const errData = await res.json();  
+        throw new Error(errData.message || "Could not create order");  
+      }  
 
-      const data = await res.json()
-      console.log("Cashfree API response:", data)
+      const data = await res.json();  
+      console.log("Cashfree API response:", data);  
 
-      const sessionId = data.payment_session_id
-      if (!sessionId) {
-        throw new Error("No payment session ID received from server")
-      }
+      const sessionId = data.payment_session_id;  
+      if (!sessionId) {  
+        throw new Error("No payment session ID received from server");  
+      }  
 
-      setOrderToken(sessionId)
-      setPaymentStatus("processing")
+      setOrderToken(sessionId);  
+      setPaymentStatus("processing");  
 
-      // Initialize Cashfree SDK
-      const { load } = await import('@cashfreepayments/cashfree-js')
-      const cashfree = await load({
-        mode: "production"
-      })
+      // Initialize Cashfree SDK  
+      const { load } = await import('@cashfreepayments/cashfree-js');  
+      const cashfree = await load({  
+        mode: "production"  
+      });  
 
-      // Configure checkout
-      const checkoutOptions = {
-        paymentSessionId: sessionId,
-        redirectTarget: "_modal",
-        theme: {
-          backgroundColor: "#243341",
-          color: "#FFFFFF",
-          font: "14px",
-          errorColor: "#ff0000"
-        }
-      }
+      // Configure checkout  
+      const checkoutOptions = {  
+        paymentSessionId: sessionId,  
+        redirectTarget: "_modal",  
+        theme: {  
+          backgroundColor: "#243341",  
+          color: "#FFFFFF",  
+          font: "14px",  
+          errorColor: "#ff0000"  
+        }  
+      };  
 
-      // Process payment
-      const result = await cashfree.checkout(checkoutOptions)
+      // Process payment  
+      const result = await cashfree.checkout(checkoutOptions);  
 
-      if (result.error) {
-        console.error("Payment error:", result.error)
-        setPaymentStatus("failed")
-        setError("Payment failed: " + result.error.message)
-        setLoading(false)
-      } else if (result.paymentDetails) {
-        console.log("Payment completed:", result.paymentDetails)
-        if (result.paymentDetails.transaction.status === "SUCCESS") {
-          await createSuperchatEntry(newOrderId)
-        } else {
-          setPaymentStatus("failed")
-          setError("Payment was not successful")
-          setLoading(false)
-        }
-      }
-      } catch (sdkError) {
-        console.error("Cashfree SDK error:", sdkError);
-        throw new Error(`Payment SDK error: ${sdkError instanceof Error ? sdkError.message : "Unknown error"}`);
-      }
-    } catch (err) {
-      console.error("Payment error:", err)
-      setError(err instanceof Error ? err.message : "Payment initialization error")
-      setPaymentStatus("failed")
-      setLoading(false)
+      if (result.error) {  
+        console.error("Payment error:", result.error);  
+        setPaymentStatus("failed");  
+        setError("Payment failed: " + result.error.message);  
+        setLoading(false);  
+      } else if (result.paymentDetails) {  
+        console.log("Payment completed:", result.paymentDetails);  
+        if (result.paymentDetails.transaction.status === "SUCCESS") {  
+          await createSuperchatEntry(newOrderId);  
+        } else {  
+          setPaymentStatus("failed");  
+          setError("Payment was not successful");  
+          setLoading(false);  
+        }  
+      }  
+    } catch (err) {  
+      console.error("Payment error:", err);  
+      setError(err instanceof Error ? err.message : "Payment initialization error");  
+      setPaymentStatus("failed");  
+      setLoading(false);  
     }
   }
 
   const createSuperchatEntry = async (orderRef: string) => {
     try {
       const { error: dbErr } = await supabase.from("superchats").insert([
-      {
-        call_id: callId,
-        sender_id: userId,
-        sender_name: senderName,
-        message,
-        amount: selectedAmount,
-        currency: "INR",
-        timestamp: new Date().toISOString(),
-        is_pinned: false,
-        order_reference: orderRef,
-      }, ])
-      if (dbErr) throw dbErr
+        {
+          call_id: callId,
+          sender_id: userId,
+          sender_name: senderName,
+          message,
+          amount: selectedAmount,
+          currency: "INR",
+          timestamp: new Date().toISOString(),
+          is_pinned: false,
+          order_reference: orderRef,
+        }
+      ]);
+      if (dbErr) throw dbErr;
 
-      setPaymentStatus("success")
-      setTimeout(onSuccess, 1500)
-    } catch (err) {
-      console.error(err)
-      setError("Failed to save superchat, please try again.")
-      setPaymentStatus("failed")
-      setLoading(false)
+      setPaymentStatus("success");  
+      setTimeout(onSuccess, 1500);  
+    } catch (err) {  
+      console.error(err);  
+      setError("Failed to save superchat, please try again.");  
+      setPaymentStatus("failed");  
+      setLoading(false);  
     }
   }
 
   const handleSubmit = () => {
     if (!message.trim()) {
-      setError("Please enter a message")
-      return
+      setError("Please enter a message");
+      return;
     }
-    initiateCashfreePayment()
+    initiateCashfreePayment();
   }
 
   return (
@@ -230,128 +227,128 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
           <X size={20} />
         </button>
 
-        <h3 className="mb-6 text-xl font-bold text-white">Send a Superchat</h3>
+        <h3 className="mb-6 text-xl font-bold text-white">Send a Superchat</h3>  
 
-        {!scriptLoaded && (
-          <div className="py-4 text-center">
-            <Loader2 size={24} className="mx-auto mb-2 animate-spin text-blue-400" />
-            <p className="text-gray-300">Loading payment gateway...</p>
-          </div>
-        )}
+        {!scriptLoaded && (  
+          <div className="py-4 text-center">  
+            <Loader2 size={24} className="mx-auto mb-2 animate-spin text-blue-400" />  
+            <p className="text-gray-300">Loading payment gateway...</p>  
+          </div>  
+        )}  
 
-        {scriptLoaded && paymentStatus === "pending" && (
-          <>
-            <div className="mb-4">
-              <label className="block mb-2 text-sm font-medium text-white">Your Message (max 200 chars)</label>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value.slice(0, 200))}
-                rows={3}
-                maxLength={200}
-                disabled={loading}
-                placeholder="Type your message..."
-                className="w-full p-3 text-white rounded-lg bg-gray-800/50 focus:ring-2 focus:ring-blue-500"
-              />
-              <div className="text-right text-xs text-gray-400">{message.length}/200</div>
-            </div>
+        {scriptLoaded && paymentStatus === "pending" && (  
+          <>  
+            <div className="mb-4">  
+              <label className="block mb-2 text-sm font-medium text-white">Your Message (max 200 chars)</label>  
+              <textarea  
+                value={message}  
+                onChange={(e) => setMessage(e.target.value.slice(0, 200))}  
+                rows={3}  
+                maxLength={200}  
+                disabled={loading}  
+                placeholder="Type your message..."  
+                className="w-full p-3 text-white rounded-lg bg-gray-800/50 focus:ring-2 focus:ring-blue-500"  
+              />  
+              <div className="text-right text-xs text-gray-400">{message.length}/200</div>  
+            </div>  
 
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-white">Select Amount</label>
-              <div className="grid grid-cols-5 gap-2 mb-4">
-                {AMOUNT_TIERS.map((tier) => (
-                  <button
-                    key={tier.value}
-                    onClick={() => handleAmountSelect(tier.value)}
-                    disabled={loading}
-                    className={`p-2 rounded-lg text-center transition ${
-                      selectedAmount === tier.value
-                        ? `${tier.color} text-white ring-2 ring-white`
-                        : "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                    }`}
-                  >
-                    <div className="font-semibold">{tier.label}</div>
-                    <div className="text-xs">{tier.duration}</div>
-                  </button>
-                ))}
-              </div>
-              <div className="flex justify-between mt-4 text-sm">
-                <span className="text-gray-300">Duration:</span>
-                <span className="font-semibold text-white">{selectedTier.duration} highlight</span>
-              </div>
-            </div>
+            <div className="mb-6">  
+              <label className="block mb-2 text-sm font-medium text-white">Select Amount</label>  
+              <div className="grid grid-cols-5 gap-2 mb-4">  
+                {AMOUNT_TIERS.map((tier) => (  
+                  <button  
+                    key={tier.value}  
+                    onClick={() => handleAmountSelect(tier.value)}  
+                    disabled={loading}  
+                    className={`p-2 rounded-lg text-center transition ${  
+                      selectedAmount === tier.value  
+                        ? `${tier.color} text-white ring-2 ring-white`  
+                        : "bg-gray-700 text-gray-200 hover:bg-gray-600"  
+                    }`}  
+                  >  
+                    <div className="font-semibold">{tier.label}</div>  
+                    <div className="text-xs">{tier.duration}</div>  
+                  </button>  
+                ))}  
+              </div>  
+              <div className="flex justify-between mt-4 text-sm">  
+                <span className="text-gray-300">Duration:</span>  
+                <span className="font-semibold text-white">{selectedTier.duration} highlight</span>  
+              </div>  
+            </div>  
 
-            {error && (
-              <div className="flex items-center p-3 mb-4 text-red-200 bg-red-500/20 rounded-lg">
-                <AlertCircle size={16} className="mr-2" />
-                <span>{error}</span>
-              </div>
-            )}
+            {error && (  
+              <div className="flex items-center p-3 mb-4 text-red-200 bg-red-500/20 rounded-lg">  
+                <AlertCircle size={16} className="mr-2" />  
+                <span>{error}</span>  
+              </div>  
+            )}  
 
-            <div className="flex justify-end space-x-3">
-              <Button variant="outline" onClick={onClose} disabled={loading}>
-                Cancel
-              </Button>
-              <Button className={selectedTier.color} onClick={handleSubmit} disabled={loading || !message.trim()}>
-                {loading ? (
-                  <>
-                    <Loader2 size={16} className="mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  `Send ₹${selectedAmount}`
-                )}
-              </Button>
-            </div>
-          </>
-        )}
+            <div className="flex justify-end space-x-3">  
+              <Button variant="outline" onClick={onClose} disabled={loading}>  
+                Cancel  
+              </Button>  
+              <Button className={selectedTier.color} onClick={handleSubmit} disabled={loading || !message.trim()}>  
+                {loading ? (  
+                  <>  
+                    <Loader2 size={16} className="mr-2 animate-spin" />  
+                    Processing...  
+                  </>  
+                ) : (  
+                  `Send ₹${selectedAmount}`  
+                )}  
+              </Button>  
+            </div>  
+          </>  
+        )}  
 
-        {paymentStatus === "processing" && (
-          <div className="py-6 text-center">
-            <Loader2 size={40} className="mx-auto mb-4 animate-spin text-blue-400" />
-            <h4 className="mb-4 text-lg font-semibold text-white">Processing Payment</h4>
+        {paymentStatus === "processing" && (  
+          <div className="py-6 text-center">  
+            <Loader2 size={40} className="mx-auto mb-4 animate-spin text-blue-400" />  
+            <h4 className="mb-4 text-lg font-semibold text-white">Processing Payment</h4>  
 
-            {/* Container for Cashfree payment UI */}
-            <div
-              id="cashfree-dropin-container"
-              className="mt-4 p-4 rounded-lg border border-gray-700 min-h-[300px] flex items-center justify-center"
-            >
-              <p className="text-gray-400">Loading payment options...</p>
-            </div>
+            {/* Container for Cashfree payment UI */}  
+            <div  
+              id="cashfree-dropin-container"  
+              className="mt-4 p-4 rounded-lg border border-gray-700 min-h-[300px] flex items-center justify-center"  
+            >  
+              <p className="text-gray-400">Loading payment options...</p>  
+            </div>  
 
-            <p className="mt-6 text-xs text-gray-400">Please complete the payment process. Don't close this window.</p>
-          </div>
-        )}
+            <p className="mt-6 text-xs text-gray-400">Please complete the payment process. Don't close this window.</p>  
+          </div>  
+        )}  
 
-        {paymentStatus === "success" && (
-          <div className="py-8 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-green-500 rounded-full">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-8 h-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h4 className="mb-2 text-lg font-semibold text-white">Superchat Sent!</h4>
-            <p className="text-gray-300">Highlight lasts for {selectedTier.duration}.</p>
-            <p className="mt-2 text-xs text-gray-400">Thank you!</p>
-          </div>
-        )}
+        {paymentStatus === "success" && (  
+          <div className="py-8 text-center">  
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-green-500 rounded-full">  
+              <svg  
+                xmlns="http://www.w3.org/2000/svg"  
+                className="w-8 h-8 text-white"  
+                fill="none"  
+                viewBox="0 0 24 24"  
+                stroke="currentColor"  
+              >  
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />  
+              </svg>  
+            </div>  
+            <h4 className="mb-2 text-lg font-semibold text-white">Superchat Sent!</h4>  
+            <p className="text-gray-300">Highlight lasts for {selectedTier.duration}.</p>  
+            <p className="mt-2 text-xs text-gray-400">Thank you!</p>  
+          </div>  
+        )}  
 
-        {paymentStatus === "failed" && (
-          <div className="py-8 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-500 rounded-full">
-              <X size={32} className="text-white" />
-            </div>
-            <h4 className="mb-2 text-lg font-semibold text-white">Payment Failed</h4>
-            <p className="mb-4 text-gray-300">{error || "There was an error processing your payment."}</p>
-            <Button onClick={() => setPaymentStatus("pending")}>Try Again</Button>
-          </div>
-        )}
-      </div>
+        {paymentStatus === "failed" && (  
+          <div className="py-8 text-center">  
+            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-500 rounded-full">  
+              <X size={32} className="text-white" />  
+            </div>  
+            <h4 className="mb-2 text-lg font-semibold text-white">Payment Failed</h4>  
+            <p className="mb-4 text-gray-300">{error || "There was an error processing your payment."}</p>  
+            <Button onClick={() => setPaymentStatus("pending")}>Try Again</Button>  
+          </div>  
+        )}  
+      </div>  
     </div>
   )
 }
