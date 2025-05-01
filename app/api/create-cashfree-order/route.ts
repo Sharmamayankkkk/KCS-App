@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import crypto from "crypto"
 
 // Validate the request body
 function validateRequestBody(body: any) {
@@ -45,75 +44,48 @@ export async function POST(request: Request) {
 
     const { amount, userId, callId, orderId, currency = "INR" } = body
 
-    // In production, make a request to Cashfree API
-    // Documentation: https://docs.cashfree.com/reference/createorder
-
-    // For production, uncomment and use this code:
-
-    const response = await fetch("https://api.cashfree.com/pg/orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-version": "2022-09-01",
-        "x-client-id": apiKey,
-        "x-client-secret": secretKey,
-      },
-      body: JSON.stringify({
-        order_id: orderId,
-        order_amount: amount,
-        order_currency: currency,
-        customer_details: {
-          customer_id: userId,
-          customer_email: "226mayankkle@gmail.com", // You should get this from your user data
-          customer_phone: "7701807886", // You should get this from your user data
+    // Production implementation - make a request to Cashfree API
+    try {
+      const response = await fetch("https://api.cashfree.com/pg/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-version": "2022-09-01",
+          "x-client-id": apiKey,
+          "x-client-secret": secretKey,
         },
-        order_meta: {
-          return_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/callback?order_id={order_id}`,
-          notify_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/cashfree-webhook`,
-        },
-        order_note: `Superchat payment for call ${callId}`,
-      }),
-    })
+        body: JSON.stringify({
+          order_id: orderId,
+          order_amount: amount,
+          order_currency: currency,
+          customer_details: {
+            customer_id: userId,
+            customer_email: "226mayankkle@gmail.com", // You should get this from your user data
+            customer_phone: "7710807886", // You should get this from your user data
+          },
+          order_meta: {
+            return_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/callback?order_id={order_id}`,
+            notify_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/cashfree-webhook`,
+          },
+          order_note: `Superchat payment for call ${callId}`,
+        }),
+      })
 
-    if (!response.ok) {
-      const errorData = await response.json()
-      console.error("Cashfree API error:", errorData)
-      return NextResponse.json({ message: errorData.message || "Payment gateway error" }, { status: response.status })
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error("Cashfree API error:", errorData)
+        return NextResponse.json({ message: errorData.message || "Payment gateway error" }, { status: response.status })
+      }
+
+      const responseData = await response.json()
+      console.log("Cashfree API response:", responseData)
+
+      // Return the response data directly without modification
+      return NextResponse.json(responseData)
+    } catch (apiError) {
+      console.error("Cashfree API request error:", apiError)
+      return NextResponse.json({ message: "Failed to communicate with payment gateway" }, { status: 500 })
     }
-
-    const responseData = await response.json()
-    console.log("Cashfree API response:", responseData)
-    // Map payment_session_id to order_token for client compatibility
-    return NextResponse.json({
-      ...responseData,
-      order_token: responseData.payment_session_id,
-    })
-
-    // This is a mock response for development purposes
-    const orderTime = new Date().toISOString()
-    const expiryTime = new Date(Date.now() + 15 * 60 * 1000).toISOString()
-
-    // Generate a signature (for development simulation)
-    const dataToSign = orderId + amount + orderTime + currency
-    const signature = crypto.createHmac("sha256", secretKey).update(dataToSign).digest("hex")
-
-    // Mock response based on Cashfree API format
-    const mockResponse = {
-      cf_order_id: orderId,
-      order_id: orderId,
-      entity: "order",
-      order_amount: amount,
-      order_currency: currency,
-      order_expiry_time: expiryTime,
-      order_status: "ACTIVE",
-      payment_session_id: `sess_${crypto.randomBytes(8).toString("hex")}`,
-      order_token: `token_${crypto.randomBytes(16).toString("hex")}`,
-      order_note: `Superchat payment for call ${callId}`,
-      created_at: orderTime,
-      signature: signature,
-    }
-
-    return NextResponse.json(mockResponse)
   } catch (error: any) {
     console.error("Order creation error:", error)
     return NextResponse.json(
