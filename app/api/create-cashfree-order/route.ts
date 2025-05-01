@@ -50,7 +50,7 @@ export async function POST(request: Request) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-api-version": "2022-09-01",
+          "x-api-version": "2025-01-01",
           "x-client-id": apiKey,
           "x-client-secret": secretKey,
         },
@@ -60,14 +60,14 @@ export async function POST(request: Request) {
           order_currency: currency,
           customer_details: {
             customer_id: userId,
-            customer_email: "226mayankkle@gmail.com", // You should get this from your user data
-            customer_phone: "7710807886", // You should get this from your user data
+            customer_email: "226mayankkle@gmail.com",
+            customer_phone: "7710807886"
           },
           order_meta: {
             return_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/callback?order_id={order_id}`,
-            notify_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/cashfree-webhook`,
+            notify_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/cashfree-webhook`
           },
-          order_note: `Superchat payment for call ${callId}`,
+          order_note: `Superchat payment for call ${callId}`
         }),
       })
 
