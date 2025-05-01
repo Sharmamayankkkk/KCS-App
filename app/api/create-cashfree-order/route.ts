@@ -85,6 +85,12 @@ export async function POST(request: Request) {
     }
     
     const responseData = await response.json();
+    
+    if (!responseData.order_token) {
+      console.error("No order token received from server");
+      return NextResponse.json({ message: "No order token received from server" }, { status: 500 });
+    }
+    
     return NextResponse.json(responseData);
     
 

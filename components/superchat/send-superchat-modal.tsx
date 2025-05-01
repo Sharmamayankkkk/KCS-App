@@ -145,7 +145,10 @@ export const SendSuperchatModal = ({
       const order_token = data.order_token;
       
       if (!order_token) {
-        throw new Error("No order token received from server");
+        console.error("No order token received from server");
+        setError("No order token received from server");
+        setLoading(false);
+        return;
       }
       
       setOrderToken(order_token);
