@@ -15,6 +15,9 @@ export default function PaymentCallback() {
     const orderId = searchParams.get("order_id")
     const paymentStatus = searchParams.get("payment_status")
 
+    console.log("Order ID:", orderId)
+    console.log("Payment Status:", paymentStatus)
+
     if (!orderId) {
       setStatus("failure")
       setMessage("Invalid payment response. Missing order information.")

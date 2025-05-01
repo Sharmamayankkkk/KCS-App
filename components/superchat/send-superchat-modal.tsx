@@ -148,6 +148,7 @@ export const SendSuperchatModal = ({
         throw new Error("No order token received from server");
       }
       
+      console.log("Order token received from server:", order_token); // P2442
       setOrderToken(order_token);
       setPaymentStatus("processing");
 
@@ -188,11 +189,11 @@ export const SendSuperchatModal = ({
               theme: "dark"
             },
             onSuccess: async (data: any) => {
-              console.log("Payment success", data);
+              console.log("Payment success", data); // P0c7f
               await createSuperchatEntry(newOrderId);
             },
             onFailure: (data: any) => {
-              console.error("Payment failed", data);
+              console.error("Payment failed", data); // P118a
               setPaymentStatus("failed");
               setError("Payment failed: " + (data?.reason || "Unknown error"));
               setLoading(false);
@@ -217,9 +218,11 @@ export const SendSuperchatModal = ({
             components: ["order-details", "card", "upi", "netbanking"],
             orderToken: order_token,
             onSuccess: async (data: any) => {
+              console.log("Payment success", data); // P0c7f
               await createSuperchatEntry(newOrderId);
             },
             onFailure: (data: any) => {
+              console.error("Payment failed", data); // P118a
               setPaymentStatus("failed");
               setError("Payment failed: " + (data?.reason || "Unknown error"));
               setLoading(false);
@@ -236,7 +239,7 @@ export const SendSuperchatModal = ({
           throw new Error("Unknown Cashfree SDK version. Please contact support.");
         }
       } catch (sdkError: any) {
-        console.error("Cashfree SDK error:", sdkError);
+        console.error("Cashfree SDK error:", sdkError); // P7caf
         throw new Error(`Payment SDK error: ${sdkError.message || "Unknown error"}`);
       }
       
