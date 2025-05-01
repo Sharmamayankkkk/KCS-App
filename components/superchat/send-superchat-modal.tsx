@@ -179,7 +179,7 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
       }
       } catch (sdkError) {
         console.error("Cashfree SDK error:", sdkError);
-        throw new Error(`Payment SDK error: ${sdkError instanceof Error ? sdkError.message : "Unknown error"}`)
+        throw new Error(`Payment SDK error: ${sdkError instanceof Error ? sdkError.message : "Unknown error"}`);
       }
     } catch (err) {
       console.error("Payment error:", err)
