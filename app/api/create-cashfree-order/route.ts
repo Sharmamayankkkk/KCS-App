@@ -49,14 +49,14 @@ export async function POST(request: Request) {
     // Documentation: https://docs.cashfree.com/reference/createorder
 
     // For production, uncomment and use this code:
-    
-    const response = await fetch('https://api.cashfree.com/pg/orders', {
-      method: 'POST',
+
+    const response = await fetch("https://api.cashfree.com/pg/orders", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-version': '2022-09-01',
-        'x-client-id': apiKey,
-        'x-client-secret': secretKey
+        "Content-Type": "application/json",
+        "x-api-version": "2022-09-01",
+        "x-client-id": apiKey,
+        "x-client-secret": secretKey,
       },
       body: JSON.stringify({
         order_id: orderId,
@@ -64,30 +64,30 @@ export async function POST(request: Request) {
         order_currency: currency,
         customer_details: {
           customer_id: userId,
-          customer_email: 'user@example.com', // You should get this from your user data
-          customer_phone: '9999999999' // You should get this from your user data
+          customer_email: "226mayankkle@gmail.com", // You should get this from your user data
+          customer_phone: "7701807886", // You should get this from your user data
         },
         order_meta: {
           return_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/callback?order_id={order_id}`,
-          notify_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/cashfree-webhook`
+          notify_url: `${process.env.NEXT_PUBLIC_APP_URL}/api/cashfree-webhook`,
         },
-        order_note: `Superchat payment for call ${callId}`
-      })
-    });
-    
+        order_note: `Superchat payment for call ${callId}`,
+      }),
+    })
+
     if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Cashfree API error:', errorData);
-      return NextResponse.json(
-        { message: errorData.message || 'Payment gateway error' }, 
-        { status: response.status }
-      );
+      const errorData = await response.json()
+      console.error("Cashfree API error:", errorData)
+      return NextResponse.json({ message: errorData.message || "Payment gateway error" }, { status: response.status })
     }
-    
-    const responseData = await response.json();
-    console.log('Cashfree API response:', responseData);
-    return NextResponse.json(responseData);
-    
+
+    const responseData = await response.json()
+    console.log("Cashfree API response:", responseData)
+    // Map payment_session_id to order_token for client compatibility
+    return NextResponse.json({
+      ...responseData,
+      order_token: responseData.payment_session_id,
+    })
 
     // This is a mock response for development purposes
     const orderTime = new Date().toISOString()
