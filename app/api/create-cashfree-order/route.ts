@@ -85,6 +85,7 @@ export async function POST(request: Request) {
     }
     
     const responseData = await response.json();
+    console.log('Cashfree API response:', responseData);
     return NextResponse.json(responseData);
     
 
