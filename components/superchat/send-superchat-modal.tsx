@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Loader2, X, AlertCircle } from "lucide-react"
 import { supabase } from "@/lib/supabaseClient"
+import Link from 'next/link';
 
 interface SendSuperchatModalProps {
   callId: string
@@ -228,7 +229,7 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
         </button>
 
         <h3 className="mb-6 text-xl font-bold text-white">Send a Superchat</h3>  
-
+        
         {!scriptLoaded && (  
           <div className="py-4 text-center">  
             <Loader2 size={24} className="mx-auto mb-2 animate-spin text-blue-400" />  
@@ -299,6 +300,24 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
                 )}  
               </Button>  
             </div>  
+            <p className="mt-8 text-[10px] text-gray-300">
+        By using SuperChat, you agree to our{' '}
+      
+        <Link href="/terms-and-conditions" className="text-blue-500 underline hover:text-blue-700">
+          Terms & Conditions
+        </Link>
+        <div className='flex gap-2 flex-wrap '>
+         <Link href="/refunds-and-cancellations" className="text-blue-500 underline hover:text-blue-700">
+         Refunds and Cancellations
+        </Link>
+        <Link href="/contact-us" className="text-blue-500 underline hover:text-blue-700">
+         Contact Us
+        </Link>
+        <Link href="/services" className="text-blue-500 underline hover:text-blue-700">
+        Services
+        </Link>
+        </div>
+      </p>
           </>  
         )}  
 
