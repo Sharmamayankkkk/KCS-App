@@ -9,7 +9,7 @@ const RefundPolicy = () => {
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">1. Overview</h2>
         <p>
-          Super Chat is a feature on <a href="https://meet.krishnaconsciousnesssociety.com" className="text-blue-600 underline">meet.krishnaconsciousnesssociety.com</a> 
+          Super Chat is a feature on <a href="https://meet.krishnaconsciousnesssociety.com" className="text-blue-600 underline"> meet.krishnaconsciousnesssociety.com</a> 
           that allows users to support content creators during live sessions by sending highlighted messages. These contributions are voluntary and processed via integrated payment gateways.
         </p>
       </section>
