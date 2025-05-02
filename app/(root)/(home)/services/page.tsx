@@ -59,10 +59,10 @@ const Services = () => {
       <div className="mt-10 text-center text-sm text-gray-600">
         For more information or assistance, please contact us at{' '}
         <a
-          href="mailto:support@krishnaconsciousnesssociety.com"
+          href="mailto:divineconnectionkcs@gmail.com"
           className="text-blue-600 underline"
         >
-          support@krishnaconsciousnesssociety.com
+          divineconnectionkcs@gmail.com
         </a>
         .
       </div>
