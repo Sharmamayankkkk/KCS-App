@@ -37,28 +37,11 @@ const MobileNav = () => {
           <div className="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto">
             <SheetClose asChild>
               <section className="flex h-full flex-col gap-6 pt-16 text-white">
-                {/* Social Media Links */}
-                <div className="flex gap-6 px-4">
-                  <Link 
-                    href="https://www.instagram.com/kcsociety_india" 
-                    target="_blank" 
-                    className="text-white hover:text-gray-300 transition-colors"
-                  >
-                    <Instagram size={24} />
-                  </Link>
-                  <Link 
-                    href="https://www.krishnaconsciousnesssociety.com/become-a-volunteer" 
-                    target="_blank" 
-                    className="text-white hover:text-gray-300 transition-colors"
-                  >
-                    <Send size={24} />
-                  </Link>
-                </div>
-
+                
                 {/* Navigation Links */}
                 {sidebarLinks.map((item) => {
                   const isActive = pathname === item.route;
-
+                
                   return (
                     <SheetClose asChild key={item.route}>
                       <Link
@@ -82,7 +65,26 @@ const MobileNav = () => {
                     </SheetClose>
                   );
                 })}
-
+                {/* Social Media Links */}
+                  <div className="flex flex-col gap-6 justify-start">
+                    <Link 
+                      href="https://www.instagram.com/kcsociety_india" 
+                      target="_blank" 
+                      className="flex items-center gap-4 p-4 rounded-lg w-full max-w-60 hover:bg-blue-1 transition-colors"
+                    >
+                      <Instagram size={20} className="text-blue-200" />
+                      <span className="font-semibold text-white">Instagram</span>
+                    </Link>
+                    
+                    <Link 
+                      href="https://www.krishnaconsciousnesssociety.com/become-a-volunteer" 
+                      target="_blank" 
+                      className="flex items-center gap-4 p-4 rounded-lg w-full max-w-60 hover:bg-blue-1 transition-colors"
+                    >
+                      <Send size={20} className="text-blue-200" />
+                      <span className="font-semibold text-white">Join Us</span>
+                    </Link>
+                  </div>
                 {/* Fixed Bottom Links */}
                 <div className="fixed bottom-4 left-4 flex flex-col gap-2 z-50">
                   <Link href="/terms-and-conditions" className="text-white hover:text-gray-300 transition-colors">

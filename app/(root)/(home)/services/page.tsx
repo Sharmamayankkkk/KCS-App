@@ -29,8 +29,10 @@ const services = [
   {
     title: '6. Super Chat Feature',
     description: (
-      <>
-        <p>Support content creators by sending highlighted messages during live sessions. Available Super Chat packages:</p>
+      <div>
+        <p>
+          Support content creators by sending highlighted messages during live sessions. Available Super Chat packages:
+        </p>
         <ul className="list-disc list-inside mt-2 space-y-1">
           <li>₹50 – Highlighted for 30 Seconds</li>
           <li>₹100 – Highlighted for 1 minute</li>
@@ -38,8 +40,10 @@ const services = [
           <li>₹500 – Highlighted for 3 minutes</li>
           <li>₹1000 – Highlighted for 5 minutes</li>
         </ul>
-        <p className="mt-2 italic text-sm">Note: Each Super Chat message can contain up to 200 characters.</p>
-      </>
+        <p className="mt-2 italic text-sm text-gray-500">
+          Note: Each Super Chat message can contain up to 200 characters.
+        </p>
+      </div>
     ),
   },
 ];
@@ -47,20 +51,27 @@ const services = [
 const Services = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-10 text-gray-800">
-      <h1 className="text-3xl font-bold mb-8 text-center">Services Offered</h1>
-      <div className="space-y-8">
+      <h1 className="text-3xl sm:text-4xl font-extrabold mb-10 text-center text-gray-900">
+        Services Offered
+      </h1>
+
+      <div className="space-y-6">
         {services.map((service, idx) => (
-          <div key={idx}>
-            <h2 className="text-xl font-semibold mb-2">{service.title}</h2>
-            <div className="text-gray-700 text-base">{service.description}</div>
+          <div
+            key={idx}
+            className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition duration-300"
+          >
+            <h2 className="text-xl font-semibold mb-2 text-gray-800">{service.title}</h2>
+            <div className="text-base text-gray-700">{service.description}</div>
           </div>
         ))}
       </div>
+
       <div className="mt-10 text-center text-sm text-gray-600">
         For more information or assistance, please contact us at{' '}
         <a
           href="mailto:divineconnectionkcs@gmail.com"
-          className="text-blue-600 underline"
+          className="text-blue-600 underline hover:text-blue-800"
         >
           divineconnectionkcs@gmail.com
         </a>
