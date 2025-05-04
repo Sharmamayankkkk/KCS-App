@@ -13,7 +13,11 @@ const TermsAndConditions = () => {
           <li>Text Chat: In-meeting text chat allows participants to send public or private messages.</li>
           <li>Recording and Storage: Meetings may be recorded and stored on the platform for later viewing or distribution.</li>
           <li>Social Media Distribution: We may share or broadcast recorded meeting content on our official social media channels.</li>
+          <li>Super Chat: Send highlighted paid messages during live sessions to support content creators.</li>
         </ul>
+        <p className="mt-2 text-sm text-gray-700">
+          Super Chat messages may be highlighted for 30 seconds to 5 minutes based on the selected amount. Each message can contain up to 200 characters.
+        </p>
       </section>
 
       <section className="mb-8">
@@ -21,7 +25,7 @@ const TermsAndConditions = () => {
         <ul className="list-disc list-inside space-y-1">
           <li>Account Information: Email address and password. Profile pictures are optional.</li>
           <li>Meeting Content: Audio and video streams when enabled.</li>
-          <li>Chat and Messages: Text messages sent or received during meetings.</li>
+          <li>Chats and Messages: Text messages sent or received during meetings.</li>
           <li>Additional Data: Technical and usage data (e.g. timestamps, device info).</li>
         </ul>
       </section>
@@ -29,13 +33,13 @@ const TermsAndConditions = () => {
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-2">Account Creation</h2>
         <p>
-          To use the service, users must create an account with a valid email and password. Profile pictures are optional.
-          You are responsible for your account's security and must notify us of any unauthorized use.
+          To use the service, users must create an account with a valid email and password. While profile pictures are optional, you are responsible for your account's security and must notify us of any unauthorized use.
         </p>
       </section>
 
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-2">Content Ownership and Licensing</h2>
+
         <h3 className="text-lg font-medium mt-4 mb-1">Your Content</h3>
         <p>You retain all rights to content you create or upload (videos, audio, messages, etc.).</p>
 
@@ -54,7 +58,7 @@ const TermsAndConditions = () => {
       <section className="mb-8">
         <h2 className="text-2xl font-semibold mb-2">Age and Regional Restrictions</h2>
         <p>
-          Our service is globally available. If you're a minor, a parent or guardian should agree to these terms.
+          Our service is globally available. If you're a minor, a parent or guardian must review and agree to these terms.
         </p>
       </section>
 
