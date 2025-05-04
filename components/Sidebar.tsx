@@ -38,6 +38,21 @@ const Sidebar = () => {
             </Link>
           );
         })}
+        {/* Additional Links */}
+       <div className="fixed bottom-4 left-4 flex flex-col gap-2 z-50">
+                 <Link href="/terms-and-conditions" className="text-white hover:text-gray-300 transition-colors">
+                   Terms & Conditions
+                 </Link>
+                 <Link href="/privacy-policy" className="text-white hover:text-gray-300 transition-colors">
+                   Privacy Policy
+                 </Link>
+                 <Link href="/about-us" className="text-white hover:text-gray-300 transition-colors">
+                   About Us
+                 </Link>
+                 <Link href="/contact-us" className="text-white hover:text-gray-300 transition-colors">
+                   Contact Us
+                 </Link>
+       </div>
       </div>
     </section>
   );

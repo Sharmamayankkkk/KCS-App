@@ -102,12 +102,11 @@
   aspect-ratio: 1;
   min-width: auto;
   border-radius: 8px;
-  background: rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease-in-out;
+  background: rgb(44, 44, 44);
 }
 
 .str-video__call-controls__button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgb(49, 47, 47);
   transform: scale(1.05);
 }
 

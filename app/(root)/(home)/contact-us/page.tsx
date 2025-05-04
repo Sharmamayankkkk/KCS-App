@@ -19,6 +19,10 @@ const ContactUs = () => {
             divineconnectionkcs@gmail.com
           </a>
         </div>
+        <div>
+          <span className="font-semibold">Address:</span>{' '}
+          Krishna Consciousness Society, F-408, Ghar Aangan Flats, Muhana Mandi, 302029, Jaipur, Rajasthan.
+        </div>
       </div>
     </div>
   );
