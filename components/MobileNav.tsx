@@ -86,7 +86,7 @@ const MobileNav = () => {
                     </Link>
                   </div>
                 {/* Fixed Bottom Links */}
-                <div className="fixed bottom-4 left-4 flex flex-col gap-2 z-50">
+                <div className="fixed bottom-4 left-4 px-1 flex flex-col gap-2 z-50">
                   <Link href="/terms-and-conditions" className="text-white hover:text-gray-300 transition-colors">
                     Terms & Conditions
                   </Link>

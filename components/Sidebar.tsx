@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 
 import { sidebarLinks } from '@/constants';
 import { cn } from '@/lib/utils';
+import { Instagram, Send } from 'lucide-react';
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -38,8 +39,29 @@ const Sidebar = () => {
             </Link>
           );
         })}
+         {/* Social Media Links */}
+         <div className="flex flex-col gap-6 justify-start">
+                    <Link 
+                      href="https://www.instagram.com/kcsociety_india" 
+                      target="_blank" 
+                      className="flex items-center gap-4 p-4 rounded-lg w-full max-w-60 hover:bg-blue-1 transition-colors"
+                    >
+                      <Instagram size={20} className="text-blue-200" />
+                      <span className="font-semibold max-lg:hidden
+                       text-white">Instagram</span>
+                    </Link>
+                    
+                    <Link 
+                      href="https://www.krishnaconsciousnesssociety.com/become-a-volunteer" 
+                      target="_blank" 
+                      className="flex items-center gap-4 p-4 rounded-lg w-full max-w-60 hover:bg-blue-1 transition-colors"
+                    >
+                      <Send size={20} className="text-blue-200" />
+                      <span className="font-semibold max-lg:hidden text-white">Join Us</span>
+                    </Link>
+                  </div>
         {/* Additional Links */}
-       <div className="fixed bottom-4 left-4 flex flex-col gap-2 z-50">
+       <div className="fixed bottom-4 left-4 flex flex-col px-2 gap-2 z-50 max-lg:text-[8px] max-lg:px-1">
                  <Link href="/terms-and-conditions" className="text-white hover:text-gray-300 transition-colors">
                    Terms & Conditions
                  </Link>

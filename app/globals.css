@@ -109,6 +109,9 @@
   background: rgb(49, 47, 47);
   transform: scale(1.05);
 }
+.str-video__icon{
+  color: #ffffff !important;
+}
 
 /* Responsive Design */
 @media (max-width: 768px) {
