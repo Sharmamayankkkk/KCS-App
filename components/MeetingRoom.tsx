@@ -16,7 +16,7 @@ import {
 } from "@stream-io/video-react-sdk"
 import "@stream-io/video-react-sdk/dist/css/styles.css"
 import { useRouter } from "next/navigation"
-import { Users, LayoutList, MessageSquare, X, Cast, Crown, BarChart2, AlertCircle } from "lucide-react"
+import { Users, LayoutList, MessageSquare, X, Cast, Crown, BarChart2, AlertCircle, MoreVertical} from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Button } from "./ui/button"
 import { cn } from "@/lib/utils"
@@ -476,14 +476,14 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             >
               <CallLayout />
             </div>
-
+  
             {/* Participants Panel */}
             {activePanel === "participants" && (
               <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden">
                 <CallParticipantsList onClose={() => setActivePanel("none")} />
               </div>
             )}
-
+  
             {/* Chat Panel */}
             {activePanel === "chat" && (
               <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
@@ -497,7 +497,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       <X className="text-white size-5" />
                     </button>
                   </div>
-
                   <div className="flex-1 space-y-2 overflow-auto custom-scrollbar-hidden">
                     {messages.map((msg) => (
                       <div key={msg.id} className="p-2 rounded-lg bg-gray-700/50 backdrop-blur-sm">
@@ -507,7 +506,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     ))}
                     <div ref={chatEndRef} />
                   </div>
-
                   <div className="mt-2 flex flex-col gap-2">
                     <input
                       type="text"
@@ -532,7 +530,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 </div>
               </div>
             )}
-
+  
             {/* Superchat Panel */}
             {activePanel === "superchat" && call?.id && (
               <div className="fixed right-0 transition-all duration-300 ease-in-out md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
@@ -544,7 +542,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 />
               </div>
             )}
-
+  
             {/* Polls Manager */}
             {activePanel === "polls" && call?.id && (
               <div className="fixed right-0 transition-all duration-300 ease-in-out md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
@@ -556,7 +554,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 />
               </div>
             )}
-
+  
             {/* Active Poll */}
             {activePanel === "activePoll" && call?.id && (
               <div className="fixed right-0 transition-all duration-300 ease-in-out md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
@@ -564,11 +562,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
             )}
           </div>
-
+  
+          {/* Bottom Controls */}
           <div className="fixed bottom-0 w-full px-4 pb-4">
             <div className="flex flex-wrap items-center justify-center gap-2 p-2 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/80 backdrop-blur-md max-w-max">
               <CallControls onLeave={() => router.push("/")} />
-
+  
               {isAdmin && (
                 <>
                   <MuteButton />
@@ -576,7 +575,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <BroadcastControl />
                 </>
               )}
-
+  
               <DropdownMenu>
                 <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
                   <LayoutList className="text-white size-5" />
@@ -589,51 +588,33 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-
-              <CallStatsButton />
-
-              <button
-                className={cn("p-2 transition rounded-lg hover:bg-gray-700/50", {
-                  "bg-gray-700/50": activePanel === "participants",
-                })}
-                onClick={() => togglePanel("participants")}
-                aria-label="Show participants"
-              >
-                <Users className="text-white size-5" />
+              <button onClick={() => togglePanel("chat")}>
+                <MessageSquare className="mr-2 size-5 text-white" /> 
               </button>
-
-              <button
-                className={cn("p-2 transition rounded-lg hover:bg-gray-700/50", {
-                  "bg-gray-700/50": activePanel === "chat",
-                })}
-                onClick={() => togglePanel("chat")}
-                aria-label="Show chat"
-              >
-                <MessageSquare className="text-white size-5" />
-              </button>
-
-              <button
-                className={cn("p-2 transition rounded-lg hover:bg-gray-700/50", {
-                  "bg-gray-700/50": activePanel === "superchat",
-                })}
-                onClick={() => togglePanel("superchat")}
-                aria-label="Show superchats"
-              >
-                <Crown className="text-white size-5" />
-              </button>
-
-              <button
-                className={cn("p-2 transition rounded-lg hover:bg-gray-700/50", {
-                  "bg-gray-700/50": activePanel === "polls" || activePanel === "activePoll",
-                })}
-                onClick={() => togglePanel(isAdmin ? "polls" : "activePoll")}
-                aria-label="Show polls"
-              >
-                <BarChart2 className="text-white size-5" />
-              </button>
+  
+              {/* 🔽 New Three Dots Dropdown for Panels */}
+              <DropdownMenu>
+                <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
+                  <MoreVertical className="text-white size-5" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="text-white bg-gray-800 p-2  hover:bg-gray-900">
+                  <DropdownMenuItem onClick={() => togglePanel("participants")}>
+                    <Users className="mr-2 size-4" /> Participants
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => togglePanel("superchat")}>
+                    <Crown className="mr-2 size-4" /> Superchat
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => togglePanel(isAdmin ? "polls" : "activePoll")}>
+                    <BarChart2 className="mr-2 size-4" /> Polls
+                  </DropdownMenuItem>
+                  <DropdownMenuItem >
+                      <CallStatsButton />Statistics
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
-
+  
           {/* Send Superchat Modal */}
           {showSendSuperchat && call?.id && (
             <SendSuperchatModal
@@ -649,7 +630,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     </StreamVideo>
   ) : (
     <Loader />
-  )
+  );
+  
+
 }
 
 export default MeetingRoom;
