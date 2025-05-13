@@ -16,7 +16,7 @@ import {
 } from "@stream-io/video-react-sdk"
 import "@stream-io/video-react-sdk/dist/css/styles.css"
 import { useRouter } from "next/navigation"
-import { Users, LayoutList, MessageSquare, X, Cast, Crown, BarChart2, AlertCircle, MoreVertical} from "lucide-react"
+import { Users, LayoutList, MessageSquare, X, Cast, Crown, BarChart2, AlertCircle, MoreVertical } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Button } from "./ui/button"
 import { cn } from "@/lib/utils"
@@ -152,7 +152,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   }
 
   // Stop RTMP broadcast
-  const stopBroadcast = async (platformName: string) => {
+  /*const stopBroadcast = async (platformName: string) => {
     try {
       if (!call) {
         setBroadcastError("Call object is not available.")
@@ -181,7 +181,27 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       console.error("Error stopping broadcast:", error)
       setBroadcastError(`Failed to stop ${platformName} broadcast.`)
     }
+  }  */
+
+  // Stop RTMP broadcast
+  const stopBroadcast = async (platformName: string) => {
+    try {
+      if (!call) {
+        setBroadcastError("Call object is not available.")
+        return
+      }
+
+      // RTMP‐specific stop
+      await call.stopRTMPBroadcast(platformName)
+
+      // Remove from active list
+      setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
+    } catch (error: any) {
+      console.error("Error stopping broadcast:", error)
+      setBroadcastError(`Failed to stop ${platformName} broadcast.`)
+    }
   }
+
 
   // Check broadcast status
   useEffect(() => {
@@ -476,14 +496,14 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             >
               <CallLayout />
             </div>
-  
+
             {/* Participants Panel */}
             {activePanel === "participants" && (
               <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden">
                 <CallParticipantsList onClose={() => setActivePanel("none")} />
               </div>
             )}
-  
+
             {/* Chat Panel */}
             {activePanel === "chat" && (
               <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
@@ -530,7 +550,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 </div>
               </div>
             )}
-  
+
             {/* Superchat Panel */}
             {activePanel === "superchat" && call?.id && (
               <div className="fixed right-0 transition-all duration-300 ease-in-out md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
@@ -542,7 +562,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 />
               </div>
             )}
-  
+
             {/* Polls Manager */}
             {activePanel === "polls" && call?.id && (
               <div className="fixed right-0 transition-all duration-300 ease-in-out md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
@@ -554,7 +574,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 />
               </div>
             )}
-  
+
             {/* Active Poll */}
             {activePanel === "activePoll" && call?.id && (
               <div className="fixed right-0 transition-all duration-300 ease-in-out md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
@@ -562,12 +582,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
             )}
           </div>
-  
+
           {/* Bottom Controls */}
           <div className="fixed bottom-0 w-full px-4 pb-4">
             <div className="flex flex-wrap items-center justify-center gap-2 p-2 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/80 backdrop-blur-md max-w-max">
               <CallControls onLeave={() => router.push("/")} />
-  
+
               {isAdmin && (
                 <>
                   <MuteButton />
@@ -575,7 +595,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   <BroadcastControl />
                 </>
               )}
-  
+
               <DropdownMenu>
                 <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
                   <LayoutList className="text-white size-5" />
@@ -589,9 +609,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
               <button onClick={() => togglePanel("chat")}>
-                <MessageSquare className="mr-2 size-5 text-white" /> 
+                <MessageSquare className="mr-2 size-5 text-white" />
               </button>
-  
+
               {/* 🔽 New Three Dots Dropdown for Panels */}
               <DropdownMenu>
                 <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
@@ -608,13 +628,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     <BarChart2 className="mr-2 size-4" /> Polls
                   </DropdownMenuItem>
                   <DropdownMenuItem >
-                      <CallStatsButton />Statistics
+                    <CallStatsButton />Statistics
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
           </div>
-  
+
           {/* Send Superchat Modal */}
           {showSendSuperchat && call?.id && (
             <SendSuperchatModal
@@ -631,7 +651,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   ) : (
     <Loader />
   );
-  
+
 
 }
 
