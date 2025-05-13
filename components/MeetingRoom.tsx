@@ -368,7 +368,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       {/* Broadcast Form Modal */}
       {showBroadcastForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-          <div className="w-full p-6 rounded-lg bg-[#243341] max-w-md relative">
+          <div className="w-full p-6 rounded-lg bg-[#243341] max-w-md relative bottom-20">
             <button
               onClick={() => setShowBroadcastForm(false)}
               className="absolute right-4 top-4 text-gray-400 hover:text-white transition"
@@ -499,7 +499,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             {/* Participants Panel */}
             {activePanel === "participants" && (
-              <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-auto overflow-hidden">
+              <div className="fixed right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-lg md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] overflow-hidden">
                 <CallParticipantsList onClose={() => setActivePanel("none")} />
               </div>
             )}
