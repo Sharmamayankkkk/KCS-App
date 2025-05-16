@@ -152,38 +152,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   }
 
   // Stop RTMP broadcast
-  /*const stopBroadcast = async (platformName: string) => {
-    try {
-      if (!call) {
-        setBroadcastError("Call object is not available.")
-        return
-      }
-
-      if (!activeBroadcasts.includes(platformName)) {
-        setBroadcastError(`No active broadcast found for ${platformName}.`)
-        return
-      }
-
-      setBroadcastError("")
-
-      // Check if stopLive() is available in the SDK
-      if (typeof call.stopLive !== "function") {
-        setBroadcastError("Stop live function is not available in this SDK version.")
-        return
-      }
-
-      await call.stopLive()
-
-      setActiveBroadcasts((prev) => prev.filter((name) => name !== platformName))
-
-      console.log(`${platformName} broadcast stopped successfully.`)
-    } catch (error) {
-      console.error("Error stopping broadcast:", error)
-      setBroadcastError(`Failed to stop ${platformName} broadcast.`)
-    }
-  }  */
-
-  // Stop RTMP broadcast
   const stopBroadcast = async (platformName: string) => {
     try {
       if (!call) {
