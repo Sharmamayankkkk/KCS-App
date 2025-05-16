@@ -16,8 +16,8 @@ import {
 } from "@stream-io/video-react-sdk"
 import "@stream-io/video-react-sdk/dist/css/styles.css"
 import { useRouter } from "next/navigation"
-import { Users, LayoutList, MessageSquare, X, Cast, Crown, BarChart2, AlertCircle, MoreVertical } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "./ui/dropdown-menu"
+import { Users, LayoutList, MessageSquare, X, Cast, Crown, BarChart2, AlertCircle, MoreVertical, Settings } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "./ui/dropdown-menu"
 import { Button } from "./ui/button"
 import { cn } from "@/lib/utils"
 import { supabase } from "@/lib/supabaseClient"
@@ -306,10 +306,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const BroadcastControl = () => (
     <>
       <DropdownMenu>
-        <DropdownMenuTrigger className="p-2 rounded-lg transition hover:bg-gray-700/50">
+        <DropdownMenuTrigger className="p-2.5 rounded-lg transition-all hover:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/60">
           <Cast className="text-white size-5" />
         </DropdownMenuTrigger>
-        <DropdownMenuContent>
+        <DropdownMenuContent side="top" align="center" className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-48">
           {BROADCAST_PLATFORMS.map((platform) => (
             <DropdownMenuItem
               key={platform.id}
@@ -324,10 +324,21 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   setShowBroadcastForm(true)
                 }
               }}
+              className="flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none"
             >
-              {activeBroadcasts.includes(platform.id)
-                ? `Stop ${platform.name} Broadcast`
-                : `Start ${platform.name} Broadcast`}
+              <div className="flex items-center justify-between w-full">
+                <span className="flex items-center">
+                  <Cast className="mr-2 size-4" />
+                  {platform.name}
+                </span>
+                <span className={cn("text-xs font-medium px-1.5 py-0.5 rounded-md", 
+                  activeBroadcasts.includes(platform.id) 
+                    ? "bg-red-500/20 text-red-300" 
+                    : "bg-gray-700 text-gray-300"
+                )}>
+                  {activeBroadcasts.includes(platform.id) ? "LIVE" : "OFF"}
+                </span>
+              </div>
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>
@@ -336,10 +347,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       {/* Broadcast Form Modal */}
       {showBroadcastForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-          <div className="w-full p-6 rounded-lg bg-[#243341] max-w-md relative bottom-20">
+          <div className="w-full p-6 rounded-lg bg-[#243341] max-w-md relative bottom-20 shadow-2xl">
             <button
               onClick={() => setShowBroadcastForm(false)}
-              className="absolute right-4 top-4 text-gray-400 hover:text-white transition"
+              className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-full p-1"
             >
               <X size={20} />
             </button>
@@ -356,7 +367,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   value={streamUrl}
                   onChange={(e) => setStreamUrl(e.target.value)}
                   placeholder="rtmp://..."
-                  className="w-full p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2.5 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500/80 border border-gray-700"
                 />
               </div>
 
@@ -367,7 +378,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   value={streamKey}
                   onChange={(e) => setStreamKey(e.target.value)}
                   placeholder="Enter stream key..."
-                  className="w-full p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-2.5 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500/80 border border-gray-700"
                 />
                 <p className="mt-1 text-xs text-gray-400">Your stream key is kept secure and never stored.</p>
               </div>
@@ -380,7 +391,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               )}
 
               <div className="flex justify-end mt-6 space-x-2">
-                <Button variant="outline" onClick={() => setShowBroadcastForm(false)}>
+                <Button variant="outline" onClick={() => setShowBroadcastForm(false)} className="bg-transparent border border-gray-600 hover:bg-gray-700 text-white">
                   Cancel
                 </Button>
                 <Button onClick={startBroadcast} className="bg-red-500 hover:bg-red-600 text-white">
@@ -564,39 +575,91 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 </>
               )}
 
+              {/* Layout Dropdown */}
               <DropdownMenu>
-                <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
+                <DropdownMenuTrigger className="p-2.5 rounded-lg transition-all hover:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/60">
                   <LayoutList className="text-white size-5" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  {["Grid", "Speaker-Left", "Speaker-Right"].map((item) => (
-                    <DropdownMenuItem key={item} onClick={() => setLayout(item.toLowerCase() as CallLayoutType)}>
-                      {item}
+                <DropdownMenuContent side="top" align="center" className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-40">
+                  {[
+                    { name: "Grid", value: "grid", icon: <LayoutList className="mr-2 size-4" /> },
+                    { name: "Speaker Left", value: "speaker-left", icon: <LayoutList className="mr-2 size-4" /> },
+                    { name: "Speaker Right", value: "speaker-right", icon: <LayoutList className="mr-2 size-4" /> }
+                  ].map(({ name, value, icon }) => (
+                    <DropdownMenuItem 
+                      key={value}
+                      onClick={() => setLayout(value as CallLayoutType)}
+                      className="flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none"
+                    >
+                      {icon}
+                      {name}
+                      {layout === value && (
+                        <span className="ml-2 h-2 w-2 rounded-full bg-blue-500"></span>
+                      )}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              <button onClick={() => togglePanel("chat")}>
-                <MessageSquare className="mr-2 size-5 text-white" />
+
+              {/* Chat Button */}
+              <button 
+                onClick={() => togglePanel("chat")}
+                className="p-2.5 rounded-lg transition-all hover:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/60"
+              >
+                <MessageSquare className="text-white size-5" />
               </button>
 
-              {/* 🔽 New Three Dots Dropdown for Panels */}
+              {/* Main Menu Dropdown */}
               <DropdownMenu>
-                <DropdownMenuTrigger className="p-2 transition rounded-lg hover:bg-gray-700/50">
+                <DropdownMenuTrigger className="p-2.5 rounded-lg transition-all hover:bg-gray-700/50 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/60">
                   <MoreVertical className="text-white size-5" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="text-white bg-gray-800 p-2  hover:bg-gray-900">
-                  <DropdownMenuItem onClick={() => togglePanel("participants")}>
-                    <Users className="mr-2 size-4" /> Participants
+                <DropdownMenuContent 
+                  side="top" 
+                  align="end" 
+                  className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-56 p-1"
+                >
+                  <DropdownMenuItem 
+                    onClick={() => togglePanel("participants")} 
+                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+                  >
+                    <Users className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
+                    <span>Participants</span>
+                    {activePanel === "participants" && (
+                      <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
+                    )}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => togglePanel("superchat")}>
-                    <Crown className="mr-2 size-4" /> Superchat
+                  
+                  <DropdownMenuItem 
+                    onClick={() => togglePanel("superchat")}
+                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+                  >
+                    <Crown className="mr-2 size-4 text-amber-500 group-hover:text-amber-400 transition-colors" />
+                    <span>Superchat</span>
+                    {activePanel === "superchat" && (
+                      <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
+                    )}
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => togglePanel(isAdmin ? "polls" : "activePoll")}>
-                    <BarChart2 className="mr-2 size-4" /> Polls
+                  
+                  <DropdownMenuItem 
+                    onClick={() => togglePanel(isAdmin ? "polls" : "activePoll")}
+                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+                  >
+                    <BarChart2 className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
+                    <span>Polls</span>
+                    {(activePanel === "polls" || activePanel === "activePoll") && (
+                      <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
+                    )}
                   </DropdownMenuItem>
-                  <DropdownMenuItem >
-                    <CallStatsButton />Statistics
+                  
+                  <DropdownMenuSeparator className="my-1 border-t border-gray-700" />
+                  
+                  <DropdownMenuItem className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group">
+                    <Settings className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
+                    <span className="flex items-center">
+                      <span>Statistics</span>
+                      <CallStatsButton />
+                    </span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -619,8 +682,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   ) : (
     <Loader />
   );
-
-
 }
 
 export default MeetingRoom;
