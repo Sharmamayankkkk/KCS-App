@@ -6,7 +6,7 @@
 :root {
   --video-primary-color: #1a1a1a;
   --video-secondary-color: #2a2a2a;
-  --video-accent-color: #0E78F9;
+  --video-accent-color: #0e78f9;
   --video-text-color: #ffffff;
 }
 
@@ -37,7 +37,7 @@
 .str-video__speaker-layout__spotlight {
   align-items: center;
   height: auto !important;
-  aspect-ratio: 16/9;
+  aspect-ratio: 16 / 9;
   border-radius: 12px;
   overflow: hidden;
 }
@@ -109,7 +109,7 @@
   background: rgb(49, 47, 47);
   transform: scale(1.05);
 }
-.str-video__icon{
+.str-video__icon {
   color: #ffffff !important;
 }
 
@@ -122,15 +122,15 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  
+
   .str-video__speaker-layout__spotlight {
     max-height: 60vh;
   }
-  
+
   .str-video__speaker-layout__participant-tile {
     min-width: 80px !important;
     max-width: 120px;
-    aspect-ratio: 16/9;
+    aspect-ratio: 16 / 9;
   }
 
   .str-video__call-controls {
@@ -145,11 +145,11 @@
     width: 60px !important;
     font-size: 12px;
   }
-  
+
   .str-video__participant-view > .str-video__call-controls__button {
     padding: 4px;
   }
-  
+
   .str-video__video-placeholder__avatar {
     width: 32px !important;
     height: 32px !important;
@@ -174,11 +174,11 @@
 }
 
 @keyframes show {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(10px);
   }
-  to { 
+  to {
     opacity: 1;
     transform: translateY(0);
   }
@@ -242,24 +242,32 @@
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 150ms;
   }
-  
+
   .animate-fade-in {
     animation: fadeIn 0.3s ease-in-out;
   }
-  
+
   .animate-slide-in {
     animation: slideIn 0.3s ease-in-out;
   }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideIn {
-  from { transform: translateX(100%); }
-  to { transform: translateX(0); }
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
 /* Stream Theme Customization */
@@ -268,4 +276,71 @@
   --str-video__secondary-color: var(--video-secondary-color);
   --str-video__text-color1: var(--video-text-color);
   --str-video__border-radius-circle: 8px;
+}
+
+/* Modern Button Effects */
+.btn-glow {
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.5);
+}
+
+.btn-glow:hover {
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.7);
+}
+
+.btn-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+/* Message notification animation */
+@keyframes messageNotification {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.message-notification {
+  animation: messageNotification 2s infinite;
+}
+
+/* Tooltip animation */
+.tooltip {
+  position: absolute;
+  opacity: 0;
+  transform: translateY(5px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.tooltip-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Button hover effect */
+.btn-hover-effect {
+  transition: all 0.3s ease;
+}
+
+.btn-hover-effect:hover {
+  transform: translateY(-2px);
 }

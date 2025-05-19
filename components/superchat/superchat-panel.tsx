@@ -135,12 +135,17 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
           <Button
             variant="outline"
             size="sm"
-            className={`text-xs text-white ${showPinnedOnly ? "bg-yellow-800/50" : "bg-transparent"}`}
+            className={`text-xs text-white rounded-full px-3 transition-all duration-200 ${
+              showPinnedOnly ? "bg-yellow-800/50 border-yellow-700/50" : "bg-transparent border-gray-700/50"
+            }`}
             onClick={() => setShowPinnedOnly(!showPinnedOnly)}
           >
             {showPinnedOnly ? "Show All" : "Pinned Only"}
           </Button>
-          <button className="text-white hover:text-gray-300 transition" onClick={onClose}>
+          <button
+            className="text-white hover:text-gray-300 transition rounded-full p-1.5 hover:bg-gray-700/50"
+            onClick={onClose}
+          >
             <X size={20} />
           </button>
         </div>
