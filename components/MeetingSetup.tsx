@@ -125,7 +125,7 @@ const MeetingSetup = ({
         <div className="flex flex-col gap-6">
           {/* Header */}
           <div className="text-center mb-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Ready to join?</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Hare Krishna <br /> Ready to join?</h1>
             <p className="text-slate-300 max-w-md mx-auto">
               Check your audio and video settings before joining the meeting
             </p>
