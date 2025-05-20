@@ -44,6 +44,7 @@ import { SuperchatPanel } from "./superchat/superchat-panel"
 import { SendSuperchatModal } from "./superchat/send-superchat-modal"
 import { PollsManager } from "./poll/polls-manager"
 import { ActivePoll } from "./poll/active-poll"
+import CustomGridLayout from './CustomGridLayout'
 
 // Broadcast platform configuration with more details
 const BROADCAST_PLATFORMS = [
@@ -291,12 +292,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   // Layout Component
   const CallLayout = () => {
     switch (layout) {
-      case "grid":
-        return <PaginatedGridLayout groupSize={9} pageArrowsVisible={true} />
-      case "speaker-right":
-        return <SpeakerLayout participantsBarPosition="left" />
-      default:
-        return <SpeakerLayout participantsBarPosition="right" />
+      case 'grid': return <CustomGridLayout />;
+      case 'speaker-left': return <SpeakerLayout participantsBarPosition="left" />;
+      case 'speaker-right': return <SpeakerLayout participantsBarPosition="right" />;
+
     }
   }
 
@@ -531,7 +530,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   return videoClient && call ? (
     <StreamVideo client={videoClient}>
       <StreamCall call={call}>
-        <section className="relative w-full h-screen pt-4 overflow-hidden">
+        <section className="relative w-full h-full flex flex-col">
           <div className="relative flex items-center justify-center size-full">
             <div
               className={cn("flex transition-all duration-300 ease-in-out size-full", {
@@ -663,176 +662,185 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             <div className="flex flex-wrap items-center justify-center gap-2 p-3 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/90 backdrop-blur-md max-w-max shadow-lg border border-gray-700/30">
               {/* Standard Call Controls with custom styling */}
               <div className="flex items-center gap-2">
-                <CallControls
-                  onLeave={() => router.push("/")}
-                  render={({ LeaveButton, MicrophoneButton, CameraButton, ScreenShareButton }) => (
-                    <>
-                      <MicrophoneButton className="size-11 rounded-full bg-gray-800/80 hover:bg-gray-700 border border-gray-700/50 shadow-md transition-all duration-200 text-white" />
-                      <CameraButton className="size-11 rounded-full bg-gray-800/80 hover:bg-gray-700 border border-gray-700/50 shadow-md transition-all duration-200 text-white" />
-                      <ScreenShareButton className="size-11 rounded-full bg-gray-800/80 hover:bg-gray-700 border border-gray-700/50 shadow-md transition-all duration-200 text-white" />
-                      <LeaveButton className="size-11 rounded-full bg-red-600/90 hover:bg-red-700 border border-red-500/50 shadow-md transition-all duration-200 text-white" />
-                    </>
-                  )}
-                />
-              </div>
-
-              <div className="h-8 w-px bg-gray-700/50 mx-1"></div>
-
-              {isAdmin && (
-                <div className="flex items-center gap-2">
-                  <MuteButton />
-                  <EndCallButton />
-                  <BroadcastControl />
-                  <div className="h-8 w-px bg-gray-700/50 mx-1"></div>
-                </div>
-              )}
-
-              {/* Layout Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  onMouseEnter={() => handleButtonHover("layout", true)}
-                  onMouseLeave={() => handleButtonHover("layout", false)}
-                  className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md"
-                >
-                  <div className="relative">
-                    <LayoutList className="text-white size-5" />
-                    {buttonHoverStates["layout"] && (
-                      <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
-                        Layout
-                      </span>
-                    )}
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  side="top"
-                  align="center"
-                  className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-40"
-                >
-                  {[
-                    { name: "Grid", value: "grid", icon: <LayoutList className="mr-2 size-4" /> },
-                    { name: "Speaker Left", value: "speaker-left", icon: <LayoutList className="mr-2 size-4" /> },
-                    { name: "Speaker Right", value: "speaker-right", icon: <LayoutList className="mr-2 size-4" /> },
-                  ].map(({ name, value, icon }) => (
-                    <DropdownMenuItem
-                      key={value}
-                      onClick={() => setLayout(value as CallLayoutType)}
-                      className="flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none"
-                    >
-                      {icon}
-                      {name}
-                      {layout === value && <span className="ml-2 h-2 w-2 rounded-full bg-blue-500"></span>}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-
-              {/* Chat Button with notification indicator */}
-              <button
-                onMouseEnter={() => handleButtonHover("chat", true)}
-                onMouseLeave={() => handleButtonHover("chat", false)}
-                onClick={() => {
-                  togglePanel("chat")
-                  setUnreadMessages(0) // Reset unread count when opening chat
-                }}
-                className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md relative"
-              >
-                <div className="relative">
-                  <MessageSquare className="text-white size-5" />
-                  {unreadMessages > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full size-5 flex items-center justify-center animate-pulse">
-                      {unreadMessages > 9 ? "9+" : unreadMessages}
-                    </span>
-                  )}
-                  {buttonHoverStates["chat"] && (
-                    <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
-                      Chat
-                    </span>
-                  )}
-                </div>
-              </button>
-
-              {/* Main Menu Dropdown */}
-              <DropdownMenu>
-                <DropdownMenuTrigger
-                  onMouseEnter={() => handleButtonHover("menu", true)}
-                  onMouseLeave={() => handleButtonHover("menu", false)}
-                  className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md"
-                >
-                  <div className="relative">
-                    <MoreVertical className="text-white size-5" />
-                    {buttonHoverStates["menu"] && (
-                      <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
-                        More
-                      </span>
-                    )}
-                  </div>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  side="top"
-                  align="end"
-                  className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-56 p-1"
-                >
-                  <DropdownMenuItem
-                    onClick={() => togglePanel("participants")}
-                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
-                  >
-                    <Users className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
-                    <span>Participants</span>
-                    {activePanel === "participants" && (
-                      <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
-                    )}
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => togglePanel("superchat")}
-                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
-                  >
-                    <Crown className="mr-2 size-4 text-amber-500 group-hover:text-amber-400 transition-colors" />
-                    <span>Superchat</span>
-                    {activePanel === "superchat" && <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>}
-                  </DropdownMenuItem>
-
-                  <DropdownMenuItem
-                    onClick={() => togglePanel(isAdmin ? "polls" : "activePoll")}
-                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
-                  >
-                    <BarChart2 className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
-                    <span>Polls</span>
-                    {(activePanel === "polls" || activePanel === "activePoll") && (
-                      <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
-                    )}
-                  </DropdownMenuItem>
-
-                  <DropdownMenuSeparator className="my-1 border-t border-gray-700" />
-
-                  <DropdownMenuItem className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group">
-                    <Settings className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
-                    <span className="flex items-center">
-                      <span>Statistics</span>
-                      <CallStatsButton />
-                    </span>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                <CallControls />
+              </div> 
+          {/* Desktop View 
+          <div className="hidden md:flex fixed bottom-0 w-full px-4 pb-4 items-center justify-center gap-2">
+            <div className="flex flex-wrap items-center justify-center gap-2 p-3 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/90 backdrop-blur-md max-w-max shadow-lg border border-gray-700/30">
+              <CallControls />
             </div>
           </div>
 
-          {/* Send Superchat Modal */}
-          {showSendSuperchat && call?.id && (
-            <SendSuperchatModal
-              callId={call.id}
-              senderName={userData?.fullName || "Anonymous"}
-              userId={userData?.id || ""}
-              onClose={() => setShowSendSuperchat(false)}
-              onSuccess={handleSuperchatSuccess}
-            />
+          {/* Mobile View 
+          <div className="md:hidden fixed bottom-4 right-4 z-50">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="bg-blue-600 p-3 rounded-full shadow-lg">
+                <MoreVertical className="text-white" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-gray-900 text-white w-48 rounded-lg shadow-xl p-2 space-y-2">
+                <CallControls />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>  */}
+
+
+          <div className="h-8 w-px bg-gray-700/50 mx-1"></div>
+
+          {isAdmin && (
+            <div className="flex items-center gap-2">
+              <MuteButton />
+              <EndCallButton />
+              <BroadcastControl />
+              <div className="h-8 w-px bg-gray-700/50 mx-1"></div>
+            </div>
           )}
-        </section>
-      </StreamCall>
-    </StreamVideo>
+
+          {/* Layout Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              onMouseEnter={() => handleButtonHover("layout", true)}
+              onMouseLeave={() => handleButtonHover("layout", false)}
+              className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md"
+            >
+              <div className="relative">
+                <LayoutList className="text-white size-5" />
+                {buttonHoverStates["layout"] && (
+                  <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
+                    Layout
+                  </span>
+                )}
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="top"
+              align="center"
+              className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-40"
+            >
+              {[
+                { name: "Grid", value: "grid", icon: <LayoutList className="mr-2 size-4" /> },
+                { name: "Speaker Left", value: "speaker-left", icon: <LayoutList className="mr-2 size-4" /> },
+                { name: "Speaker Right", value: "speaker-right", icon: <LayoutList className="mr-2 size-4" /> },
+              ].map(({ name, value, icon }) => (
+                <DropdownMenuItem
+                  key={value}
+                  onClick={() => setLayout(value as CallLayoutType)}
+                  className="flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none"
+                >
+                  {icon}
+                  {name}
+                  {layout === value && <span className="ml-2 h-2 w-2 rounded-full bg-blue-500"></span>}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          {/* Chat Button with notification indicator */}
+          <button
+            onMouseEnter={() => handleButtonHover("chat", true)}
+            onMouseLeave={() => handleButtonHover("chat", false)}
+            onClick={() => {
+              togglePanel("chat")
+              setUnreadMessages(0) // Reset unread count when opening chat
+            }}
+            className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md relative"
+          >
+            <div className="relative">
+              <MessageSquare className="text-white size-5" />
+              {unreadMessages > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full size-5 flex items-center justify-center animate-pulse">
+                  {unreadMessages > 9 ? "9+" : unreadMessages}
+                </span>
+              )}
+              {buttonHoverStates["chat"] && (
+                <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
+                  Chat
+                </span>
+              )}
+            </div>
+          </button>
+
+          {/* Main Menu Dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              onMouseEnter={() => handleButtonHover("menu", true)}
+              onMouseLeave={() => handleButtonHover("menu", false)}
+              className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md"
+            >
+              <div className="relative">
+                <MoreVertical className="text-white size-5" />
+                {buttonHoverStates["menu"] && (
+                  <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
+                    More
+                  </span>
+                )}
+              </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="top"
+              align="end"
+              className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-56 p-1"
+            >
+              <DropdownMenuItem
+                onClick={() => togglePanel("participants")}
+                className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+              >
+                <Users className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
+                <span>Participants</span>
+                {activePanel === "participants" && (
+                  <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
+                )}
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => togglePanel("superchat")}
+                className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+              >
+                <Crown className="mr-2 size-4 text-amber-500 group-hover:text-amber-400 transition-colors" />
+                <span>Superchat</span>
+                {activePanel === "superchat" && <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>}
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={() => togglePanel(isAdmin ? "polls" : "activePoll")}
+                className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+              >
+                <BarChart2 className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
+                <span>Polls</span>
+                {(activePanel === "polls" || activePanel === "activePoll") && (
+                  <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
+                )}
+              </DropdownMenuItem>
+
+              <DropdownMenuSeparator className="my-1 border-t border-gray-700" />
+
+              <DropdownMenuItem className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group">
+                <Settings className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
+                <span className="flex items-center">
+                  <span>Statistics</span>
+                  <CallStatsButton />
+                </span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Send Superchat Modal */}
+      {showSendSuperchat && call?.id && (
+        <SendSuperchatModal
+          callId={call.id}
+          senderName={userData?.fullName || "Anonymous"}
+          userId={userData?.id || ""}
+          onClose={() => setShowSendSuperchat(false)}
+          onSuccess={handleSuperchatSuccess}
+        />
+      )}
+    </section>
+ </StreamCall>
+ </StreamVideo>
   ) : (
-    <Loader />
-  )
+  <Loader />
+)
 }
 
-export default MeetingRoom
+export default MeetingRoom;
