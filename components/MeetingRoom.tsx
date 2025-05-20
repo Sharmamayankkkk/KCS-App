@@ -664,26 +664,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               <div className="flex items-center gap-2">
                 <CallControls />
               </div> 
-          {/* Desktop View 
-          <div className="hidden md:flex fixed bottom-0 w-full px-4 pb-4 items-center justify-center gap-2">
-            <div className="flex flex-wrap items-center justify-center gap-2 p-3 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/90 backdrop-blur-md max-w-max shadow-lg border border-gray-700/30">
-              <CallControls />
-            </div>
-          </div>
-
-          {/* Mobile View 
-          <div className="md:hidden fixed bottom-4 right-4 z-50">
-            <DropdownMenu>
-              <DropdownMenuTrigger className="bg-blue-600 p-3 rounded-full shadow-lg">
-                <MoreVertical className="text-white" />
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="bg-gray-900 text-white w-48 rounded-lg shadow-xl p-2 space-y-2">
-                <CallControls />
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>  */}
-
-
+              
           <div className="h-8 w-px bg-gray-700/50 mx-1"></div>
 
           {isAdmin && (
