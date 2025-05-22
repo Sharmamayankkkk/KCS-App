@@ -344,3 +344,183 @@
 .btn-hover-effect:hover {
   transform: translateY(-2px);
 }
+
+/* Admin Panel Dropdown Styles */
+.admin-panel-dropdown .str-video__call-controls__button {
+  margin: 0;
+  width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  border-radius: 6px;
+  background: transparent;
+  justify-content: flex-start;
+  padding: 8px;
+}
+
+.admin-panel-dropdown .str-video__call-controls__button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: none;
+}
+
+/* Responsive adjustments for call controls */
+@media (max-width: 640px) {
+  .str-video__call-controls {
+    flex-wrap: wrap;
+    max-width: 95vw;
+    justify-content: center;
+    padding: 8px 4px;
+  }
+
+  .str-video__call-controls__button {
+    height: 40px;
+    width: 40px;
+    min-width: 40px;
+  }
+
+  /* Prevent controls from overlapping video tiles */
+  .str-video__speaker-layout__participant-tile {
+    margin-bottom: 60px;
+  }
+}
+
+/* Tooltip positioning fix for mobile */
+@media (max-width: 480px) {
+  .tooltip {
+    max-width: 120px;
+    font-size: 10px;
+    white-space: normal;
+    text-align: center;
+  }
+}
+
+/* Claude AI */
+/* Add these styles to your globals.css file */
+
+/* Dropdown Menu Positioning Fixes */
+.dropdown-menu-content {
+  /* Ensure dropdowns stay within viewport */
+  max-height: 80vh;
+  overflow-y: auto;
+  
+  /* Add better positioning for mobile */
+  @media (max-width: 768px) {
+    max-height: 60vh;
+    min-width: 200px;
+    max-width: 90vw;
+  }
+  
+  @media (max-width: 480px) {
+    max-height: 50vh;
+    min-width: 180px;
+    max-width: 85vw;
+  }
+}
+
+/* Force dropdown positioning to be more predictable */
+[data-radix-popper-content-wrapper] {
+  z-index: 9999 !important;
+}
+
+/* Ensure dropdown content has proper spacing from viewport edges */
+[data-radix-dropdown-menu-content] {
+  margin: 8px !important;
+  
+  @media (max-width: 768px) {
+    margin: 4px !important;
+  }
+}
+
+/* Better mobile dropdown positioning */
+@media (max-width: 768px) {
+  /* Adjust the call controls container to provide more space */
+  .str-video__call-controls {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  
+  /* Ensure dropdowns don't get cut off by the bottom navigation */
+  [data-radix-dropdown-menu-content] {
+    transform-origin: center bottom !important;
+  }
+}
+
+/* Responsive dropdown content */
+.responsive-dropdown-content {
+  @apply bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl;
+  
+  /* Base styles */
+  min-width: 8rem;
+  max-width: min(300px, 90vw);
+  max-height: min(400px, 80vh);
+  overflow-y: auto;
+  
+  /* Mobile optimizations */
+  @media (max-width: 768px) {
+    min-width: 160px;
+    max-width: min(280px, 85vw);
+    max-height: min(300px, 60vh);
+  }
+  
+  @media (max-width: 480px) {
+    min-width: 140px;
+    max-width: min(240px, 80vw);
+    max-height: min(250px, 50vh);
+    font-size: 0.875rem;
+  }
+}
+
+/* Scrollable dropdown items */
+.dropdown-scroll-area {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 transparent;
+}
+
+.dropdown-scroll-area::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dropdown-scroll-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dropdown-scroll-area::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 2px;
+}
+
+.dropdown-scroll-area::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}
+
+/* Bottom controls container adjustments for better dropdown space */
+.bottom-controls-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  
+  /* Ensure there's space for dropdowns */
+  @media (max-width: 768px) {
+    padding: 0.75rem;
+    margin-bottom: env(safe-area-inset-bottom, 0);
+  }
+}
+
+/* Prevent dropdown overflow on mobile landscape */
+@media (max-width: 896px) and (orientation: landscape) {
+  .responsive-dropdown-content {
+    max-height: min(200px, 40vh);
+  }
+}
+
+/* Animation improvements for mobile */
+@media (max-width: 768px) {
+  [data-state="open"][data-radix-dropdown-menu-content] {
+    animation-duration: 150ms;
+  }
+  
+  [data-state="closed"][data-radix-dropdown-menu-content] {
+    animation-duration: 100ms;
+  }
+}
