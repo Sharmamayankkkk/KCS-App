@@ -39,36 +39,34 @@ export const SuperchatMessage = ({ message, onPin, isAdmin = false }: SuperchatM
     const storedMessage = localStorage.getItem(message.id)
     if (storedMessage) {
       const parsedMessage = JSON.parse(storedMessage)
-      setVisible(parsedMessage.isVisible) // Set visibility from localStorage
-      setTimeLeft(parsedMessage.timeLeft) // Set time left from localStorage
+      setVisible(parsedMessage.isVisible)
+      setTimeLeft(parsedMessage.timeLeft)
+    } else {
+      // If no stored data, use the message duration
+      setTimeLeft(message.duration)
     }
-  }, [message.id])
+  }, [message.id, message.duration])
 
   // Timer logic
   useEffect(() => {
-    if (!message.isPinned) {
+    if (!message.isPinned && timeLeft > 0) {
       const timer = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             clearInterval(timer)
             setVisible(false)
-            localStorage.setItem(
-              message.id,
-              JSON.stringify({ isVisible: false, timeLeft: 0 })
-            ) // Save message visibility and timeLeft to localStorage
+            localStorage.setItem(message.id, JSON.stringify({ isVisible: false, timeLeft: 0 }))
             return 0
           }
-          localStorage.setItem(
-            message.id,
-            JSON.stringify({ isVisible: true, timeLeft: prev - 1 })
-          ) // Save the updated timeLeft to localStorage
-          return prev - 1
+          const newTimeLeft = prev - 1
+          localStorage.setItem(message.id, JSON.stringify({ isVisible: true, timeLeft: newTimeLeft }))
+          return newTimeLeft
         })
       }, 1000)
 
       return () => clearInterval(timer)
     }
-  }, [message.isPinned, message.duration])
+  }, [message.isPinned, message.id, timeLeft])
 
   // Don't render if not visible and not pinned
   if (!visible && !message.isPinned) return null

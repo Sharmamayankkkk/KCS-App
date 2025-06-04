@@ -32,16 +32,24 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
         console.error("Error fetching superchats:", error)
       } else {
         setSuperchats(
-          data.map((item) => ({
-            id: item.id,
-            sender: item.sender_name,
-            text: item.message,
-            amount: item.amount,
-            currency: item.currency || "INR",
-            timestamp: item.timestamp,
-            duration: calculateDuration(item.amount),
-            isPinned: item.is_pinned || false,
-          })),
+          data.map((item) => {
+            const calculatedDuration = calculateDuration(item.amount)
+            const messageTime = new Date(item.timestamp).getTime()
+            const currentTime = new Date().getTime()
+            const elapsedSeconds = Math.floor((currentTime - messageTime) / 1000)
+            const remainingDuration = Math.max(0, calculatedDuration - elapsedSeconds)
+
+            return {
+              id: item.id,
+              sender: item.sender_name,
+              text: item.message,
+              amount: item.amount,
+              currency: item.currency || "INR",
+              timestamp: item.timestamp,
+              duration: remainingDuration, // Use remaining duration
+              isPinned: item.is_pinned || false,
+            }
+          }),
         )
       }
     }
@@ -92,12 +100,12 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
     }
   }, [callId])
 
-  // Calculate duration based on amount
+  // Calculate duration based on amount (in seconds)
   const calculateDuration = (amount: number): number => {
-    if (amount >= 1000) return 300 // 5 minutes
-    if (amount >= 500) return 180 // 3 minutes
-    if (amount >= 200) return 120 // 2 minutes
-    if (amount >= 100) return 60 // 1 minute
+    if (amount >= 1000) return 300 // 5 minutes = 300 seconds
+    if (amount >= 500) return 180 // 3 minutes = 180 seconds
+    if (amount >= 200) return 120 // 2 minutes = 120 seconds
+    if (amount >= 100) return 60 // 1 minute = 60 seconds
     return 30 // 30 seconds
   }
 
