@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Loader2, X, AlertCircle } from "lucide-react"
+import { Loader2, X, AlertCircle, Check, Heart, Star, Zap, Send, Sparkles } from "lucide-react"
 import { supabase } from "@/lib/supabaseClient"
 import Link from "next/link"
 
@@ -14,21 +14,19 @@ interface SendSuperchatModalProps {
   onSuccess: () => void
 }
 
-// Predefined amount tiers
+// Clean, modern amount tiers
 const AMOUNT_TIERS = [
-  { value: 1, label: "₹1", color: "bg-green-500", duration: "5m" },
-  { value: 20, label: "₹20", color: "bg-purple-500", duration: "30s" },
-  { value: 100, label: "₹100", color: "bg-blue-500", duration: "1m" },
-  { value: 200, label: "₹200", color: "bg-emerald-500", duration: "2m" },
-  { value: 500, label: "₹500", color: "bg-amber-500", duration: "3m" },
-  { value: 1000, label: "₹1000", color: "bg-red-500", duration: "5m" },
+  { value: 1, label: "₹1", duration: "5m", icon: Heart, color: "emerald" },
+  { value: 20, label: "₹20", duration: "30s", icon: Star, color: "blue" },
+  { value: 100, label: "₹100", duration: "1m", icon: Zap, color: "purple" },
+  { value: 200, label: "₹200", duration: "2m", icon: Sparkles, color: "pink" },
+  { value: 500, label: "₹500", duration: "3m", icon: Star, color: "orange" },
+  { value: 1000, label: "₹1000", duration: "5m", icon: Heart, color: "red" },
 ]
 
-// Declare Cashfree types
-// Using a minimal declaration to avoid version-specific differences
 declare global {
   interface Window {
-    Cashfree: any // Use any to work with different versions
+    Cashfree: any
   }
 }
 
@@ -41,12 +39,16 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
   const [orderId, setOrderId] = useState("")
   const [orderToken, setOrderToken] = useState<string>("")
   const [scriptLoaded, setScriptLoaded] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    setIsVisible(true)
+  }, [])
 
   // Load Cashfree SDK
   useEffect(() => {
     if (typeof window === "undefined") return
 
-    // Don't load if already loaded
     if (window.Cashfree) {
       setScriptLoaded(true)
       return
@@ -66,13 +68,12 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
     document.body.appendChild(script)
 
     return () => {
-      // Clean up if component unmounts before script loads
       script.onload = null
       script.onerror = null
     }
   }, [])
 
-  // Polling for backend payment status if drop-in was bypassed
+  // Polling for backend payment status
   useEffect(() => {
     let iv: NodeJS.Timeout
     if (paymentStatus === "processing" && orderId) {
@@ -105,16 +106,19 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
     setSelectedAmount(amt)
   }
 
+  const handleClose = () => {
+    setIsVisible(false)
+    setTimeout(onClose, 300)
+  }
+
   const initiateCashfreePayment = async () => {
     setLoading(true)
     setError("")
 
     try {
-      // Generate unique order ID
       const newOrderId = `SC-${callId.slice(0, 8)}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
       setOrderId(newOrderId)
 
-      // Create order on backend
       const res = await fetch("/api/create-cashfree-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -143,28 +147,25 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
       setOrderToken(sessionId)
       setPaymentStatus("processing")
 
-      // Initialize Cashfree SDK
       const { load } = await import("@cashfreepayments/cashfree-js")
       const cashfree = await load({
         mode: "production",
       })
 
-      // Configure checkout
       const checkoutOptions = {
         paymentSessionId: sessionId,
         redirectTarget: "_modal",
         theme: {
-          backgroundColor: "#243341",
-          color: "#FFFFFF",
+          backgroundColor: "#ffffff",
+          color: "#1f2937",
           font: "14px",
-          errorColor: "#ff0000",
+          errorColor: "#ef4444",
         },
       }
 
-      // Process payment
       const result = await cashfree.checkout(checkoutOptions)
 
-      console.log("Payment result:", result) // Add logging for debugging
+      console.log("Payment result:", result)
 
       if (result.error) {
         console.error("Payment error:", result.error)
@@ -174,7 +175,6 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
       } else if (result.paymentDetails && result.paymentDetails.transaction) {
         console.log("Payment completed:", result.paymentDetails)
 
-        // Check if transaction status exists and is successful
         const transactionStatus = result.paymentDetails.transaction.status
         if (transactionStatus === "SUCCESS") {
           await createSuperchatEntry(newOrderId)
@@ -184,7 +184,6 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
           setLoading(false)
         }
       } else {
-        // Handle case where paymentDetails is undefined or incomplete
         console.warn("Payment result structure unexpected:", result)
         setPaymentStatus("failed")
         setError("Payment response was incomplete. Please contact support if payment was deducted.")
@@ -233,151 +232,262 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
     initiateCashfreePayment()
   }
 
+  const getColorClasses = (color: string, isSelected: boolean) => {
+    const colors = {
+      emerald: {
+        bg: isSelected ? "bg-emerald-500" : "bg-emerald-50 hover:bg-emerald-100",
+        text: isSelected ? "text-white" : "text-emerald-700",
+        border: isSelected ? "border-emerald-500" : "border-emerald-200 hover:border-emerald-300",
+        icon: isSelected ? "text-white" : "text-emerald-600"
+      },
+      blue: {
+        bg: isSelected ? "bg-blue-500" : "bg-blue-50 hover:bg-blue-100",
+        text: isSelected ? "text-white" : "text-blue-700",
+        border: isSelected ? "border-blue-500" : "border-blue-200 hover:border-blue-300",
+        icon: isSelected ? "text-white" : "text-blue-600"
+      },
+      purple: {
+        bg: isSelected ? "bg-purple-500" : "bg-purple-50 hover:bg-purple-100",
+        text: isSelected ? "text-white" : "text-purple-700",
+        border: isSelected ? "border-purple-500" : "border-purple-200 hover:border-purple-300",
+        icon: isSelected ? "text-white" : "text-purple-600"
+      },
+      pink: {
+        bg: isSelected ? "bg-pink-500" : "bg-pink-50 hover:bg-pink-100",
+        text: isSelected ? "text-white" : "text-pink-700",
+        border: isSelected ? "border-pink-500" : "border-pink-200 hover:border-pink-300",
+        icon: isSelected ? "text-white" : "text-pink-600"
+      },
+      orange: {
+        bg: isSelected ? "bg-orange-500" : "bg-orange-50 hover:bg-orange-100",
+        text: isSelected ? "text-white" : "text-orange-700",
+        border: isSelected ? "border-orange-500" : "border-orange-200 hover:border-orange-300",
+        icon: isSelected ? "text-white" : "text-orange-600"
+      },
+      red: {
+        bg: isSelected ? "bg-red-500" : "bg-red-50 hover:bg-red-100",
+        text: isSelected ? "text-white" : "text-red-700",
+        border: isSelected ? "border-red-500" : "border-red-200 hover:border-red-300",
+        icon: isSelected ? "text-white" : "text-red-600"
+      }
+    }
+    return colors[color as keyof typeof colors] || colors.blue
+  }
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="w-full max-w-md p-6 bg-[#243341] rounded-lg relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-white" disabled={loading}>
-          <X size={20} />
-        </button>
-
-        <h3 className="mb-6 text-xl font-bold text-white">Send a Superchat</h3>
-
-        {!scriptLoaded && (
-          <div className="py-4 text-center">
-            <Loader2 size={24} className="mx-auto mb-2 animate-spin text-blue-400" />
-            <p className="text-gray-300">Loading payment gateway...</p>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${isVisible ? 'bg-black/50 backdrop-blur-sm' : 'bg-black/0'}`}>
+    <div className={`w-full max-w-md mx-auto transition-all duration-300 ease-out ${isVisible ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'}`}>
+      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="px-4 py-4 sm:py-2 sm:px-6 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <Send size={20} className="text-white" />
+              </div>
+                <div>
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
+                  Send Superchat
+                </h3>
+                <p className="text-xs sm:text-sm md:text-base text-gray-500 mt-1">
+                  Support with a highlighted message
+                </p>
+                </div>
+            </div>
+            <button
+              onClick={handleClose}
+              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              disabled={loading}
+            >
+              <X size={20} />
+            </button>
           </div>
-        )}
-
-        {scriptLoaded && paymentStatus === "pending" && (
-          <>
-            <div className="mb-4">
-              <label className="block mb-2 text-sm font-medium text-white">Your Message (max 200 chars)</label>
-              <textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value.slice(0, 200))}
-                rows={3}
-                maxLength={200}
-                disabled={loading}
-                placeholder="Type your message..."
-                className="w-full p-3 text-white rounded-lg bg-gray-800/50 focus:ring-2 focus:ring-blue-500"
-              />
-              <div className="text-right text-xs text-gray-400">{message.length}/200</div>
+        </div>
+  
+        <div className="px-4 py-6 sm:px-6 space-y-6">
+          {!scriptLoaded && (
+            <div className="py-8 text-center">
+              <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
+                <Loader2 size={24} className="animate-spin text-blue-600" />
+              </div>
+              <p className="text-gray-600 font-medium">Loading payment gateway...</p>
+              <p className="text-gray-400 text-sm mt-1">Please wait a moment</p>
             </div>
-
-            <div className="mb-6">
-              <label className="block mb-2 text-sm font-medium text-white">Select Amount</label>
-              <div className="grid grid-cols-5 gap-2 mb-4">
-                {AMOUNT_TIERS.map((tier) => (
-                  <button
-                    key={tier.value}
-                    onClick={() => handleAmountSelect(tier.value)}
+          )}
+  
+          {scriptLoaded && paymentStatus === "pending" && (
+            <>
+              {/* Message Input */}
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold text-gray-700">Your Message</label>
+                <div className="relative">
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value.slice(0, 200))}
+                    rows={3}
+                    maxLength={200}
                     disabled={loading}
-                    className={`p-2 rounded-lg text-center transition ${
-                      selectedAmount === tier.value
-                        ? `${tier.color} text-white ring-2 ring-white`
-                        : "bg-gray-700 text-gray-200 hover:bg-gray-600"
-                    }`}
-                  >
-                    <div className="font-semibold">{tier.label}</div>
-                    <div className="text-xs">{tier.duration}</div>
-                  </button>
-                ))}
+                    placeholder="Write a message to highlight..."
+                    className="w-full p-3 text-gray-900 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400 resize-none"
+                  />
+                  <div className="absolute bottom-2 right-3 text-xs text-gray-400 bg-white px-1">
+                    {message.length}/200
+                  </div>
+                </div>
               </div>
-              <div className="flex justify-between mt-4 text-sm">
-                <span className="text-gray-300">Duration:</span>
-                <span className="font-semibold text-white">{selectedTier.duration} highlight</span>
-              </div>
+  
+              {/* Amount Selection */}
+              <div className="space-y-4">
+    <label className="block text-sm font-semibold text-gray-700">Choose Amount</label>
+  
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-3">
+      {AMOUNT_TIERS.map((tier) => {
+        const IconComponent = tier.icon
+        const isSelected = selectedAmount === tier.value
+        const colorClasses = getColorClasses(tier.color, isSelected)
+  
+        return (
+          <button
+            key={tier.value}
+            onClick={() => handleAmountSelect(tier.value)}
+            disabled={loading}
+            className={`relative p-3 sm:p-4 rounded-xl transition-all duration-200 border-2 ${colorClasses.bg} ${colorClasses.text} ${colorClasses.border} hover:scale-105 active:scale-95`}
+          >
+            <div className="flex flex-col items-center space-y-1 sm:space-y-2">
+              <IconComponent size={20} className={colorClasses.icon} />
+              <div className="font-bold text-sm sm:text-base text-center">{tier.label}</div>
+              <div className="text-xs sm:text-sm opacity-75 text-center">{tier.duration}</div>
             </div>
-
-            {error && (
-              <div className="flex items-center p-3 mb-4 text-red-200 bg-red-500/20 rounded-lg">
-                <AlertCircle size={16} className="mr-2" />
-                <span>{error}</span>
+  
+            {isSelected && (
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white">
+                <Check size={12} className="text-white" />
               </div>
             )}
-
-            <div className="flex justify-end space-x-3">
-              <Button variant="outline" onClick={onClose} disabled={loading}>
-                Cancel
-              </Button>
-              <Button className={selectedTier.color} onClick={handleSubmit} disabled={loading || !message.trim()}>
-                {loading ? (
-                  <>
-                    <Loader2 size={16} className="mr-2 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  `Send ₹${selectedAmount}`
-                )}
-              </Button>
-            </div>
-            <p className="mt-8 text-[10px] text-gray-300">
-              By using SuperChat, you agree to our{" "}
-              <Link href="/terms-and-conditions" className="text-blue-500 underline hover:text-blue-700">
-                Terms & Conditions
-              </Link>
-              <div className="flex gap-2 flex-wrap ">
-                <Link href="/refunds-and-cancellations" className="text-blue-500 underline hover:text-blue-700">
-                  Refunds and Cancellations
-                </Link>
-                <Link href="/contact-us" className="text-blue-500 underline hover:text-blue-700">
-                  Contact Us
-                </Link>
-                <Link href="/services" className="text-blue-500 underline hover:text-blue-700">
-                  Services
-                </Link>
+          </button>
+        )
+      })}
+    </div>
+  
+      <div className="flex flex-row items-center justify-between p-3 rounded-lg bg-gray-50 border border-gray-100 text-sm">
+        <span className="text-gray-600 font-medium">Highlight Duration:</span>
+        <span className="text-gray-900 font-bold">{selectedTier.duration}</span>
+      </div>
+  </div>
+  
+              {/* Error Message */}
+              {error && (
+                <div className="flex items-start space-x-3 p-4 bg-red-50 border border-red-200 rounded-xl">
+                  <AlertCircle size={18} className="text-red-500 mt-0.5 flex-shrink-0" />
+                  <span className="text-red-700 text-sm">{error}</span>
+                </div>
+              )}
+  
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
+                <Button
+                  variant="outline"
+                  onClick={handleClose}
+                  disabled={loading}
+                  className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSubmit}
+                  disabled={loading || !message.trim()}
+                  className={`flex-1 ${getColorClasses(selectedTier.color, true).bg} hover:opacity-90 text-white font-semibold`}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 size={16} className="mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={16} className="mr-2" />
+                      Send {selectedTier.label}
+                    </>
+                  )}
+                </Button>
               </div>
-            </p>
-          </>
-        )}
-
-        {paymentStatus === "processing" && (
-          <div className="py-6 text-center">
-            <Loader2 size={40} className="mx-auto mb-4 animate-spin text-blue-400" />
-            <h4 className="mb-4 text-lg font-semibold text-white">Processing Payment</h4>
-
-            {/* Container for Cashfree payment UI */}
-            <div
-              id="cashfree-dropin-container"
-              className="mt-4 p-4 rounded-lg border border-gray-700 min-h-[300px] flex items-center justify-center"
-            >
-              <p className="text-gray-400">Loading payment options...</p>
-            </div>
-
-            <p className="mt-6 text-xs text-gray-400">Please complete the payment process. Don't close this window.</p>
-          </div>
-        )}
-
-        {paymentStatus === "success" && (
-          <div className="py-8 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-green-500 rounded-full">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-8 h-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+  
+              {/* Terms */}
+              <div className="pt-4 border-t border-gray-100 space-y-2">
+                <p className="text-xs text-gray-500">
+                  By proceeding, you agree to our{" "}
+                  <Link href="/terms-and-conditions" className="text-blue-500 hover:text-blue-600 underline">
+                    Terms & Conditions
+                  </Link>
+                </p>
+                <div className="flex flex-wrap gap-3 text-xs">
+                  <Link href="/refunds-and-cancellations" className="text-blue-500 hover:text-blue-600 underline">
+                    Refunds & Cancellations
+                  </Link>
+                  <Link href="/contact-us" className="text-blue-500 hover:text-blue-600 underline">
+                    Contact Us
+                  </Link>
+                  <Link href="/services" className="text-blue-500 hover:text-blue-600 underline">
+                    Services
+                  </Link>
+                </div>
+              </div>
+            </>
+          )}
+  
+          {paymentStatus === "processing" && (
+            <div className="py-8 text-center space-y-4">
+              <div className="w-16 h-16 mx-auto rounded-full bg-blue-100 flex items-center justify-center">
+                <Loader2 size={32} className="animate-spin text-blue-600" />
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-gray-900 mb-2">Processing Payment</h4>
+                <p className="text-gray-600">Please complete the payment process</p>
+              </div>
+  
+              <div
+                id="cashfree-dropin-container"
+                className="mt-6 p-4 rounded-xl border border-gray-200 bg-gray-50 min-h-[300px] flex items-center justify-center"
               >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
+                <p className="text-gray-500">Loading payment options...</p>
+              </div>
+  
+              <p className="text-xs text-gray-500">🔒 Secure payment • Don't close this window</p>
             </div>
-            <h4 className="mb-2 text-lg font-semibold text-white">Superchat Sent!</h4>
-            <p className="text-gray-300">Highlight lasts for {selectedTier.duration}.</p>
-            <p className="mt-2 text-xs text-gray-400">Thank you!</p>
-          </div>
-        )}
-
-        {paymentStatus === "failed" && (
-          <div className="py-8 text-center">
-            <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-500 rounded-full">
-              <X size={32} className="text-white" />
+          )}
+  
+          {paymentStatus === "success" && (
+            <div className="py-8 text-center space-y-4">
+              <div className="w-20 h-20 mx-auto bg-green-500 rounded-full flex items-center justify-center">
+                <Check size={36} className="text-white" />
+              </div>
+              <div>
+                <h4 className="text-xl font-bold text-gray-900 mb-2">Superchat Sent! 🎉</h4>
+                <p className="text-gray-600 mb-1">Your message will be highlighted for {selectedTier.duration}</p>
+                <p className="text-gray-500 text-sm">Thank you for your support!</p>
+              </div>
             </div>
-            <h4 className="mb-2 text-lg font-semibold text-white">Payment Failed</h4>
-            <p className="mb-4 text-gray-300">{error || "There was an error processing your payment."}</p>
-            <Button onClick={() => setPaymentStatus("pending")}>Try Again</Button>
+          )}
+  
+          {paymentStatus === "failed" && (
+            <div className="py-8 text-center space-y-4">
+              <div className="w-20 h-20 mx-auto bg-red-500 rounded-full flex items-center justify-center">
+                <X size={36} className="text-white" />
+              </div>
+              <div>
+                <h4 className="text-lg font-bold text-gray-900 mb-2">Payment Failed</h4>
+                <p className="text-gray-600 mb-4">{error || "There was an error processing your payment."}</p>
+                <Button
+                  onClick={() => setPaymentStatus("pending")}
+                    className="bg-blue-500 hover:bg-blue-600 text-white"
+                  >
+                    Try Again
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   )
