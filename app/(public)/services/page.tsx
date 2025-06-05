@@ -31,14 +31,16 @@ const services = [
     description: (
       <div>
         <p>
-          Support content creators by sending highlighted messages during live sessions. Available Super Chat packages:
+          Support content creators by sending spiritually-themed highlighted messages during live sessions. Available Super Chat tiers:
         </p>
         <ul className="list-disc list-inside mt-2 space-y-1">
-          <li>₹50 – Highlighted for 30 Seconds</li>
-          <li>₹100 – Highlighted for 1 minute</li>
-          <li>₹200 – Highlighted for 2 minutes</li>
-          <li>₹500 – Highlighted for 3 minutes</li>
-          <li>₹1000 – Highlighted for 5 minutes</li>
+          <li>₹25 – <strong>Nitya Seva</strong> (30 Seconds)</li>
+          <li>₹50 – <strong>Bhakti Boost</strong> (1 Minute 10 Seconds)</li>
+          <li>₹100 – <strong>Gopi Glimmer</strong> (2 Minutes 30 Seconds)</li>
+          <li>₹250 – <strong>Vaikuntha Vibes</strong> (6 Minutes)</li>
+          <li>₹500 – <strong>Raja Bhakta Blessing</strong> (12 Minutes)</li>
+          <li>₹1000 – <strong>Parama Bhakta Offering</strong> (25 Minutes)</li>
+          <li>₹5000 – <strong>Goloka Mahadhaan</strong> (1 Hour 10 Minutes)</li>
         </ul>
         <p className="mt-2 italic text-sm text-gray-500">
           Note: Each Super Chat message can contain up to 200 characters.
@@ -54,7 +56,6 @@ const Services = () => {
       <h1 className="text-3xl sm:text-4xl font-extrabold mb-10 text-center text-gray-900">
         Services Offered
       </h1>
-
       <div className="space-y-6">
         {services.map((service, idx) => (
           <div
@@ -66,7 +67,6 @@ const Services = () => {
           </div>
         ))}
       </div>
-
       <div className="mt-10 text-center text-sm text-gray-600">
         For more information or assistance, please contact us at{' '}
         <a
