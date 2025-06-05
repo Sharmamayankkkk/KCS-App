@@ -725,7 +725,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       </button>
                     </div>
                     <Button
-                      onClick={() => setShowSendSuperchat(true)}
+                      onClick={() => {
+                        setShowSendSuperchat(true);
+                        setActivePanel('none');
+                      }}
                       className="bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 rounded-full py-2.5 shadow-md transition-all duration-300 hover:shadow-lg"
                       size="sm"
                     >
