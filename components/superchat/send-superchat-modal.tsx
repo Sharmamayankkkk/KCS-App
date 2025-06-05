@@ -16,12 +16,13 @@ interface SendSuperchatModalProps {
 
 // Clean, modern amount tiers
 const AMOUNT_TIERS = [
-  { value: 20, label: "₹20", duration: "30s", icon: Star, color: "blue" },
-  { value: 100, label: "₹100", duration: "1m", icon: Zap, color: "purple" },
-  { value: 200, label: "₹200", duration: "2m", icon: Sparkles, color: "pink" },
-  { value: 500, label: "₹500", duration: "3m", icon: Star, color: "orange" },
-  { value: 1000, label: "₹1000", duration: "5m", icon: Heart, color: "red" },
-  { value: 5000, label: "₹5000", duration: "30m", icon: Heart, color: "emerald" }
+  { value: 25, label: "₹25", duration: "30s", icon: Star, color: "blue" },
+  { value: 50, label: "₹50", duration: "1m 10s", icon: Zap, color: "purple" },
+  { value: 100, label: "₹100", duration: "2m 30s", icon: Sparkles, color: "pink" },
+  { value: 250, label: "₹250", duration: "6m", icon: Star, color: "orange" },
+  { value: 500, label: "₹500", duration: "12m", icon: Heart, color: "red" },
+  { value: 1000, label: "₹1000", duration: "25m", icon: Heart, color: "emerald" },
+  { value: 5000, label: "₹5000", duration: "1h 10m", icon: Heart, color: "emerald" }
 ]
 
 declare global {
