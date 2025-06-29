@@ -92,8 +92,8 @@ Spread wisdom, respect the path.
 
 ## 🌺 Connect in Consciousness
 
-- **Spiritual Web**: [KCS Divine Platform]()
-- **Cosmic Email**: connect@kcsmeet.org
+- **Spiritual Web**: [KCS Divine Platform](https:meet.krishnaconsciousnesssociety.com/)
+- **Cosmic Email**: [divineconnectionkcs@gmail.com](mailto:divineconnectionkcs@gmail.com)
 - **GitHub Sangha**: @Sharmamayankkkk
 
 ---
