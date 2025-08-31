@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Image as ImageIcon, Upload, X, Blur, Monitor } from "lucide-react"
+import { Image as ImageIcon, Upload, X, Bluetooth as Blur, Monitor } from "lucide-react"
 import { Button } from "./ui/button"
 import { cn } from "@/lib/utils"
 
