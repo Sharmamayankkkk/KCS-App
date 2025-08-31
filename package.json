@@ -11,6 +11,7 @@
   "dependencies": {
     "@cashfreepayments/cashfree-js": "^1.0.4",
     "@clerk/nextjs": "^5.0.0-beta.35",
+    "@mediapipe/selfie_segmentation": "^0.1.1675465747",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-popover": "^1.0.7",
@@ -19,6 +20,9 @@
     "@stream-io/node-sdk": "^0.1.12",
     "@stream-io/video-react-sdk": "^1.12.11",
     "@supabase/supabase-js": "latest",
+    "@tensorflow-models/body-segmentation": "^1.0.2",
+    "@tensorflow/tfjs-backend-webgl": "^4.22.0",
+    "@tensorflow/tfjs-core": "^4.22.0",
     "@vercel/analytics": "^1.4.1",
     "@vercel/speed-insights": "^1.1.0",
     "class-variance-authority": "^0.7.0",

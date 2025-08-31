@@ -1,5 +1,8 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
+import * as bodySegmentation from "@tensorflow-models/body-segmentation"
+import "@tensorflow/tfjs-core"
+import "@tensorflow/tfjs-backend-webgl"
 import { DeviceSettings, VideoPreview, useCall, useCallStateHooks } from "@stream-io/video-react-sdk"
 import { Button } from "./ui/button"
 import { Card } from "./ui/card"
@@ -30,6 +33,11 @@ const MeetingSetup = ({
   const [showSettings, setShowSettings] = useState(false)
   const [isJoining, setIsJoining] = useState(false)
   const [countdownValue, setCountdownValue] = useState<number | null>(null)
+  const [isBlurEnabled, setIsBlurEnabled] = useState(false)
+  const originalStream = useRef<MediaStream | null>(null)
+  const segmenterRef = useRef<bodySegmentation.BodySegmenter | null>(null)
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
 
   //By default keep it off
   useEffect(() => {
@@ -37,6 +45,69 @@ const MeetingSetup = ({
         call.camera.disable()
         }, [call])
   
+  useEffect(() => {
+    let animationFrameId: number;
+
+    async function setupAndRender() {
+      if (!isCameraEnabled || !isBlurEnabled) {
+        // If blur is disabled or camera is off, revert to original stream and stop.
+        if (originalStream.current) {
+          call.camera.setVideoDevice(originalStream.current.getVideoTracks()[0]);
+        }
+        return;
+      }
+
+      // --- Initialization ---
+      if (!originalStream.current) {
+        originalStream.current = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
+      if (!segmenterRef.current) {
+        const model = bodySegmentation.SupportedModels.MediaPipeSelfieSegmentation;
+        segmenterRef.current = await bodySegmentation.createSegmenter(model, { runtime: 'mediapipe', solutionPath: 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation' });
+      }
+      if (!canvasRef.current) {
+        canvasRef.current = document.createElement('canvas');
+      }
+      if (!videoRef.current) {
+        videoRef.current = document.createElement('video');
+        videoRef.current.srcObject = originalStream.current;
+        videoRef.current.play();
+      }
+
+      const video = videoRef.current;
+      const canvas = canvasRef.current;
+      const segmenter = segmenterRef.current;
+
+      // --- Render Loop ---
+      async function render() {
+        // Stop the loop if blur is disabled or camera is off
+        if (!isBlurEnabled || !isCameraEnabled) {
+          return;
+        }
+
+        if (video.readyState >= 2) {
+          const segmentation = await segmenter.segmentPeople(video);
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          await bodySegmentation.drawBokehEffect(canvas, video, segmentation, 0.5, 3, 3, false);
+        }
+        animationFrameId = requestAnimationFrame(render);
+      }
+
+      // Start rendering and set the new stream
+      await render();
+      const newStream = canvas.captureStream();
+      call.camera.setVideoDevice(newStream.getVideoTracks()[0]);
+    }
+
+    setupAndRender();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      // No need to clean up videoRef/canvasRef/segmenterRef as they are reused.
+      // The originalStream should be stopped when the call is over, which is handled by the SDK.
+    };
+  }, [isBlurEnabled, isCameraEnabled, call.camera]);
 
   // Handle device toggles
   const toggleMic = () => {
@@ -223,6 +294,26 @@ const MeetingSetup = ({
                     <DeviceSettings />
                   </div>
                 )}
+
+                {/* Blur toggle button */}
+                <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <Settings className="text-blue-400" size={20} />
+                    <span className="text-white">Background Blur</span>
+                  </div>
+                  <Button
+                    variant="secondary"
+                    className={cn(
+                      "h-9 px-4 transition-all duration-300",
+                      isBlurEnabled
+                        ? "bg-emerald-600 hover:bg-emerald-700 text-white"
+                        : "bg-slate-600 hover:bg-slate-700 text-slate-300",
+                    )}
+                    onClick={() => setIsBlurEnabled(!isBlurEnabled)}
+                  >
+                    {isBlurEnabled ? "On" : "Off"}
+                  </Button>
+                </div>
               </div>
 
               {/* Share screen reminder 
