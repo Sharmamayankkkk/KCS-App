@@ -142,8 +142,8 @@ export const useBackgroundProcessor = () => {
               // Apply custom background
               const mask = await bodySegmentation.toBinaryMask(
                 segmentation,
-                { r: 0, g: 0, b: 0, a: 0 },
-                { r: 0, g: 0, b: 0, a: 255 }
+                { r: 0, g: 0, b: 0, a: 255 }, // Person pixels (keep opaque)
+                { r: 0, g: 0, b: 0, a: 0 }    // Background pixels (make transparent)
               )
 
               // Draw background image
@@ -166,7 +166,7 @@ export const useBackgroundProcessor = () => {
                 for (let i = 0; i < imageData.data.length; i += 4) {
                   const maskIndex = Math.floor(i / 4)
                   if (maskData[maskIndex * 4 + 3] === 0) {
-                    // Background pixel - make transparent
+                    // Background pixel - make transparent to show custom background
                     imageData.data[i + 3] = 0
                   }
                 }
