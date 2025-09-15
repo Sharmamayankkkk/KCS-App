@@ -89,6 +89,8 @@ export const BackgroundSelector = ({
       }
 
       setCustomBackgrounds(prev => [...prev, newBackground])
+      // Automatically select the newly uploaded background
+      onBackgroundChange(newBackground)
     }
     reader.readAsDataURL(file)
   }
