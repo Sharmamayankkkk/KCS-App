@@ -27,6 +27,7 @@ import {
   AlertCircle,
   MoreVertical,
   Settings,
+  Image as ImageIcon,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -50,6 +51,8 @@ import { PollsManager } from './poll/polls-manager';
 import { ActivePoll } from './poll/active-poll';
 import CustomGridLayout from './CustomGridLayout';
 import CallControls from './CallControls';
+import { BackgroundSelector } from './BackgroundSelector';
+import { useBackgroundProcessor } from '@/hooks/useBackgroundProcessor';
 
 // Move constants outside component to prevent recreation
 const BROADCAST_PLATFORMS = [
@@ -84,6 +87,20 @@ const LAYOUT_OPTIONS = [
 ];
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
+
+interface BackgroundOption {
+  id: string
+  name: string
+  type: 'none' | 'blur' | 'image'
+  url?: string
+  preview?: string
+}
+
+const DEFAULT_BACKGROUND: BackgroundOption = {
+  id: 'none',
+  name: 'No Background',
+  type: 'none',
+}
 
 interface MeetingRoomProps {
   apiKey: string;
@@ -120,6 +137,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   >({});
   const [showControls, setShowControls] = useState(true);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
+  
+  // Background processing state
+  const [selectedBackground, setSelectedBackground] = useState<BackgroundOption>(DEFAULT_BACKGROUND);
+  const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
+  const [isProcessingBackground, setIsProcessingBackground] = useState(false);
+  const { processFrame, cleanup } = useBackgroundProcessor();
 
   // Memoize environment variables
   const { youtubeStreamUrl, youtubeStreamKey } = useMemo(
@@ -190,6 +213,46 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [apiKey, userToken, userData]);
 
+  // Background processing effect
+  useEffect(() => {
+    if (!call) return;
+
+    const setupBackgroundProcessing = async () => {
+      try {
+        setIsProcessingBackground(true);
+
+        // Register the background filter
+        const { unregister } = call.camera.registerFilter((originalStream: MediaStream) => {
+          // Process the stream with selected background
+          const processedStreamPromise = processFrame(originalStream, selectedBackground);
+          return {
+            output: processedStreamPromise.then(stream => stream || originalStream),
+            stop: () => cleanup()
+          };
+        });
+
+        // Store the unregister function for cleanup
+        return unregister;
+      } catch (error) {
+        console.error('Error setting up background processing:', error);
+      } finally {
+        setIsProcessingBackground(false);
+      }
+    };
+
+    const unregisterPromise = setupBackgroundProcessing();
+
+    return () => {
+      unregisterPromise?.then(unregister => unregister?.());
+      cleanup();
+    };
+  }, [call, selectedBackground, processFrame, cleanup]);
+
+  // Background change handler
+  const handleBackgroundChange = useCallback((background: BackgroundOption) => {
+    setSelectedBackground(background);
+  }, []);
+
   // Memoized broadcast functions
   const startBroadcast = useCallback(async () => {
     if (!streamUrl || !streamKey || !selectedPlatform) {
@@ -226,7 +289,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       setSelectedPlatform('');
     } catch (error: any) {
       console.error('Error starting broadcast:', error);
-      const errorMessages = {
+      const errorMessages: Record<string, string> = {
         'Invalid stream key': 'Invalid stream key. Please check your details.',
         Unauthorized: 'Authorization error. Please check your permissions.',
       };
@@ -894,6 +957,19 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
+                    onClick={() => setShowBackgroundSelector(true)}
+                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+                    disabled={isProcessingBackground}
+                  >
+                    <ImageIcon className="mr-2 size-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
+                    <span>Background</span>
+                    <span className="ml-auto text-xs text-gray-400">
+                      {selectedBackground.name}
+                      {isProcessingBackground && " (Processing...)"}
+                    </span>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem
                     onClick={() => togglePanel('superchat')}
                     className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
                   >
@@ -940,6 +1016,15 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               userId={userData?.id || ''}
               onClose={() => setShowSendSuperchat(false)}
               onSuccess={handleSuperchatSuccess}
+            />
+          )}
+
+          {/* Background Selector Modal */}
+          {showBackgroundSelector && (
+            <BackgroundSelector
+              selectedBackground={selectedBackground}
+              onBackgroundChange={handleBackgroundChange}
+              onClose={() => setShowBackgroundSelector(false)}
             />
           )}
         </section>
