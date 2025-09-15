@@ -52,6 +52,19 @@ const MeetingSetup = ({
   
   const { processFrame, cleanup } = useBackgroundProcessor()
 
+  // Load background from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedBackground = localStorage.getItem('meetingBackground')
+      if (savedBackground) {
+        const background = JSON.parse(savedBackground)
+        setSelectedBackground(background)
+      }
+    } catch (error) {
+      console.error('Error loading background from localStorage:', error)
+    }
+  }, [])
+
   //By default keep it off
   useEffect(() => {
       call.microphone.disable()
@@ -105,6 +118,12 @@ const MeetingSetup = ({
   const handleBackgroundChange = useCallback((background: BackgroundOption) => {
     setSelectedBackground(background)
     setShowBackgroundSelector(false)
+    // Save to localStorage for persistence in meeting room
+    try {
+      localStorage.setItem('meetingBackground', JSON.stringify(background))
+    } catch (error) {
+      console.error('Error saving background to localStorage:', error)
+    }
   }, [])
 
   // Handle device toggles

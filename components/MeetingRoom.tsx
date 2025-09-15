@@ -144,6 +144,19 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [isProcessingBackground, setIsProcessingBackground] = useState(false);
   const { processFrame, cleanup } = useBackgroundProcessor();
 
+  // Load background from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedBackground = localStorage.getItem('meetingBackground')
+      if (savedBackground) {
+        const background = JSON.parse(savedBackground)
+        setSelectedBackground(background)
+      }
+    } catch (error) {
+      console.error('Error loading background from localStorage:', error)
+    }
+  }, [])
+
   // Memoize environment variables
   const { youtubeStreamUrl, youtubeStreamKey } = useMemo(
     () => ({
@@ -251,6 +264,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   // Background change handler
   const handleBackgroundChange = useCallback((background: BackgroundOption) => {
     setSelectedBackground(background);
+    // Save to localStorage for persistence
+    try {
+      localStorage.setItem('meetingBackground', JSON.stringify(background));
+    } catch (error) {
+      console.error('Error saving background to localStorage:', error);
+    }
   }, []);
 
   // Memoized broadcast functions
