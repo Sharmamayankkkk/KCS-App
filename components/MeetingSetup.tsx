@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, useCallback } from "react"
 import { DeviceSettings, VideoPreview, useCall, useCallStateHooks } from "@stream-io/video-react-sdk"
 import { Button } from "./ui/button"
 import { Card } from "./ui/card"
@@ -49,7 +49,6 @@ const MeetingSetup = ({
   const [selectedBackground, setSelectedBackground] = useState<BackgroundOption>(DEFAULT_BACKGROUND)
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false)
   const [isProcessingBackground, setIsProcessingBackground] = useState(false)
-  const originalStreamRef = useRef<MediaStream | null>(null)
   
   const { processFrame, cleanup } = useBackgroundProcessor()
 
@@ -67,31 +66,20 @@ const MeetingSetup = ({
       }
 
       try {
-        // Get original camera stream
-        if (!originalStreamRef.current) {
-          originalStreamRef.current = await navigator.mediaDevices.getUserMedia({ 
-            video: { width: 1280, height: 720 } 
-          })
-        }
-
         setIsProcessingBackground(true)
 
-        // Process the stream with selected background
-        const processedStream = await processFrame(originalStreamRef.current, selectedBackground)
+        // Register the background filter
+        const { unregister } = call.camera.registerFilter((originalStream: MediaStream) => {
+          // Process the stream with selected background
+          const processedStreamPromise = processFrame(originalStream, selectedBackground)
+          return {
+            output: processedStreamPromise.then(stream => stream || originalStream),
+            stop: () => cleanup()
+          }
+        })
 
-        if (processedStream) {
-          // Apply the processed stream to the call
-          const videoTrack = processedStream.getVideoTracks()[0]
-          if (videoTrack) {
-            await call.camera.setVideoDevice(videoTrack)
-          }
-        } else {
-          // Fallback to original stream
-          const videoTrack = originalStreamRef.current.getVideoTracks()[0]
-          if (videoTrack) {
-            await call.camera.setVideoDevice(videoTrack)
-          }
-        }
+        // Store the unregister function for cleanup
+        return unregister
       } catch (error) {
         console.error('Error setting up background processing:', error)
       } finally {
@@ -99,9 +87,10 @@ const MeetingSetup = ({
       }
     }
 
-    setupBackgroundProcessing()
+    const unregisterPromise = setupBackgroundProcessing()
 
     return () => {
+      unregisterPromise?.then(unregister => unregister?.())
       cleanup()
     }
   }, [isCameraEnabled, selectedBackground, call.camera, processFrame, cleanup])
@@ -110,9 +99,6 @@ const MeetingSetup = ({
   useEffect(() => {
     return () => {
       cleanup()
-      if (originalStreamRef.current) {
-        originalStreamRef.current.getTracks().forEach(track => track.stop())
-      }
     }
   }, [cleanup])
 

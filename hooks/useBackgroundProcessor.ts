@@ -17,6 +17,8 @@ export const useBackgroundProcessor = () => {
   const backgroundImageRef = useRef<HTMLImageElement | null>(null)
   const animationFrameRef = useRef<number | null>(null)
   const isProcessingRef = useRef(false)
+  const currentStreamRef = useRef<MediaStream | null>(null)
+  const currentBackgroundRef = useRef<BackgroundOption | null>(null)
 
   // Initialize the segmentation model
   const initializeSegmenter = useCallback(async () => {
@@ -40,9 +42,22 @@ export const useBackgroundProcessor = () => {
     originalStream: MediaStream,
     background: BackgroundOption
   ): Promise<MediaStream | null> => {
+    // If background is 'none', return original stream
     if (background.type === 'none') {
+      cleanup() // Clean up any existing processing
       return originalStream
     }
+
+    // If the background hasn't changed and we're already processing, return current stream
+    if (currentBackgroundRef.current?.id === background.id && currentStreamRef.current) {
+      return currentStreamRef.current
+    }
+
+    // Clean up previous processing
+    cleanup()
+    
+    // Update current background reference
+    currentBackgroundRef.current = background
 
     try {
       const segmenter = await initializeSegmenter()
@@ -87,11 +102,14 @@ export const useBackgroundProcessor = () => {
         if (!backgroundImageRef.current || backgroundImageRef.current.src !== background.url) {
           backgroundImageRef.current = new Image()
           backgroundImageRef.current.crossOrigin = 'anonymous'
-          backgroundImageRef.current.src = background.url
           
           await new Promise((resolve, reject) => {
             backgroundImageRef.current!.onload = resolve
-            backgroundImageRef.current!.onerror = reject
+            backgroundImageRef.current!.onerror = (error) => {
+              console.error('Failed to load background image:', error)
+              reject(error)
+            }
+            backgroundImageRef.current!.src = background.url!
           })
         }
       }
@@ -99,6 +117,9 @@ export const useBackgroundProcessor = () => {
       // Start processing frames
       const processVideoFrame = async () => {
         if (!video || !canvas || !ctx || !segmenter || isProcessingRef.current) return
+        
+        // Check if background has changed, if so, stop processing
+        if (currentBackgroundRef.current?.id !== background.id) return
 
         isProcessingRef.current = true
 
@@ -163,8 +184,8 @@ export const useBackgroundProcessor = () => {
           isProcessingRef.current = false
         }
 
-        // Continue processing if still active
-        if (background.type !== 'none') {
+        // Continue processing if still active and background hasn't changed
+        if (background.type !== 'none' && currentBackgroundRef.current?.id === background.id) {
           animationFrameRef.current = requestAnimationFrame(processVideoFrame)
         }
       }
@@ -172,8 +193,10 @@ export const useBackgroundProcessor = () => {
       // Start the processing loop
       processVideoFrame()
 
-      // Return the canvas stream
-      return canvas.captureStream(30) // 30 FPS
+      // Create and return the canvas stream
+      const canvasStream = canvas.captureStream(30) // 30 FPS
+      currentStreamRef.current = canvasStream
+      return canvasStream
     } catch (error) {
       console.error('Error setting up background processing:', error)
       return originalStream
@@ -187,6 +210,11 @@ export const useBackgroundProcessor = () => {
       animationFrameRef.current = null
     }
     isProcessingRef.current = false
+    currentBackgroundRef.current = null
+    if (currentStreamRef.current) {
+      currentStreamRef.current.getTracks().forEach(track => track.stop())
+      currentStreamRef.current = null
+    }
   }, [])
 
   // Cleanup on unmount
