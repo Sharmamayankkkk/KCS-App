@@ -107,24 +107,24 @@ export const BackgroundSelector = ({
   const getBackgroundIcon = (type: string) => {
     switch (type) {
       case 'none':
-        return <Monitor className="w-4 h-4" />
+        return <Monitor className="size-4" />
       case 'blur':
-        return <Blur className="w-4 h-4" />
+        return <Blur className="size-4" />
       case 'image':
-        return <ImageIcon className="w-4 h-4" />
+        return <ImageIcon className="size-4" />
       default:
-        return <ImageIcon className="w-4 h-4" />
+        return <ImageIcon className="size-4" />
     }
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
-      <div className="w-full max-w-2xl mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden">
+      <div className="mx-4 w-full max-w-2xl overflow-hidden rounded-2xl bg-white shadow-2xl">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50">
+        <div className="border-b border-gray-200 bg-gradient-to-r from-blue-50 to-purple-50 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+              <div className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-500">
                 <ImageIcon size={20} className="text-white" />
               </div>
               <div>
@@ -134,7 +134,7 @@ export const BackgroundSelector = ({
             </div>
             <button
               onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              className="rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600"
             >
               <X size={20} />
             </button>
@@ -142,10 +142,10 @@ export const BackgroundSelector = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-[70vh] overflow-y-auto">
+        <div className="max-h-[70vh] overflow-y-auto p-6">
           {/* Upload Section */}
           <div className="mb-6">
-            <h4 className="text-sm font-semibold text-gray-700 mb-3">Upload Custom Background</h4>
+            <h4 className="mb-3 text-sm font-semibold text-gray-700">Upload Custom Background</h4>
             <div className="flex items-center space-x-3">
               <Button
                 onClick={() => fileInputRef.current?.click()}
@@ -172,7 +172,7 @@ export const BackgroundSelector = ({
           <div className="space-y-4">
             <h4 className="text-sm font-semibold text-gray-700">Available Backgrounds</h4>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
               {allBackgrounds.map((background) => {
                 const isSelected = selectedBackground.id === background.id
                 const isCustom = background.id.startsWith('custom-')
@@ -189,16 +189,16 @@ export const BackgroundSelector = ({
                     onClick={() => onBackgroundChange(background)}
                   >
                     {/* Background Preview */}
-                    <div className="aspect-video relative bg-gray-100">
+                    <div className="relative aspect-video bg-gray-100">
                       {background.type === 'none' && (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                          <Monitor className="w-8 h-8 text-gray-400" />
+                        <div className="flex size-full items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
+                          <Monitor className="size-8 text-gray-400" />
                         </div>
                       )}
                       
                       {background.type === 'blur' && (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
-                          <Blur className="w-8 h-8 text-blue-500" />
+                        <div className="flex size-full items-center justify-center bg-gradient-to-br from-blue-100 to-purple-100">
+                          <Blur className="size-8 text-blue-500" />
                         </div>
                       )}
                       
@@ -206,7 +206,7 @@ export const BackgroundSelector = ({
                         <img
                           src={background.preview}
                           alt={background.name}
-                          className="w-full h-full object-cover"
+                          className="size-full object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
                             target.style.display = 'none'
@@ -224,9 +224,9 @@ export const BackgroundSelector = ({
 
                       {/* Selection Indicator */}
                       {isSelected && (
-                        <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
-                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <div className="absolute inset-0 flex items-center justify-center bg-blue-500/20">
+                          <div className="flex size-8 items-center justify-center rounded-full bg-blue-500">
+                            <svg className="size-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
                           </div>
@@ -240,7 +240,7 @@ export const BackgroundSelector = ({
                             e.stopPropagation()
                             removeCustomBackground(background.id)
                           }}
-                          className="absolute top-2 right-2 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-red-500 opacity-0 transition-opacity hover:bg-red-600 group-hover:opacity-100"
                         >
                           <X size={12} className="text-white" />
                         </button>
@@ -248,10 +248,10 @@ export const BackgroundSelector = ({
                     </div>
 
                     {/* Background Info */}
-                    <div className="p-3 bg-white">
+                    <div className="bg-white p-3">
                       <div className="flex items-center space-x-2">
                         {getBackgroundIcon(background.type)}
-                        <span className="text-sm font-medium text-gray-900 truncate">
+                        <span className="truncate text-sm font-medium text-gray-900">
                           {background.name}
                         </span>
                       </div>
@@ -264,7 +264,7 @@ export const BackgroundSelector = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div className="border-t border-gray-200 bg-gray-50 px-6 py-4">
           <div className="flex justify-end space-x-3">
             <Button variant="outline" onClick={onClose}>
               Cancel

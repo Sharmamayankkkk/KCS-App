@@ -1,6 +1,11 @@
 'use client';
 
-import { DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenuTrigger ,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/components/ui/dropdown-menu';
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import {
   CallParticipantsList,
@@ -29,12 +34,6 @@ import {
   Settings,
   Image as ImageIcon,
 } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-} from './ui/dropdown-menu';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { supabase } from '@/lib/supabaseClient';
@@ -569,12 +568,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
           <DropdownMenuTrigger
             onMouseEnter={() => handleButtonHover('broadcast', true)}
             onMouseLeave={() => handleButtonHover('broadcast', false)}
-            className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md"
+            className="flex size-11 items-center justify-center rounded-full border border-gray-700/50 bg-gray-800/80 shadow-md transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
           >
             <div className="relative">
-              <Cast className="text-white size-5" />
-              {buttonHoverStates['broadcast'] && (
-                <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
+              <Cast className="size-5 text-white" />
+              {buttonHoverStates.broadcast && (
+                <span className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-90">
                   Broadcast
                 </span>
               )}
@@ -583,7 +582,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
           <DropdownMenuContent
             side="top"
             align="center"
-            className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-48"
+            className="w-48 rounded-lg border-gray-700 bg-gray-800 text-white shadow-xl animate-in fade-in-80 zoom-in-95"
           >
             {BROADCAST_PLATFORMS.map((platform) => (
               <DropdownMenuItem
@@ -598,9 +597,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     setShowBroadcastForm(true);
                   }
                 }}
-                className="flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none"
+                className="flex cursor-pointer items-center rounded-md px-3 py-2 text-sm hover:bg-gray-700/70 focus:bg-gray-700 focus:outline-none"
               >
-                <div className="flex items-center justify-between w-full">
+                <div className="flex w-full items-center justify-between">
                   <span className="flex items-center">
                     <Cast className="mr-2 size-4" />
                     {platform.name}
@@ -624,10 +623,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         {/* Broadcast Form Modal */}
         {showBroadcastForm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-            <div className="w-full p-6 rounded-lg bg-[#243341] max-w-md relative bottom-20 shadow-2xl border border-gray-700/30">
+            <div className="relative bottom-20 w-full max-w-md rounded-lg border border-gray-700/30 bg-[#243341] p-6 shadow-2xl">
               <button
                 onClick={() => setShowBroadcastForm(false)}
-                className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-full p-1"
+                className="absolute right-4 top-4 rounded-full p-1 text-gray-400 transition-colors hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50"
               >
                 <X size={20} />
               </button>
@@ -641,7 +640,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
               <div className="space-y-4">
                 <div>
-                  <label className="block mb-1 text-sm font-medium text-white">
+                  <label className="mb-1 block text-sm font-medium text-white">
                     Stream URL
                   </label>
                   <input
@@ -649,12 +648,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     value={streamUrl}
                     onChange={(e) => setStreamUrl(e.target.value)}
                     placeholder="rtmp://..."
-                    className="w-full p-2.5 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500/80 border border-gray-700"
+                    className="w-full rounded-lg border border-gray-700 bg-gray-800/50 p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/80"
                   />
                 </div>
 
                 <div>
-                  <label className="block mb-1 text-sm font-medium text-white">
+                  <label className="mb-1 block text-sm font-medium text-white">
                     Stream Key
                   </label>
                   <input
@@ -662,7 +661,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     value={streamKey}
                     onChange={(e) => setStreamKey(e.target.value)}
                     placeholder="Enter stream key..."
-                    className="w-full p-2.5 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500/80 border border-gray-700"
+                    className="w-full rounded-lg border border-gray-700 bg-gray-800/50 p-2.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/80"
                   />
                   <p className="mt-1 text-xs text-gray-400">
                     Your stream key is kept secure and never stored.
@@ -670,25 +669,25 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 </div>
 
                 {broadcastError && (
-                  <div className="p-3 rounded-lg bg-red-500/20 flex items-center">
-                    <AlertCircle size={16} className="text-red-400 mr-2" />
-                    <span className="text-red-200 text-sm">
+                  <div className="flex items-center rounded-lg bg-red-500/20 p-3">
+                    <AlertCircle size={16} className="mr-2 text-red-400" />
+                    <span className="text-sm text-red-200">
                       {broadcastError}
                     </span>
                   </div>
                 )}
 
-                <div className="flex justify-end mt-6 space-x-2">
+                <div className="mt-6 flex justify-end space-x-2">
                   <Button
                     variant="outline"
                     onClick={() => setShowBroadcastForm(false)}
-                    className="bg-transparent border border-gray-600 hover:bg-gray-700 text-white rounded-lg"
+                    className="rounded-lg border border-gray-600 bg-transparent text-white hover:bg-gray-700"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={startBroadcast}
-                    className="bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md transition-all duration-200"
+                    className="rounded-lg bg-red-500 text-white shadow-md transition-all duration-200 hover:bg-red-600"
                   >
                     Start Broadcast
                   </Button>
@@ -718,8 +717,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   return videoClient && call ? (
     <StreamVideo client={videoClient}>
       <StreamCall call={call}>
-        <section className="relative w-full h-full flex flex-col">
-          <div className="relative flex items-center justify-center size-full">
+        <section className="relative flex size-full flex-col">
+          <div className="relative flex size-full items-center justify-center">
             <div
               className={cn(
                 'flex transition-all duration-300 ease-in-out size-full',
@@ -734,25 +733,25 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
             {/* Participants panel */}
             {activePanel === 'participants' && (
-              <div className="fixed top-0 right-0 p-4 bg-[#19232d]/95 backdrop-blur-md rounded-l-lg w-[300px] sm:w-[350px] h-full z-[100] overflow-hidden flex flex-col">
+              <div className="fixed right-0 top-0 z-[100] flex h-full w-[300px] flex-col overflow-hidden rounded-l-lg bg-[#19232d]/95 p-4 backdrop-blur-md sm:w-[350px]">
                 <CallParticipantsList onClose={() => setActivePanel('none')} />
               </div>
             )}
 
             {/* Chat Panel */}
             {activePanel === 'chat' && (
-              <div className="fixed top-0 right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-l-lg w-[300px] sm:w-[350px] h-full z-[100] overflow-hidden flex flex-col">
-                <div className="flex flex-col h-full">
-                  <div className="flex justify-between items-center mb-2">
+              <div className="fixed right-0 top-0 z-[100] flex h-full w-[300px] flex-col overflow-hidden rounded-l-lg bg-[#19232d]/95 p-4 backdrop-blur-md transition-all duration-300 ease-in-out sm:w-[350px]">
+                <div className="flex h-full flex-col">
+                  <div className="mb-2 flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-white">Chat</h3>
                     <button
-                      className="p-2 transition rounded-full hover:bg-gray-700/50"
+                      className="rounded-full p-2 transition hover:bg-gray-700/50"
                       onClick={() => setActivePanel('none')}
                     >
-                      <X className="text-white size-5" />
+                      <X className="size-5 text-white" />
                     </button>
                   </div>
-                  <div className="flex-1 space-y-2 overflow-auto custom-scrollbar-hidden pr-1">
+                  <div className="custom-scrollbar-hidden flex-1 space-y-2 overflow-auto pr-1">
                     {messages.map((msg, index) => (
                       <div
                         key={msg.id}
@@ -776,7 +775,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       <input
                         type="text"
                         placeholder="Type a message..."
-                        className="w-full p-3 pr-12 text-white rounded-full bg-gray-800/70 focus:outline-none focus:ring-2 focus:ring-blue-500/70 border border-gray-700/50"
+                        className="w-full rounded-full border border-gray-700/50 bg-gray-800/70 p-3 pr-12 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/70"
                         value={messageText}
                         onChange={(e) => setMessageText(e.target.value)}
                         onKeyDown={(e) => {
@@ -788,7 +787,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                       <button
                         onClick={() => sendMessage(messageText)}
                         disabled={!messageText.trim()}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:opacity-50 text-white rounded-full p-1.5 transition-all duration-200"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-blue-600 p-1.5 text-white transition-all duration-200 hover:bg-blue-700 disabled:bg-gray-600 disabled:opacity-50"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -811,7 +810,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                         setShowSendSuperchat(true);
                         setActivePanel('none');
                       }}
-                      className="bg-gradient-to-r from-amber-500 to-amber-700 hover:from-amber-600 hover:to-amber-800 rounded-full py-2.5 shadow-md transition-all duration-300 hover:shadow-lg"
+                      className="rounded-full bg-gradient-to-r from-amber-500 to-amber-700 py-2.5 shadow-md transition-all duration-300 hover:from-amber-600 hover:to-amber-800 hover:shadow-lg"
                       size="sm"
                     >
                       <Crown size={14} className="mr-1.5" /> Send Superchat
@@ -821,9 +820,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
             )}
 
-            {/* Other panels remain the same */}
+            {/* Superchat Panel */}
             {activePanel === 'superchat' && call?.id && (
-              <div className="fixed top-0 right-0 w-[300px] sm:w-[350px] h-full z-[100] overflow-hidden flex flex-col bg-[#19232d]/95 backdrop-blur-md rounded-l-lg">
+              <div className="mobile-panel fixed right-0 top-0 z-[100] flex size-full flex-col sm:w-[350px] md:w-[380px] md:rounded-l-lg">
                 <SuperchatPanel
                   callId={call.id}
                   userId={userData?.id || ''}
@@ -833,8 +832,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
             )}
 
+            {/* Polls Panel */}
             {activePanel === 'polls' && call?.id && (
-              <div className="fixed top-0 right-0 w-[300px] sm:w-[350px] h-full z-[100] overflow-hidden flex flex-col bg-[#19232d]/95 backdrop-blur-md rounded-l-lg">
+              <div className="mobile-panel fixed right-0 top-0 z-[100] flex size-full flex-col sm:w-[350px] md:w-[380px] md:rounded-l-lg">
                 <PollsManager
                   callId={call.id}
                   userId={userData?.id || ''}
@@ -844,8 +844,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
             )}
 
+            {/* Active Poll Panel */}
             {activePanel === 'activePoll' && call?.id && (
-              <div className="fixed right-0 transition-all duration-300 ease-in-out md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
+              <div className="mobile-panel fixed right-0 top-0 z-[100] flex size-full flex-col sm:w-[350px] md:w-[380px] md:rounded-l-lg">
                 <ActivePoll
                   callId={call.id}
                   userId={userData?.id || ''}
@@ -862,12 +863,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               transition-opacity duration-300
               ${
                 showControls
-                  ? 'opacity-100 pointer-events-auto'
-                  : 'opacity-0 pointer-events-none'
+                  ? 'pointer-events-auto opacity-100'
+                  : 'pointer-events-none opacity-0'
               }
                   `}
           >
-            <div className="flex flex-wrap items-center justify-center gap-2 p-3 mx-auto transition rounded-lg sm:gap-4 bg-[#19232d]/90 backdrop-blur-md max-w-max shadow-lg border border-gray-700/30">
+            <div className="mx-auto flex max-w-max flex-wrap items-center justify-center gap-2 rounded-lg border border-gray-700/30 bg-[#19232d]/90 p-3 shadow-lg backdrop-blur-md transition sm:gap-4">
               <div className="flex items-center gap-2">
                 <CallControls onLeave={() => router.push('/')} />
               </div>
@@ -876,7 +877,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 <div className="flex items-center gap-2">
                   <AdminPanel />
                   {BroadcastControl}
-                  <div className="h-8 w-px bg-gray-700/50 mx-1"></div>
+                  <div className="mx-1 h-8 w-px bg-gray-700/50"></div>
                 </div>
               )}
 
@@ -885,12 +886,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 <DropdownMenuTrigger
                   onMouseEnter={() => handleButtonHover('layout', true)}
                   onMouseLeave={() => handleButtonHover('layout', false)}
-                  className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md"
+                  className="flex size-11 items-center justify-center rounded-full border border-gray-700/50 bg-gray-800/80 shadow-md transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                 >
                   <div className="relative">
-                    <LayoutList className="text-white size-5" />
-                    {buttonHoverStates['layout'] && (
-                      <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
+                    <LayoutList className="size-5 text-white" />
+                    {buttonHoverStates.layout && (
+                      <span className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-90">
                         Layout
                       </span>
                     )}
@@ -899,7 +900,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 <DropdownMenuContent
                   side="top"
                   align="center"
-                  className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-40"
+                  className="w-40 rounded-lg border-gray-700 bg-gray-800 text-white shadow-xl animate-in fade-in-80 zoom-in-95"
                 >
                   {[
                     { name: "Grid", value: "grid", icon: <LayoutList className="mr-2 size-4" /> },
@@ -909,11 +910,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     <DropdownMenuItem
                       key={value}
                       onClick={() => setLayout(value as CallLayoutType)}
-                      className="flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none"
+                      className="flex cursor-pointer items-center rounded-md px-3 py-2 text-sm hover:bg-gray-700/70 focus:bg-gray-700 focus:outline-none"
                     >
                       {icon}
                       {name}
-                      {layout === value && <span className="ml-2 h-2 w-2 rounded-full bg-blue-500"></span>}
+                      {layout === value && <span className="ml-2 size-2 rounded-full bg-blue-500"></span>}
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
@@ -926,17 +927,17 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   togglePanel("chat")
                   setUnreadMessages(0) // Reset unread count when opening chat
                 }}
-                className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md relative"
+                className="relative flex size-11 items-center justify-center rounded-full border border-gray-700/50 bg-gray-800/80 shadow-md transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
               >
                 <div className="relative">
-                  <MessageSquare className="text-white size-5" />
+                  <MessageSquare className="size-5 text-white" />
                   {unreadMessages > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full size-5 flex items-center justify-center animate-pulse">
+                    <span className="absolute -right-1 -top-1 flex size-5 animate-pulse items-center justify-center rounded-full bg-red-500 text-xs text-white">
                       {unreadMessages > 9 ? "9+" : unreadMessages}
                     </span>
                   )}
-                  {buttonHoverStates["chat"] && (
-                    <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
+                  {buttonHoverStates.chat && (
+                    <span className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-90">
                       Chat
                     </span>
                   )}
@@ -948,12 +949,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 <DropdownMenuTrigger
                   onMouseEnter={() => handleButtonHover("menu", true)}
                   onMouseLeave={() => handleButtonHover("menu", false)}
-                  className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md"
+                  className="flex size-11 items-center justify-center rounded-full border border-gray-700/50 bg-gray-800/80 shadow-md transition-all duration-200 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                 >
                   <div className="relative">
-                    <MoreVertical className="text-white size-5" />
-                    {buttonHoverStates["menu"] && (
-                      <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
+                    <MoreVertical className="size-5 text-white" />
+                    {buttonHoverStates.menu && (
+                      <span className="absolute -top-10 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-90">
                         More
                       </span>
                     )}
@@ -962,25 +963,25 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 <DropdownMenuContent
                   side="top"
                   align="end"
-                  className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-56 p-1"
+                  className="w-56 rounded-lg border-gray-700 bg-gray-800 p-1 text-white shadow-xl animate-in fade-in-80 zoom-in-95"
                 >
                   <DropdownMenuItem
                     onClick={() => togglePanel('participants')}
-                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+                    className="group flex cursor-pointer items-center rounded-md px-3 py-2.5 text-sm hover:bg-gray-700/70 focus:bg-gray-700 focus:outline-none"
                   >
-                    <Users className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
+                    <Users className="mr-2 size-4 text-gray-400 transition-colors group-hover:text-white" />
                     <span>Participants</span>
                     {activePanel === 'participants' && (
-                      <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
+                      <span className="ml-auto size-2 rounded-full bg-blue-500"></span>
                     )}
                   </DropdownMenuItem>
 
                   <DropdownMenuItem
                     onClick={() => setShowBackgroundSelector(true)}
-                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+                    className="group flex cursor-pointer items-center rounded-md px-3 py-2.5 text-sm hover:bg-gray-700/70 focus:bg-gray-700 focus:outline-none"
                     disabled={isProcessingBackground}
                   >
-                    <ImageIcon className="mr-2 size-4 text-purple-400 group-hover:text-purple-300 transition-colors" />
+                    <ImageIcon className="mr-2 size-4 text-purple-400 transition-colors group-hover:text-purple-300" />
                     <span>Background</span>
                     <span className="ml-auto text-xs text-gray-400">
                       {selectedBackground.name}
@@ -990,12 +991,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
                   <DropdownMenuItem
                     onClick={() => togglePanel('superchat')}
-                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+                    className="group flex cursor-pointer items-center rounded-md px-3 py-2.5 text-sm hover:bg-gray-700/70 focus:bg-gray-700 focus:outline-none"
                   >
-                    <Crown className="mr-2 size-4 text-amber-500 group-hover:text-amber-400 transition-colors" />
+                    <Crown className="mr-2 size-4 text-amber-500 transition-colors group-hover:text-amber-400" />
                     <span>Superchat</span>
                     {activePanel === 'superchat' && (
-                      <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
+                      <span className="ml-auto size-2 rounded-full bg-blue-500"></span>
                     )}
                   </DropdownMenuItem>
 
@@ -1003,20 +1004,20 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     onClick={() =>
                       togglePanel(isAdmin ? 'polls' : 'activePoll')
                     }
-                    className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
+                    className="group flex cursor-pointer items-center rounded-md px-3 py-2.5 text-sm hover:bg-gray-700/70 focus:bg-gray-700 focus:outline-none"
                   >
-                    <BarChart2 className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
+                    <BarChart2 className="mr-2 size-4 text-gray-400 transition-colors group-hover:text-white" />
                     <span>Polls</span>
                     {(activePanel === 'polls' ||
                       activePanel === 'activePoll') && (
-                      <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
+                      <span className="ml-auto size-2 rounded-full bg-blue-500"></span>
                     )}
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator className="my-1 border-t border-gray-700" />
 
-                  <DropdownMenuItem className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group">
-                    <Settings className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
+                  <DropdownMenuItem className="group flex cursor-pointer items-center rounded-md px-3 py-2.5 text-sm hover:bg-gray-700/70 focus:bg-gray-700 focus:outline-none">
+                    <Settings className="mr-2 size-4 text-gray-400 transition-colors group-hover:text-white" />
                     <span className="flex items-center">
                       <span>Statistics</span>
                       <CallStatsButton />

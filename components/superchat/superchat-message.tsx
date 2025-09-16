@@ -82,18 +82,18 @@ export const SuperchatMessage = ({ message, onPin, isAdmin = false }: SuperchatM
     >
       <div className="flex items-start p-3">
         <div className="flex-1">
-          <div className="flex items-center mb-1">
+          <div className="mb-1 flex items-center">
             <span className="font-bold text-white">{message.sender}</span>
             {message.isPinned && (
-              <span className="ml-2 text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full flex items-center">
+              <span className="ml-2 flex items-center rounded-full bg-yellow-500 px-2 py-0.5 text-xs text-black">
                 <Star size={12} className="mr-1" /> Pinned
               </span>
             )}
           </div>
-          <p className="text-white text-sm">{message.text}</p>
+          <p className="text-sm text-white">{message.text}</p>
         </div>
-        <div className="text-white text-right">
-          <div className="font-bold text-lg">
+        <div className="text-right text-white">
+          <div className="text-lg font-bold">
             {message.currency} {message.amount.toFixed(2)}
           </div>
           {!message.isPinned && <div className="text-xs opacity-75">{timeLeft}s</div>}
@@ -103,7 +103,7 @@ export const SuperchatMessage = ({ message, onPin, isAdmin = false }: SuperchatM
       {isAdmin && (
         <button
           onClick={() => onPin?.(message.id)}
-          className="absolute bottom-1 right-1 text-white bg-gray-800/50 p-1 rounded-full hover:bg-gray-700/70"
+          className="absolute bottom-1 right-1 rounded-full bg-gray-800/50 p-1 text-white hover:bg-gray-700/70"
         >
           <CheckCircle size={16} />
         </button>

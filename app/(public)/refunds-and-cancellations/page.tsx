@@ -2,21 +2,21 @@ import React from 'react';
 
 const RefundPolicy = () => {
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-gray-800">
-      <h1 className="text-3xl sm:text-4xl font-extrabold mb-2 text-center text-gray-900">
+    <div className="mx-auto max-w-3xl px-4 py-10 text-gray-800 sm:px-6 lg:px-8">
+      <h1 className="mb-2 text-center text-3xl font-extrabold text-gray-900 sm:text-4xl">
         Refund Policy for Super Chat Contributions
       </h1>
-      <p className="text-center text-sm text-gray-500 mb-10">Effective Date: May 5, 2025</p>
+      <p className="mb-10 text-center text-sm text-gray-500">Effective Date: May 5, 2025</p>
 
       <div className="space-y-8">
         {/* 1. Overview */}
-        <section className="border border-gray-200 rounded-lg p-6 bg-gray-50 shadow-sm">
-          <h2 className="text-xl font-semibold mb-3">1. Overview</h2>
+        <section className="rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
+          <h2 className="mb-3 text-xl font-semibold">1. Overview</h2>
           <p>
             Super Chat is a feature on{' '}
             <a
               href="https://meet.krishnaconsciousnesssociety.com"
-              className="text-blue-600 underline break-words"
+              className="break-words text-blue-600 underline"
             >
               meet.krishnaconsciousnesssociety.com
             </a>{' '}
@@ -27,9 +27,9 @@ const RefundPolicy = () => {
         </section>
 
         {/* 2. Super Chat Packages */}
-        <section className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
-          <h2 className="text-xl font-semibold mb-3">2. Super Chat Packages</h2>
-          <ul className="list-disc list-inside space-y-1">
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-xl font-semibold">2. Super Chat Packages</h2>
+          <ul className="list-inside list-disc space-y-1">
             <li>
               <strong>₹25</strong> – Message highlighted for 30 seconds
             </li>
@@ -52,19 +52,19 @@ const RefundPolicy = () => {
               <strong>₹5000</strong> – Message highlighted for 1 hour 10 minutes
             </li>
           </ul>
-          <p className="mt-2 italic text-sm text-gray-500">
+          <p className="mt-2 text-sm italic text-gray-500">
             Note: Each Super Chat message can contain a maximum of 200 characters.
           </p>
         </section>
 
         {/* 3. Non-Refundable Contributions */}
-        <section className="border border-gray-200 rounded-lg p-6 bg-gray-50 shadow-sm">
-          <h2 className="text-xl font-semibold mb-3">3. Non-Refundable Contributions</h2>
+        <section className="rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
+          <h2 className="mb-3 text-xl font-semibold">3. Non-Refundable Contributions</h2>
           <p>
             All Super Chat contributions are final and non-refundable. By contributing, you
             acknowledge that:
           </p>
-          <ul className="list-disc list-inside mt-2 space-y-1">
+          <ul className="mt-2 list-inside list-disc space-y-1">
             <li>The contribution is made voluntarily to support the content creator.</li>
             <li>Once processed, it cannot be refunded, reversed, or charged back.</li>
           </ul>
@@ -74,10 +74,10 @@ const RefundPolicy = () => {
         </section>
 
         {/* 4. Exceptions */}
-        <section className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
-          <h2 className="text-xl font-semibold mb-3">4. Exceptions for Refunds</h2>
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-xl font-semibold">4. Exceptions for Refunds</h2>
           <p>Refunds will only be considered under these exceptional cases:</p>
-          <ul className="list-disc list-inside mt-2 space-y-1">
+          <ul className="mt-2 list-inside list-disc space-y-1">
             <li>
               <strong>Technical Failures:</strong> Paid but not delivered due to server or gateway
               errors.
@@ -90,10 +90,10 @@ const RefundPolicy = () => {
         </section>
 
         {/* 5. Refund Request Procedure */}
-        <section className="border border-gray-200 rounded-lg p-6 bg-gray-50 shadow-sm">
-          <h2 className="text-xl font-semibold mb-3">5. Refund Request Procedure</h2>
+        <section className="rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
+          <h2 className="mb-3 text-xl font-semibold">5. Refund Request Procedure</h2>
           <p>To request a refund, follow these steps:</p>
-          <ol className="list-decimal list-inside mt-2 space-y-1">
+          <ol className="mt-2 list-inside list-decimal space-y-1">
             <li>
               Email us at{' '}
               <a href="mailto:divineconnectionkcs@gmail.com" className="text-blue-600 underline">
@@ -103,7 +103,7 @@ const RefundPolicy = () => {
             </li>
             <li>
               Include the following:
-              <ul className="list-disc list-inside ml-5 mt-1 space-y-1">
+              <ul className="ml-5 mt-1 list-inside list-disc space-y-1">
                 <li>Your registered email address</li>
                 <li>Date and time of transaction</li>
                 <li>Amount and payment method</li>
@@ -119,10 +119,10 @@ const RefundPolicy = () => {
         </section>
 
         {/* 6. Payment Methods */}
-        <section className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm">
-          <h2 className="text-xl font-semibold mb-3">6. Payment Methods and Processing</h2>
+        <section className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <h2 className="mb-3 text-xl font-semibold">6. Payment Methods and Processing</h2>
           <p>We accept:</p>
-          <ul className="list-disc list-inside mt-2 space-y-1">
+          <ul className="mt-2 list-inside list-disc space-y-1">
             <li>Credit/Debit Cards</li>
             <li>Unified Payments Interface (UPI)</li>
             <li>PayPal</li>
@@ -135,8 +135,8 @@ const RefundPolicy = () => {
         </section>
 
         {/* 7. Contact Info */}
-        <section className="border border-gray-200 rounded-lg p-6 bg-gray-50 shadow-sm">
-          <h2 className="text-xl font-semibold mb-3">7. Contact Information</h2>
+        <section className="rounded-lg border border-gray-200 bg-gray-50 p-6 shadow-sm">
+          <h2 className="mb-3 text-xl font-semibold">7. Contact Information</h2>
           <p>
             For questions or concerns, email us at{' '}
             <a href="mailto:divineconnectionkcs@gmail.com" className="text-blue-600 underline">

@@ -35,8 +35,8 @@ const Home = () => {
   }, []);
 
   return (
-    <section className="flex flex-col gap-5 size-full text-white">
-      <div className="h-80 w-full flex items-center p-4 rounded-[20px] bg-hero bg-cover">
+    <section className="flex size-full flex-col gap-5 text-white">
+      <div className="flex h-80 w-full items-center rounded-[20px] bg-hero bg-cover p-4">
           <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-extrabold lg:text-7xl">{time || 'Loading...'}</h1>
             <p className="text-lg font-medium text-sky-1 lg:text-2xl">{date || 'Loading...'}</p>

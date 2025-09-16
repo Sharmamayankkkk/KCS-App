@@ -30,16 +30,16 @@ const Sidebar = () => {
           )
         })}
         {/* Social Media Links */}
-        <div className="flex flex-col gap-6 justify-start">
+        <div className="flex flex-col justify-start gap-6">
           <Link
             href="https://www.instagram.com/kcsociety_india"
             target="_blank"
-            className="flex items-center gap-4 p-4 rounded-lg w-full max-w-60 hover:bg-blue-1 transition-colors"
+            className="flex w-full max-w-60 items-center gap-4 rounded-lg p-4 transition-colors hover:bg-blue-1"
           >
             <Instagram size={20} className="text-blue-200" />
             <span
-              className="font-semibold max-lg:hidden
-                                                                                                                                                                                                                                                                                                                                         text-white"
+              className="font-semibold text-white
+                                                                                                                                                                                                                                                                                                                                         max-lg:hidden"
             >
               Instagram
             </span>
@@ -48,24 +48,24 @@ const Sidebar = () => {
           <Link
             href="https://www.krishnaconsciousnesssociety.com/become-a-volunteer"
             target="_blank"
-            className="flex items-center gap-4 p-4 rounded-lg w-full max-w-60 hover:bg-blue-1 transition-colors"
+            className="flex w-full max-w-60 items-center gap-4 rounded-lg p-4 transition-colors hover:bg-blue-1"
           >
             <Send size={20} className="text-blue-200" />
-            <span className="font-semibold max-lg:hidden text-white">Join Us</span>
+            <span className="font-semibold text-white max-lg:hidden">Join Us</span>
           </Link>
         </div>
         {/* Additional Links */}
-        <div className="fixed bottom-4 left-4 flex flex-col px-2 gap-2 z-50 max-lg:text-[8px] max-lg:px-1">
-          <Link href="/terms-and-conditions" className="text-white hover:text-gray-300 transition-colors">
+        <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2 px-2 max-lg:px-1 max-lg:text-[8px]">
+          <Link href="/terms-and-conditions" className="text-white transition-colors hover:text-gray-300">
             Terms & Conditions
           </Link>
-          <Link href="/refunds-and-cancellations" className="text-white hover:text-gray-300 transition-colors">
+          <Link href="/refunds-and-cancellations" className="text-white transition-colors hover:text-gray-300">
             Refunds & Cancellations
           </Link>
-          <Link href="/services" className="text-white hover:text-gray-300 transition-colors">
+          <Link href="/services" className="text-white transition-colors hover:text-gray-300">
             Services
           </Link>
-          <Link href="/contact-us" className="text-white hover:text-gray-300 transition-colors">
+          <Link href="/contact-us" className="text-white transition-colors hover:text-gray-300">
             Contact Us
           </Link>
         </div>
