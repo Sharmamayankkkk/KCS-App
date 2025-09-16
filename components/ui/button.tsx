@@ -10,13 +10,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-slate-900 text-slate-50 hover:bg-slate-800/90 shadow-sm hover:shadow-md dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
+          "bg-slate-900 text-slate-50 shadow-sm hover:bg-slate-800/90 hover:shadow-md dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
         destructive:
-          "bg-red-500 text-slate-50 hover:bg-red-500/90 shadow-sm hover:shadow-md dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/90",
+          "bg-red-500 text-slate-50 shadow-sm hover:bg-red-500/90 hover:shadow-md dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/90",
         outline:
           "border border-slate-200 bg-white hover:bg-slate-100 hover:text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:hover:bg-slate-800 dark:hover:text-slate-50",
         secondary:
-          "bg-slate-100 text-slate-900 hover:bg-slate-100/80 shadow-sm hover:shadow-md dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-800/80",
+          "bg-slate-100 text-slate-900 shadow-sm hover:bg-slate-100/80 hover:shadow-md dark:bg-slate-800 dark:text-slate-50 dark:hover:bg-slate-800/80",
         ghost: "hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800 dark:hover:text-slate-50",
         link: "text-slate-900 underline-offset-4 hover:underline dark:text-slate-50",
       },

@@ -65,7 +65,7 @@ const MeetingSetup = ({
     }
   }, [])
 
-  //By default keep it off
+  // By default keep it off
   useEffect(() => {
       call.microphone.disable()
         call.camera.disable()
@@ -209,20 +209,20 @@ const MeetingSetup = ({
 
   return (
     <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800 p-4">
-      <Card className="max-w-3xl w-full p-6 border-none bg-slate-800/70 backdrop-blur-lg shadow-xl rounded-xl">
+      <Card className="w-full max-w-3xl rounded-xl border-none bg-slate-800/70 p-6 shadow-xl backdrop-blur-lg">
         <div className="flex flex-col gap-6">
           {/* Header */}
-          <div className="text-center mb-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Hare Krishna <br /> Ready to join?</h1>
-            <p className="text-slate-300 max-w-md mx-auto">
+          <div className="mb-2 text-center">
+            <h1 className="mb-2 text-2xl font-bold text-white md:text-3xl">Hare Krishna <br /> Ready to join?</h1>
+            <p className="mx-auto max-w-md text-slate-300">
               Check your audio and video settings before joining the meeting
             </p>
           </div>
 
           {/* Main content container */}
-          <div className="flex flex-col md:flex-row gap-6">
+          <div className="flex flex-col gap-6 md:flex-row">
             {/* Video preview */}
-            <div className="flex-1 relative rounded-xl overflow-hidden border border-slate-700/50 shadow-inner">
+            <div className="relative flex-1 overflow-hidden rounded-xl border border-slate-700/50 shadow-inner">
               <div
                 className={cn(
                   "absolute inset-0 flex items-center justify-center z-10 bg-black/70 transition-opacity duration-300",
@@ -235,14 +235,14 @@ const MeetingSetup = ({
             </div>
 
             {/* Controls */}
-            <div className="flex-1 flex flex-col justify-between gap-4">
+            <div className="flex flex-1 flex-col justify-between gap-4">
               {/* Device toggles */}
               <div className="grid grid-cols-1 gap-4">
-                <h2 className="text-xl font-semibold text-white mb-2">Audio & Video</h2>
+                <h2 className="mb-2 text-xl font-semibold text-white">Audio & Video</h2>
 
                 <div className="flex flex-col space-y-4">
                   {/* Camera toggle */}
-                  <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                  <div className="flex items-center justify-between rounded-lg bg-slate-700/50 p-3">
                     <div className="flex items-center gap-3">
                       {isCameraEnabled ? (
                         <Video className="text-emerald-400" size={20} />
@@ -266,7 +266,7 @@ const MeetingSetup = ({
                   </div>
 
                   {/* Microphone toggle */}
-                  <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                  <div className="flex items-center justify-between rounded-lg bg-slate-700/50 p-3">
                     <div className="flex items-center gap-3">
                       {isMicEnabled ? (
                         <Mic className="text-emerald-400" size={20} />
@@ -290,14 +290,14 @@ const MeetingSetup = ({
                   </div>
 
                   {/* Device settings button */}
-                  <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                  <div className="flex items-center justify-between rounded-lg bg-slate-700/50 p-3">
                     <div className="flex items-center gap-3">
                       <Settings className="text-blue-400" size={20} />
                       <span className="text-white">Device settings</span>
                     </div>
                     <Button
                       variant="secondary"
-                      className="h-9 px-4 bg-blue-600 hover:bg-blue-700 text-white"
+                      className="h-9 bg-blue-600 px-4 text-white hover:bg-blue-700"
                       onClick={() => setShowSettings(!showSettings)}
                     >
                       Configure
@@ -307,13 +307,13 @@ const MeetingSetup = ({
 
                 {/* Device settings panel (conditionally rendered) */}
                 {showSettings && (
-                  <div className="mt-2 p-4 bg-slate-700/70 rounded-lg border border-slate-600/50 animate-fade-in">
+                  <div className="mt-2 animate-fade-in rounded-lg border border-slate-600/50 bg-slate-700/70 p-4">
                     <DeviceSettings />
                   </div>
                 )}
 
                 {/* Background Settings */}
-                <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
+                <div className="flex items-center justify-between rounded-lg bg-slate-700/50 p-3">
                   <div className="flex items-center gap-3">
                     <ImageIcon className="text-purple-400" size={20} />
                     <div className="flex flex-col">
@@ -326,7 +326,7 @@ const MeetingSetup = ({
                   </div>
                   <Button
                     variant="secondary"
-                    className="h-9 px-4 bg-purple-600 hover:bg-purple-700 text-white"
+                    className="h-9 bg-purple-600 px-4 text-white hover:bg-purple-700"
                     onClick={() => setShowBackgroundSelector(true)}
                     disabled={isProcessingBackground}
                   >
@@ -354,7 +354,7 @@ const MeetingSetup = ({
               </div>
             ) : (
               <Button
-                className="w-full sm:w-64 h-12 bg-green-600 hover:bg-green-700 text-white font-medium text-lg rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-2"
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-green-600 text-lg font-medium text-white transition-all duration-300 hover:scale-105 hover:bg-green-700 hover:shadow-lg sm:w-64"
                 onClick={handleJoinMeeting}
               >
                 <Check size={18} />
@@ -362,7 +362,7 @@ const MeetingSetup = ({
               </Button>
             )}
 
-            <p className="text-xs text-slate-400 mt-4 text-center max-w-sm">
+            <p className="mt-4 max-w-sm text-center text-xs text-slate-400">
               By joining, you agree to our terms of service and privacy policy
             </p>
           </div>

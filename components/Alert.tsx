@@ -27,14 +27,14 @@ const Alert = ({ title, subtitle, iconUrl, onClose, variant = "warning" }: Alert
 
     switch (variant) {
       case "error":
-        return <X className="h-6 w-6 text-red-400" />
+        return <X className="size-6 text-red-400" />
       case "info":
-        return <Calendar className="h-6 w-6 text-blue-400" />
+        return <Calendar className="size-6 text-blue-400" />
       case "success":
-        return <Calendar className="h-6 w-6 text-green-400" />
+        return <Calendar className="size-6 text-green-400" />
       case "warning":
       default:
-        return <AlertCircle className="h-6 w-6 text-amber-400" />
+        return <AlertCircle className="size-6 text-amber-400" />
     }
   }
 
@@ -45,7 +45,7 @@ const Alert = ({ title, subtitle, iconUrl, onClose, variant = "warning" }: Alert
         variantStyles[variant],
       )}
     >
-      <div className="rounded-full p-3 bg-black/20 backdrop-blur">{getIcon()}</div>
+      <div className="rounded-full bg-black/20 p-3 backdrop-blur">{getIcon()}</div>
       <div className="space-y-2">
         <h2 className="text-xl font-bold">{title}</h2>
         {subtitle && <p className="text-sm opacity-80">{subtitle}</p>}
@@ -53,7 +53,7 @@ const Alert = ({ title, subtitle, iconUrl, onClose, variant = "warning" }: Alert
       {onClose && (
         <button
           onClick={onClose}
-          className="mt-4 px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-sm font-medium"
+          className="mt-4 rounded-full bg-white/10 px-5 py-2 text-sm font-medium transition-colors hover:bg-white/20"
         >
           Got it
         </button>

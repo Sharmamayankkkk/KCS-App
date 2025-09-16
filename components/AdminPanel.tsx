@@ -144,19 +144,19 @@ const AdminPanel = () => {
         {/* Main Admin Panel Button */}
         <button
           onClick={() => setShowAdminPanel(!showAdminPanel)}
-          className="flex items-center justify-center p-2 transition-all bg-indigo-600 rounded-lg hover:bg-indigo-700 active:scale-95"
+          className="flex items-center justify-center rounded-lg bg-indigo-600 p-2 transition-all hover:bg-indigo-700 active:scale-95"
         >
-          <ShieldAlert className="text-white size-5" />
+          <ShieldAlert className="size-5 text-white" />
         </button>
 
         {/* Admin Panel Dropdown */}
         {showAdminPanel && (
-          <div className="absolute bottom-full mb-2 bg-black border border-gray-700 rounded-lg p-4 w-80 shadow-lg z-50">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-white font-medium text-lg">Admin Panel</h3>
+          <div className="absolute bottom-full z-50 mb-2 w-80 rounded-lg border border-gray-700 bg-black p-4 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-medium text-white">Admin Panel</h3>
               <button
                 onClick={() => setShowAdminPanel(false)}
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-400 transition-colors hover:text-white"
               >
                 ×
               </button>
@@ -164,32 +164,32 @@ const AdminPanel = () => {
             
             {/* End Call Section */}
             <div className="mb-6">
-              <h4 className="text-white font-medium text-sm mb-3">Call Management</h4>
+              <h4 className="mb-3 text-sm font-medium text-white">Call Management</h4>
               <Button 
                 onClick={handleOpenConfirm} 
-                className="w-full bg-red-600 hover:bg-red-700 transition-colors duration-300 rounded-full px-4 py-2 font-medium flex items-center justify-center gap-2 shadow-md"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-2 font-medium shadow-md transition-colors duration-300 hover:bg-red-700"
                 size="sm"
               >
-                <PhoneOff className="h-4 w-4" />
+                <PhoneOff className="size-4" />
                 <span>End Call</span>
               </Button>
             </div>
 
             {/* Participant Controls Section */}
             <div>
-              <div className="flex justify-between items-center mb-3">
-                <h4 className="text-white font-medium text-sm">Participant Controls</h4>
+              <div className="mb-3 flex items-center justify-between">
+                <h4 className="text-sm font-medium text-white">Participant Controls</h4>
                 <button
                   onClick={() => setShowControls(!showControls)}
-                  className="text-indigo-400 hover:text-indigo-300 transition-colors text-sm"
+                  className="text-sm text-indigo-400 transition-colors hover:text-indigo-300"
                 >
                   {showControls ? 'Hide' : 'Show'}
                 </button>
               </div>
               
               {showControls && (
-                <div className="space-y-3 mb-3">
-                  <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-gray-800/70">
+                <div className="mb-3 space-y-3">
+                  <div className="flex items-center justify-between rounded-md bg-gray-800/70 px-2 py-1.5">
                     <div className="flex items-center text-white">
                       <Mic className="mr-2 size-4" />
                       <span className="text-sm">Mute Audio</span>
@@ -199,12 +199,12 @@ const AdminPanel = () => {
                       className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${controlOptions.audio ? 'bg-indigo-600' : 'bg-gray-600'}`}
                     >
                       <span
-                        className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${controlOptions.audio ? 'translate-x-4' : 'translate-x-1'}`}
+                        className={`inline-block size-3.5 rounded-full bg-white transition-transform${controlOptions.audio ? 'translate-x-4' : 'translate-x-1'}`}
                       />
                     </button>
                   </div>
                   
-                  <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-gray-800/70">
+                  <div className="flex items-center justify-between rounded-md bg-gray-800/70 px-2 py-1.5">
                     <div className="flex items-center text-white">
                       <Video className="mr-2 size-4" />
                       <span className="text-sm">Disable Video</span>
@@ -214,7 +214,7 @@ const AdminPanel = () => {
                       className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${controlOptions.video ? 'bg-indigo-600' : 'bg-gray-600'}`}
                     >
                       <span
-                        className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${controlOptions.video ? 'translate-x-4' : 'translate-x-1'}`}
+                        className={`inline-block size-3.5 rounded-full bg-white transition-transform${controlOptions.video ? 'translate-x-4' : 'translate-x-1'}`}
                       />
                     </button>
                   </div>
@@ -224,11 +224,11 @@ const AdminPanel = () => {
               <button
                 onClick={muteAllExceptHost}
                 disabled={isProcessing || !showControls}
-                className="w-full py-1.5 px-2 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white text-sm font-medium rounded-md transition-colors duration-200 flex items-center justify-center"
+                className="flex w-full items-center justify-center rounded-md bg-red-600 px-2 py-1.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-400"
               >
                 {isProcessing ? (
                   <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg className="-ml-1 mr-2 size-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                       <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
@@ -240,7 +240,7 @@ const AdminPanel = () => {
               </button>
               
               {statusMessage && (
-                <div className="mt-2 text-xs text-white bg-gray-800/80 px-2 py-1.5 rounded-md w-full text-center">
+                <div className="mt-2 w-full rounded-md bg-gray-800/80 px-2 py-1.5 text-center text-xs text-white">
                   {statusMessage}
                 </div>
               )}
@@ -262,13 +262,13 @@ const AdminPanel = () => {
             <Button 
               variant="outline" 
               onClick={() => setConfirmOpen(false)}
-              className="border border-gray-300 hover:bg-gray-100 transition-colors"
+              className="border border-gray-300 transition-colors hover:bg-gray-100"
             >
               Cancel
             </Button>
             <Button 
               onClick={endCall}
-              className="bg-red-600 hover:bg-red-700 transition-colors focus:ring-red-500"
+              className="bg-red-600 transition-colors hover:bg-red-700 focus:ring-red-500"
             >
               End Call
             </Button>
