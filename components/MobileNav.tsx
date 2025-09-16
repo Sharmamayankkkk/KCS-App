@@ -3,7 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Instagram, Send } from "lucide-react"
+import { Instagram, Send, X } from "lucide-react"
 
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { sidebarLinks } from "@/constants"
@@ -24,15 +24,20 @@ const MobileNav = () => {
             className="cursor-pointer sm:hidden"
           />
         </SheetTrigger>
-        <SheetContent side="left" className="border-none bg-dark-1">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/icons/KCS.png" width={48} height={48} alt="KCS logo" />
-            <p className="text-3xl font-extrabold text-white">KCS</p>
-          </Link>
-          <div className="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto">
-            <SheetClose asChild>
-              <section className="flex h-full flex-col gap-6 pt-16 text-white">
-                {/* Navigation Links */}
+        <SheetContent side="left" className="border-none bg-dark-1 w-[280px] sm:w-[300px]">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <Link href="/" className="flex items-center gap-2">
+              <Image src="/icons/KCS.png" width={48} height={48} alt="KCS logo" />
+              <p className="text-2xl font-extrabold text-white">KCS</p>
+            </Link>
+          </div>
+
+          {/* Navigation Content */}
+          <div className="flex flex-col h-[calc(100vh-120px)] justify-between overflow-y-auto">
+            <div className="flex flex-col gap-4">
+              {/* Main Navigation Links */}
+              <div className="space-y-2">
                 {sidebarLinks.map((item) => {
                   const isActive = pathname === item.route
 
@@ -40,54 +45,98 @@ const MobileNav = () => {
                     <SheetClose asChild key={item.route}>
                       <Link
                         href={item.route}
-                        key={item.label}
-                        className={cn("flex gap-4 items-center p-4 rounded-lg w-full max-w-60", {
-                          "bg-blue-1": isActive,
-                        })}
+                        className={cn(
+                          "flex items-center gap-4 p-3 rounded-lg w-full transition-all duration-200 hover:bg-blue-1/50",
+                          {
+                            "bg-blue-1": isActive,
+                          }
+                        )}
                       >
-                        <Image src={item.imgURL || "/placeholder.svg"} alt={item.label} width={20} height={20} />
-                        <p className="font-semibold">{item.label}</p>
+                        <Image 
+                          src={item.imgURL || "/placeholder.svg"} 
+                          alt={item.label} 
+                          width={20} 
+                          height={20}
+                          className="flex-shrink-0"
+                        />
+                        <p className="font-medium text-white">{item.label}</p>
                       </Link>
                     </SheetClose>
                   )
                 })}
-                {/* Social Media Links */}
-                <div className="flex flex-col gap-6 justify-start">
-                  <Link
-                    href="https://www.instagram.com/kcsociety_india"
-                    target="_blank"
-                    className="flex items-center gap-4 p-4 rounded-lg w-full max-w-60 hover:bg-blue-1 transition-colors"
-                  >
-                    <Instagram size={20} className="text-blue-200" />
-                    <span className="font-semibold text-white">Instagram</span>
-                  </Link>
+              </div>
 
-                  <Link
-                    href="https://www.krishnaconsciousnesssociety.com/become-a-volunteer"
-                    target="_blank"
-                    className="flex items-center gap-4 p-4 rounded-lg w-full max-w-60 hover:bg-blue-1 transition-colors"
-                  >
-                    <Send size={20} className="text-blue-200" />
-                    <span className="font-semibold text-white">Join Us</span>
-                  </Link>
+              {/* Social Media Section */}
+              <div className="mt-8 pt-6 border-t border-gray-700">
+                <h4 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wide">
+                  Connect With Us
+                </h4>
+                <div className="space-y-2">
+                  <SheetClose asChild>
+                    <Link
+                      href="https://www.instagram.com/kcsociety_india"
+                      target="_blank"
+                      className="flex items-center gap-4 p-3 rounded-lg w-full hover:bg-blue-1/50 transition-all duration-200"
+                    >
+                      <Instagram size={20} className="text-blue-200 flex-shrink-0" />
+                      <span className="font-medium text-white">Instagram</span>
+                    </Link>
+                  </SheetClose>
+
+                  <SheetClose asChild>
+                    <Link
+                      href="https://www.krishnaconsciousnesssociety.com/become-a-volunteer"
+                      target="_blank"
+                      className="flex items-center gap-4 p-3 rounded-lg w-full hover:bg-blue-1/50 transition-all duration-200"
+                    >
+                      <Send size={20} className="text-blue-200 flex-shrink-0" />
+                      <span className="font-medium text-white">Join Us</span>
+                    </Link>
+                  </SheetClose>
                 </div>
-                {/* Fixed Bottom Links */}
-                <div className="fixed bottom-4 left-4 px-1 flex flex-col gap-2 z-50">
-                  <Link href="/terms-and-conditions" className="text-white hover:text-gray-300 transition-colors">
+              </div>
+            </div>
+
+            {/* Footer Links */}
+            <div className="mt-auto pt-6 border-t border-gray-700">
+              <h4 className="text-gray-400 text-sm font-medium mb-4 uppercase tracking-wide">
+                Legal & Support
+              </h4>
+              <div className="grid grid-cols-1 gap-2 text-sm">
+                <SheetClose asChild>
+                  <Link 
+                    href="/terms-and-conditions" 
+                    className="text-gray-300 hover:text-white transition-colors p-2 rounded hover:bg-gray-800"
+                  >
                     Terms & Conditions
                   </Link>
-                  <Link href="/refunds-and-cancellations" className="text-white hover:text-gray-300 transition-colors">
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link 
+                    href="/refunds-and-cancellations" 
+                    className="text-gray-300 hover:text-white transition-colors p-2 rounded hover:bg-gray-800"
+                  >
                     Refunds & Cancellations
                   </Link>
-                  <Link href="/services" className="text-white hover:text-gray-300 transition-colors">
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link 
+                    href="/services" 
+                    className="text-gray-300 hover:text-white transition-colors p-2 rounded hover:bg-gray-800"
+                  >
                     Services
                   </Link>
-                  <Link href="/contact-us" className="text-white hover:text-gray-300 transition-colors">
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link 
+                    href="/contact-us" 
+                    className="text-gray-300 hover:text-white transition-colors p-2 rounded hover:bg-gray-800"
+                  >
                     Contact Us
                   </Link>
-                </div>
-              </section>
-            </SheetClose>
+                </SheetClose>
+              </div>
+            </div>
           </div>
         </SheetContent>
       </Sheet>

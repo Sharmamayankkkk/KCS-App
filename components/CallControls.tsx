@@ -10,6 +10,7 @@ import {
   ToggleVideoPublishingButton,
   CancelCallButton,
 } from '@stream-io/video-react-sdk';
+import { MoreVertical, Mic, MicOff, Video, VideoOff, Monitor, Circle, Smile, PhoneOff } from 'lucide-react';
 
 type CallControlsProps = {
   onLeave: () => void;
@@ -36,84 +37,89 @@ export const CallControls: React.FC<CallControlsProps> = ({ onLeave }) => {
   }, []);
 
   return (
-    <div className="str-video__call-controls" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <div className="flex items-center justify-center gap-3 p-4 bg-dark-1/80 backdrop-blur-md rounded-2xl border border-gray-700/50 shadow-2xl">
+      {/* Audio Control */}
       <Restricted requiredGrants={[OwnCapability.SEND_AUDIO]}>
         <SpeakingWhileMutedNotification>
-          <ToggleAudioPublishingButton />
+          <div className="relative group">
+            <ToggleAudioPublishingButton className="flex items-center justify-center w-12 h-12 rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105" />
+          </div>
         </SpeakingWhileMutedNotification>
       </Restricted>
 
+      {/* Video Control */}
       <Restricted requiredGrants={[OwnCapability.SEND_VIDEO]}>
-        <ToggleVideoPublishingButton />
+        <div className="relative group">
+          <ToggleVideoPublishingButton className="flex items-center justify-center w-12 h-12 rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105" />
+        </div>
       </Restricted>
 
-      {/* Dropdown */}
-      <div
-        ref={dropdownRef}
-        style={{ position: 'relative', display: 'inline-block' }}
-      >
+      {/* More Controls Dropdown */}
+      <div ref={dropdownRef} className="relative">
         <button
           onClick={() => setDropdownOpen((prev) => !prev)}
-          style={{
-            backgroundColor: 'black',
-            color: 'white',
-            border: 'none',
-            padding: '6px 10px',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '18px',
-          }}
+          className="flex items-center justify-center w-12 h-12 rounded-xl bg-gray-800 hover:bg-gray-700 border border-gray-600 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 text-white"
           aria-haspopup="true"
           aria-expanded={dropdownOpen}
+          aria-label="More controls"
         >
-          &#9881; {/* gear icon */}
+          <MoreVertical size={20} />
         </button>
 
         {dropdownOpen && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '120%', // open upward
-              right: 0,
-              backgroundColor: 'black',
-              color: 'white',
-              borderRadius: '6px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
-              padding: '10px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-              zIndex: 1000,
-              width: '180px',
-            }}
-          >
-            <strong style={{ fontSize: '14px', marginBottom: '5px' }}>More Controls</strong>
+          <div className="absolute bottom-16 right-0 w-56 bg-dark-1 border border-gray-700 rounded-xl shadow-2xl backdrop-blur-md z-50 overflow-hidden">
+            <div className="p-3">
+              <h3 className="text-sm font-medium text-gray-300 mb-3">More Controls</h3>
+              
+              <div className="space-y-2">
+                <Restricted requiredGrants={[OwnCapability.START_RECORD_CALL, OwnCapability.STOP_RECORD_CALL]}>
+                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                    <div className="flex items-center justify-center w-8 h-8">
+                      <RecordCallButton />
+                    </div>
+                    <span className="text-sm text-white flex items-center gap-2">
+                      <Circle size={16} className="text-red-500" />
+                      Record Meeting
+                    </span>
+                  </div>
+                </Restricted>
 
-            <Restricted requiredGrants={[OwnCapability.START_RECORD_CALL, OwnCapability.STOP_RECORD_CALL]}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <RecordCallButton />
-                <span style={{ fontSize: '13px' }}>Record</span>
-              </div>
-            </Restricted>
+                <Restricted requiredGrants={[OwnCapability.CREATE_REACTION]}>
+                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                    <div className="flex items-center justify-center w-8 h-8">
+                      <ReactionsButton />
+                    </div>
+                    <span className="text-sm text-white flex items-center gap-2">
+                      <Smile size={16} className="text-yellow-500" />
+                      Reactions
+                    </span>
+                  </div>
+                </Restricted>
 
-            <Restricted requiredGrants={[OwnCapability.CREATE_REACTION]}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ReactionsButton />
-                <span style={{ fontSize: '13px' }}>React</span>
+                <Restricted requiredGrants={[OwnCapability.SCREENSHARE]}>
+                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-800 transition-colors">
+                    <div className="flex items-center justify-center w-8 h-8">
+                      <ScreenShareButton />
+                    </div>
+                    <span className="text-sm text-white flex items-center gap-2">
+                      <Monitor size={16} className="text-blue-500" />
+                      Share Screen
+                    </span>
+                  </div>
+                </Restricted>
               </div>
-            </Restricted>
-
-            <Restricted requiredGrants={[OwnCapability.SCREENSHARE]}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ScreenShareButton />
-                <span style={{ fontSize: '13px' }}>Share Screen</span>
-              </div>
-            </Restricted>
+            </div>
           </div>
         )}
       </div>
 
-      <CancelCallButton onLeave={onLeave} />
+      {/* Leave Call Button */}
+      <div className="relative group">
+        <CancelCallButton 
+          onLeave={onLeave}
+          className="flex items-center justify-center w-12 h-12 rounded-xl bg-red-600 hover:bg-red-700 border border-red-500 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+        />
+      </div>
     </div>
   );
 };

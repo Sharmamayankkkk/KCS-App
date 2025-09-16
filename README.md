@@ -72,23 +72,188 @@ KCS Meet embodies the timeless wisdom of Lord Krishna, bringing spiritual seeker
 
 ## 🌼 Divine Capabilities
 
-- 🕯️ Personal Sacred Spaces
-- 🌍 Global Spiritual Gatherings
-- 🌈 Transcendental Screen Sharing
-- 💖 Compassionate Interaction Tools
-- 🔒 Protection of Spiritual Energy
+### 🔥 Core Spiritual Features
+- 🕯️ **Personal Sacred Spaces**: Private meditation and meeting rooms
+- 🌍 **Global Spiritual Gatherings**: Connect with devotees worldwide  
+- 🌈 **Transcendental Screen Sharing**: Share spiritual content seamlessly
+- 💖 **Compassionate Interaction Tools**: Chat, polls, and reactions
+- 🔒 **Protection of Spiritual Energy**: Secure, authenticated connections
+- 📊 **Divine Analytics**: Meeting insights and statistics
+- 🎥 **Sacred Recordings**: Preserve spiritual moments
+- 🖼️ **Background Sanctification**: Custom spiritual backgrounds
+
+### 🎯 Advanced Features
+- 📱 **Cross-Platform Devotion**: Works on all devices
+- 🌙 **Dark Mode Meditation**: Easy on the eyes for long sessions
+- 🔊 **Audio/Video Controls**: Comprehensive meeting management
+- 👥 **Participant Management**: Admin controls for spiritual leaders
+- 💝 **Superchat System**: Highlighted messages for special occasions
+- 🗳️ **Democratic Decisions**: Polling system for community choices
+- 🎨 **Customizable Interface**: Adaptive to your spiritual preferences
+
+## 🏗️ Architecture & Technology Stack
+
+### Frontend Enlightenment
+- **Next.js 14**: React framework for divine user experiences
+- **TypeScript**: Type-safe cosmic language
+- **Tailwind CSS**: Utility-first styling for rapid UI development
+- **Framer Motion**: Smooth animations for transcendental interactions
+
+### Backend Consciousness
+- **Stream Video SDK**: Real-time video/audio communication
+- **Clerk Authentication**: Secure user management
+- **Supabase**: Real-time database and backend services
+- **Vercel Analytics**: Performance monitoring and insights
+
+### Spiritual Integrations
+- **Cashfree Payments**: Secure donation processing
+- **Firebase**: Additional backend services
+- **TensorFlow.js**: AI-powered features (background effects)
+
+## 🚀 Deployment & Production
+
+### Environment Configuration
+```bash
+# Authentication
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+
+# Video Services  
+NEXT_PUBLIC_STREAM_API_KEY=your_stream_key
+STREAM_SECRET_KEY=your_stream_secret
+
+# Database
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+
+# Payments (Optional)
+CASHFREE_CLIENT_ID=your_cashfree_id
+CASHFREE_CLIENT_SECRET=your_cashfree_secret
+```
+
+### Build & Deploy
+```bash
+# Production build
+npm run build
+
+# Start production server
+npm start
+
+# Lint code
+npm run lint
+```
+
+## 📱 Mobile & Responsive Design
+
+KCS Meet is designed with mobile-first approach:
+- 📱 Optimized for smartphones and tablets
+- 🖥️ Seamless desktop experience
+- 🔄 Adaptive layouts for all screen sizes
+- 👆 Touch-friendly interface elements
+
+## 🛡️ Security & Privacy
+
+- 🔐 **End-to-End Encryption**: Secure video/audio streams
+- 🔑 **Authentication Required**: Clerk-based user verification
+- 🛡️ **Privacy Protection**: No unauthorized data collection
+- 🔒 **Secure Payments**: Cashfree integration for donations
+- 📝 **Data Compliance**: Following privacy best practices
+
+## 🧪 Testing & Quality Assurance
+
+```bash
+# Run linting
+npm run lint
+
+# Type checking
+npx tsc --noEmit
+
+# Build verification
+npm run build
+```
+
+## 📈 Performance Optimization
+
+- ⚡ **Fast Loading**: Optimized bundle sizes
+- 🎯 **Efficient Rendering**: React best practices
+- 📊 **Analytics Integration**: Vercel Speed Insights
+- 🔄 **Caching Strategy**: Next.js automatic optimizations
+
+## 🌍 Browser Support
+
+- ✅ Chrome (Recommended)
+- ✅ Firefox
+- ✅ Safari
+- ✅ Edge
+- 📱 Mobile browsers (iOS Safari, Chrome Mobile)
+
+## 🔧 Development Tools
+
+- **ESLint**: Code quality enforcement
+- **Prettier**: Code formatting
+- **TypeScript**: Type safety
+- **Tailwind CSS**: Utility-first styling
+- **Next.js DevTools**: Development optimization
 
 ## 🙏 Karma of Contribution
 
-Contribute to our spiritual technology mission:
-- ⭐ Bless with a Star
-- 🌱 Nurture through Issues
-- 🤝 Collaborate with Pull Requests
+Contribute to our spiritual technology mission and help connect souls worldwide:
+
+### 🌟 Ways to Contribute
+- ⭐ **Bless with a Star**: Star the repository to show support
+- 🌱 **Nurture through Issues**: Report bugs or suggest features
+- 🤝 **Collaborate with Pull Requests**: Submit code improvements
+- 📚 **Share Wisdom**: Improve documentation
+- 🐛 **Debug Mindfully**: Help identify and fix issues
+- 🎨 **Design Divinely**: Contribute UI/UX improvements
+
+### 📋 Contribution Guidelines
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) for detailed guidelines on:
+- Development setup
+- Code standards
+- Pull request process
+- Community guidelines
+
+### 🏆 Contributors Hall of Fame
+We gratefully acknowledge all souls who have contributed to this divine mission:
+
+<!-- Contributors will be added here -->
+
+*Your contribution, no matter how small, helps spread Krishna's universal love through technology.*
 
 ## 📜 Dharmic Licensing
 
-Distributed under the MIT Dharma License.
-Spread wisdom, respect the path.
+This project is distributed under the **MIT License** - see the [LICENSE](./LICENSE) file for details.
+
+### 🕉️ Spiritual License Philosophy
+- **Freedom**: Use, modify, and distribute freely
+- **Compassion**: Share improvements with the community  
+- **Respect**: Maintain attribution and licensing
+- **Wisdom**: Spread knowledge responsibly
+
+The MIT License ensures that this spiritual technology remains accessible to all beings seeking divine connection, while respecting intellectual property and encouraging collaborative development.
+
+## 📞 Support & Community
+
+### 🆘 Getting Help
+- 📖 **Documentation**: Check this README and [CONTRIBUTING.md](./CONTRIBUTING.md)
+- 🐛 **Issues**: Create a GitHub issue for bugs or feature requests
+- 💬 **Discussions**: Join GitHub Discussions for general questions
+- 📧 **Direct Contact**: Email us for sensitive matters
+
+### 🛠️ Troubleshooting
+
+#### Common Issues
+1. **Build Failures**: Ensure all environment variables are set
+2. **Video Issues**: Check browser permissions for camera/microphone
+3. **Authentication Problems**: Verify Clerk configuration
+4. **Slow Performance**: Clear browser cache and check network
+
+#### Getting Support
+1. Search existing issues first
+2. Provide detailed error descriptions
+3. Include browser/device information
+4. Share relevant logs (without sensitive data)
 
 ## 🌺 Connect in Consciousness
 
