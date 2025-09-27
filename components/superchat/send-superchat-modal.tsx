@@ -31,7 +31,7 @@ interface SendSuperchatModalProps {
 const AMOUNT_TIERS = [
   {
     value: 25,
-    label: "₹25",
+    label: "₹1",
     duration: "30s",
     icon: Star,
     color: "blue",

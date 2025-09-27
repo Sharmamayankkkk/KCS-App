@@ -353,7 +353,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     async (messageText: string) => {
       if (!messageText.trim() || !call?.id) return;
 
-      const { error } = await supabase.from('messages').insert([
+      const { error } = await supabase.from('chat_messages').insert([
         {
           call_id: call.id,
           text: messageText,
@@ -410,8 +410,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
     const fetchMessages = async () => {
       const { data, error } = await supabase
-        .from('messages')
-        .select('*')
+      .from('chat_messages')
+      .select('*')
         .eq('call_id', call.id)
         .order('created_at', { ascending: true });
 
@@ -433,7 +433,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       .channel(`messages:${call.id}`)
       .on(
         'postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'messages' },
+        { event: 'INSERT', schema: 'public', table: 'chat_messages' },
         (payload) => {
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -491,7 +491,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         .channel(`unread-messages:${call?.id}`)
         .on(
           'postgres_changes',
-          { event: 'INSERT', schema: 'public', table: 'messages' },
+          { event: 'INSERT', schema: 'public', table: 'chat_messages' },
           handleNewMessage,
         )
         .subscribe();
