@@ -81,9 +81,6 @@ export const SendSuperchatModal = ({
     }
   }, [])
 
-  // --- Start of Changes ---
-
-  // CHANGE 1: Corrected the polling logic for payment status.
   useEffect(() => {
     if (paymentStatus !== "processing" || !orderId) return;
 
@@ -103,26 +100,22 @@ export const SendSuperchatModal = ({
       attempts++;
       
       try {
-        const res = await fetch(`/api/check-payment-status?orderId=${orderId}`);
-        if (!res.ok) return; // Ignore transient network errors and retry
+        const res = await fetch(`/api/check-payment-status?orderId=${orderId}`, { cache: 'no-store' }); // THE FINAL FIX
+        if (!res.ok) return;
 
         const data = await res.json();
 
-        // The Cashfree Order Status API returns 'PAID' for success.
         if (data.status === "PAID") {
           clearInterval(intervalId);
           await createSuperchatEntry(orderId);
         } 
-        // These are the terminal failure states for an order.
         else if (["EXPIRED", "ERROR"].includes(data.status)) {
           clearInterval(intervalId);
           setPaymentStatus("failed");
           setError("Payment failed or was cancelled.");
           setLoading(false);
         }
-        // Otherwise, the status is still 'ACTIVE' or something else, so we keep polling.
       } catch (err) {
-        // Ignore fetch errors and let the poller try again
         console.error("Polling error:", err);
       }
     };
@@ -158,7 +151,6 @@ export const SendSuperchatModal = ({
         throw new Error("No payment session ID received from server")
       }
 
-      // Set status to processing to trigger the polling useEffect
       setPaymentStatus("processing") 
 
       const { load } = await import("@cashfreepayments/cashfree-js")
@@ -169,12 +161,7 @@ export const SendSuperchatModal = ({
         redirectTarget: "_modal",
       }
       
-      // CHANGE 2: Removed the unreliable client-side result handling.
-      // The polling mechanism is now the single source of truth for the payment status.
       await cashfree.checkout(checkoutOptions)
-      
-      // The user has closed the modal. The polling will continue in the background.
-      // We don't need to check the result here as it can be misleading for async payments.
 
     } catch (err) {
       console.error("Payment initiation error:", err)
@@ -183,54 +170,6 @@ export const SendSuperchatModal = ({
       setLoading(false)
     }
   }
-
-  // --- End of Changes ---
-{/*
-  const createSuperchatEntry = async (orderRef: string) => {
-    try {
-      // Check if superchat for this order already exists to prevent duplicates
-      const { data: existing, error: selectError } = await supabase
-        .from("superchats")
-        .select("id")
-        .eq("order_reference", orderRef)
-        .single();
-      
-      if(selectError && selectError.code !== 'PGRST116') { // 'PGRST116' means no rows found, which is good
-          throw selectError;
-      }
-
-      if (existing) {
-        console.log("Superchat already created for this order.");
-        setPaymentStatus("success");
-        setTimeout(onSuccess, 1500);
-        return;
-      }
-      
-      const { error: dbErr } = await supabase.from("superchats").insert([
-        {
-          call_id: callId,
-          sender_id: userId,
-          sender_name: senderName,
-          message,
-          amount: selectedAmount,
-          currency: "INR",
-          timestamp: new Date().toISOString(),
-          is_pinned: false,
-          order_reference: orderRef,
-        },
-      ])
-      if (dbErr) throw dbErr
-
-      setPaymentStatus("success")
-      setTimeout(onSuccess, 1500)
-    } catch (err) {
-      console.error("Error creating superchat entry:", err)
-      setError("Payment confirmed, but failed to save superchat. Please contact support.")
-      setPaymentStatus("failed") // Technically a success, but the user needs to know it didn't appear
-      setLoading(false)
-    }
-  }
-*/}
 
 const createSuperchatEntry = async (orderRef: string) => {
   try {
@@ -247,25 +186,22 @@ const createSuperchatEntry = async (orderRef: string) => {
           timestamp: new Date().toISOString(),
           is_pinned: false,
           order_reference: orderRef,
-          payment_status: 'pending' // Set initial status, webhook will update to 'completed'
+          payment_status: 'pending'
         },
         {
           onConflict: 'order_reference',
-          ignoreDuplicates: true, // This prevents errors from the race condition
+          ignoreDuplicates: true,
         }
       );
 
     if (dbErr) {
-      // If there's a real error (not a duplicate), throw it
       throw dbErr;
     }
 
-    // Success!
     setPaymentStatus("success");
     setTimeout(onSuccess, 1500);
 
   } catch (err) {
-    // This will now only catch legitimate errors, not the race condition.
     console.error("Error creating superchat entry:", err);
     setError("Payment confirmed, but failed to save superchat. Please contact support.");
     setPaymentStatus("failed");
