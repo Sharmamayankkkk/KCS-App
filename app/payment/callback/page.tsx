@@ -35,21 +35,21 @@ export default function PaymentCallback() {
   }, [searchParams])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="max-w-md w-full p-8 bg-gray-800 rounded-lg shadow-lg">
+    <div className="flex min-h-screen items-center justify-center bg-gray-900">
+      <div className="w-full max-w-md rounded-lg bg-gray-800 p-8 shadow-lg">
         {status === "loading" && (
           <div className="text-center">
-            <Loader2 className="h-16 w-16 text-blue-500 animate-spin mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Processing Payment</h2>
+            <Loader2 className="mx-auto mb-4 size-16 animate-spin text-blue-500" />
+            <h2 className="mb-2 text-xl font-bold text-white">Processing Payment</h2>
             <p className="text-gray-300">Please wait while we verify your payment...</p>
           </div>
         )}
 
         {status === "success" && (
           <div className="text-center">
-            <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Payment Successful!</h2>
-            <p className="text-gray-300 mb-6">{message}</p>
+            <CheckCircle className="mx-auto mb-4 size-16 text-green-500" />
+            <h2 className="mb-2 text-xl font-bold text-white">Payment Successful!</h2>
+            <p className="mb-6 text-gray-300">{message}</p>
             <Button onClick={() => router.push("/")} className="bg-green-600 hover:bg-green-700">
               Return to Call
             </Button>
@@ -58,9 +58,9 @@ export default function PaymentCallback() {
 
         {status === "failure" && (
           <div className="text-center">
-            <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Payment Failed</h2>
-            <p className="text-gray-300 mb-6">{message}</p>
+            <XCircle className="mx-auto mb-4 size-16 text-red-500" />
+            <h2 className="mb-2 text-xl font-bold text-white">Payment Failed</h2>
+            <p className="mb-6 text-gray-300">{message}</p>
             <Button onClick={() => router.push("/")} variant="outline" className="mr-2">
               Return to Call
             </Button>

@@ -97,20 +97,20 @@ const MuteButton = () => {
       {/* Main Button */}
       <button
         onClick={() => setShowControls(!showControls)}
-        className="flex items-center justify-center p-2 transition-all bg-indigo-600 rounded-lg hover:bg-indigo-700 active:scale-95"
+        className="flex items-center justify-center rounded-lg bg-indigo-600 p-2 transition-all hover:bg-indigo-700 active:scale-95"
       >
-        <ShieldAlert className="text-white size-5" />
+        <ShieldAlert className="size-5 text-white" />
       </button>
 
       {/* Expanded Controls Panel */}
       {showControls && (
-        <div className="absolute bottom-full mb-2 bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-lg p-3 w-64 shadow-lg z-50">
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="text-white font-medium text-sm">Participant Controls</h3>
+        <div className="absolute bottom-full z-50 mb-2 w-64 rounded-lg border border-gray-700 bg-gray-900/95 p-3 shadow-lg backdrop-blur-md">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="text-sm font-medium text-white">Participant Controls</h3>
           </div>
           
-          <div className="space-y-3 mb-3">
-            <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-gray-800/70">
+          <div className="mb-3 space-y-3">
+            <div className="flex items-center justify-between rounded-md bg-gray-800/70 px-2 py-1.5">
               <div className="flex items-center text-white">
                 <Mic className="mr-2 size-4" />
                 <span className="text-sm">Mute Audio</span>
@@ -120,12 +120,12 @@ const MuteButton = () => {
                 className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${controlOptions.audio ? 'bg-indigo-600' : 'bg-gray-600'}`}
               >
                 <span
-                  className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${controlOptions.audio ? 'translate-x-4' : 'translate-x-1'}`}
+                  className={`inline-block size-3.5 rounded-full bg-white transition-transform${controlOptions.audio ? 'translate-x-4' : 'translate-x-1'}`}
                 />
               </button>
             </div>
             
-            <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-gray-800/70">
+            <div className="flex items-center justify-between rounded-md bg-gray-800/70 px-2 py-1.5">
               <div className="flex items-center text-white">
                 <Video className="mr-2 size-4" />
                 <span className="text-sm">Disable Video</span>
@@ -135,7 +135,7 @@ const MuteButton = () => {
                 className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${controlOptions.video ? 'bg-indigo-600' : 'bg-gray-600'}`}
               >
                 <span
-                  className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${controlOptions.video ? 'translate-x-4' : 'translate-x-1'}`}
+                  className={`inline-block size-3.5 rounded-full bg-white transition-transform${controlOptions.video ? 'translate-x-4' : 'translate-x-1'}`}
                 />
               </button>
             </div>
@@ -144,11 +144,11 @@ const MuteButton = () => {
           <button
             onClick={muteAllExceptHost}
             disabled={isProcessing}
-            className="w-full py-1.5 px-2 bg-red-600 hover:bg-red-700 disabled:bg-red-400 disabled:cursor-not-allowed text-white text-sm font-medium rounded-md transition-colors duration-200 flex items-center justify-center"
+            className="flex w-full items-center justify-center rounded-md bg-red-600 px-2 py-1.5 text-sm font-medium text-white transition-colors duration-200 hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-red-400"
           >
             {isProcessing ? (
               <>
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <svg className="-ml-1 mr-2 size-4 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
@@ -160,7 +160,7 @@ const MuteButton = () => {
           </button>
           
           {statusMessage && (
-            <div className="mt-2 text-xs text-white bg-gray-800/80 px-2 py-1.5 rounded-md w-full text-center">
+            <div className="mt-2 w-full rounded-md bg-gray-800/80 px-2 py-1.5 text-center text-xs text-white">
               {statusMessage}
             </div>
           )}

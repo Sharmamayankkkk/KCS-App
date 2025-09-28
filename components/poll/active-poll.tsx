@@ -242,8 +242,8 @@ export const ActivePoll = ({ callId, userId, onClose }: ActivePollProps) => {
 
   if (loading) {
     return (
-      <div className="flex flex-col h-full items-center justify-center p-4">
-        <div className="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mb-2"></div>
+      <div className="flex h-full flex-col items-center justify-center p-4">
+        <div className="mb-2 size-8 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
         <p className="text-gray-300">Loading poll...</p>
       </div>
     )
@@ -251,11 +251,11 @@ export const ActivePoll = ({ callId, userId, onClose }: ActivePollProps) => {
 
   if (!activePoll) {
     return (
-      <div className="flex flex-col h-full items-center justify-center p-4">
-        <div className="text-center mb-4">
+      <div className="flex h-full flex-col items-center justify-center p-4">
+        <div className="mb-4 text-center">
           <BarChart2 size={40} className="mx-auto mb-2 text-gray-400" />
-          <h3 className="text-white text-lg font-medium">No Active Polls</h3>
-          <p className="text-gray-400 text-sm">There are no active polls at this time.</p>
+          <h3 className="text-lg font-medium text-white">No Active Polls</h3>
+          <p className="text-sm text-gray-400">There are no active polls at this time.</p>
         </div>
         <Button onClick={onClose} variant="outline">
           Close
@@ -265,31 +265,31 @@ export const ActivePoll = ({ callId, userId, onClose }: ActivePollProps) => {
   }
 
   return (
-    <div className="flex flex-col h-full bg-[#19232d]/95 backdrop-blur-md rounded-lg p-4">
-      <div className="flex items-center justify-between mb-4">
+    <div className="flex h-full flex-col rounded-lg bg-[#19232d]/95 p-4 backdrop-blur-md">
+      <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center">
-          <BarChart2 className="text-blue-400 mr-2" size={20} />
+          <BarChart2 className="mr-2 text-blue-400" size={20} />
           <h3 className="text-lg font-semibold text-white">Live Poll</h3>
         </div>
-        <button className="text-white hover:text-gray-300 transition" onClick={onClose}>
+        <button className="text-white transition hover:text-gray-300" onClick={onClose}>
           <X size={20} />
         </button>
       </div>
 
-      <div className="bg-gray-800/50 rounded-lg p-4 mb-4">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center text-gray-300 text-sm">
+      <div className="mb-4 rounded-lg bg-gray-800/50 p-4">
+        <div className="mb-2 flex items-center justify-between">
+          <div className="flex items-center text-sm text-gray-300">
             <Clock size={14} className="mr-1" />
             {formatTimeLeft(timeLeft)}
           </div>
           {showResults && (
-            <div className="text-gray-300 text-sm">
+            <div className="text-sm text-gray-300">
               {activePoll.total_votes} {activePoll.total_votes === 1 ? "vote" : "votes"}
             </div>
           )}
         </div>
 
-        <h4 className="text-lg font-medium text-white mb-4">{activePoll.question}</h4>
+        <h4 className="mb-4 text-lg font-medium text-white">{activePoll.question}</h4>
 
         <div className="space-y-3">
           {activePoll.options.map((option) => {
@@ -300,31 +300,31 @@ export const ActivePoll = ({ callId, userId, onClose }: ActivePollProps) => {
               <div key={option.id} className="w-full">
                 {showResults ? (
                   <div className="mb-1 flex items-center justify-between">
-                    <div className="text-white text-sm">{option.text}</div>
-                    <div className="text-white text-sm font-semibold">{percentage}%</div>
+                    <div className="text-sm text-white">{option.text}</div>
+                    <div className="text-sm font-semibold text-white">{percentage}%</div>
                   </div>
                 ) : (
                   <button
                     onClick={() => handleVote(option.id)}
-                    className="w-full text-left text-white text-sm bg-gray-700/70 hover:bg-gray-600/70 p-3 rounded-md mb-1 transition"
+                    className="mb-1 w-full rounded-md bg-gray-700/70 p-3 text-left text-sm text-white transition hover:bg-gray-600/70"
                   >
                     {option.text}
                   </button>
                 )}
 
                 {showResults && (
-                  <div className="w-full h-8 bg-gray-700/50 rounded-md overflow-hidden relative">
+                  <div className="relative h-8 w-full overflow-hidden rounded-md bg-gray-700/50">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${percentage}%` }}
                       transition={{ duration: 0.5 }}
-                      className={`absolute top-0 left-0 h-full ${
+                      className={`absolute left-0 top-0 h-full ${
                         userVote === option.id ? "bg-blue-500" : "bg-gray-600"
                       }`}
                     />
 
                     {userVote === option.id && (
-                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2">
                         <CheckCircle2 size={16} className="text-white" />
                       </div>
                     )}
@@ -338,9 +338,9 @@ export const ActivePoll = ({ callId, userId, onClose }: ActivePollProps) => {
 
       <div className="mt-auto">
         {!showResults && !userVote ? (
-          <p className="text-center text-gray-400 text-sm">Select an option to vote</p>
+          <p className="text-center text-sm text-gray-400">Select an option to vote</p>
         ) : !activePoll.is_active || timeLeft <= 0 ? (
-          <p className="text-center text-gray-400 text-sm">This poll has ended</p>
+          <p className="text-center text-sm text-gray-400">This poll has ended</p>
         ) : (
           <Button variant="outline" size="sm" className="w-full" onClick={() => setShowResults(!showResults)}>
             {showResults ? "Hide Results" : "Show Results"}
@@ -348,7 +348,7 @@ export const ActivePoll = ({ callId, userId, onClose }: ActivePollProps) => {
         )}
       </div>
 
-      {error && <div className="mt-4 p-3 rounded-lg bg-red-500/20 text-red-200 text-sm">{error}</div>}
+      {error && <div className="mt-4 rounded-lg bg-red-500/20 p-3 text-sm text-red-200">{error}</div>}
     </div>
   )
 }

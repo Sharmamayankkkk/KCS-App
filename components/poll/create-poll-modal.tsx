@@ -95,10 +95,10 @@ export const CreatePollModal = ({ callId, onClose, onSuccess }: CreatePollModalP
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-      <div className="w-full p-6 rounded-lg bg-[#243341] max-w-md relative">
+      <div className="relative w-full max-w-md rounded-lg bg-[#243341] p-6">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-gray-400 hover:text-white transition"
+          className="absolute right-4 top-4 text-gray-400 transition hover:text-white"
           disabled={loading}
         >
           <X size={20} />
@@ -107,19 +107,19 @@ export const CreatePollModal = ({ callId, onClose, onSuccess }: CreatePollModalP
         <h3 className="mb-6 text-xl font-bold text-white">Create New Poll</h3>
 
         <div className="mb-4">
-          <label className="block mb-2 text-sm font-medium text-white">Question</label>
+          <label className="mb-2 block text-sm font-medium text-white">Question</label>
           <input
             type="text"
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
-            className="w-full p-3 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-lg bg-gray-800/50 p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Ask your question..."
             disabled={loading}
           />
         </div>
 
         <div className="mb-4">
-          <div className="flex items-center justify-between mb-2">
+          <div className="mb-2 flex items-center justify-between">
             <label className="text-sm font-medium text-white">Options (min 2, max 5)</label>
             <Button
               variant="ghost"
@@ -139,14 +139,14 @@ export const CreatePollModal = ({ callId, onClose, onSuccess }: CreatePollModalP
                   type="text"
                   value={option}
                   onChange={(e) => handleOptionChange(index, e.target.value)}
-                  className="flex-1 p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 rounded-lg bg-gray-800/50 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder={`Option ${index + 1}`}
                   disabled={loading}
                 />
                 {options.length > 2 && (
                   <button
                     onClick={() => handleRemoveOption(index)}
-                    className="p-2 text-gray-400 hover:text-red-400 transition"
+                    className="p-2 text-gray-400 transition hover:text-red-400"
                     disabled={loading}
                   >
                     <Trash2 size={16} />
@@ -158,11 +158,11 @@ export const CreatePollModal = ({ callId, onClose, onSuccess }: CreatePollModalP
         </div>
 
         <div className="mb-6">
-          <label className="block mb-2 text-sm font-medium text-white">Duration: {duration} seconds</label>
+          <label className="mb-2 block text-sm font-medium text-white">Duration: {duration} seconds</label>
           <select
             value={duration}
             onChange={(e) => setDuration(Number(e.target.value))}
-            className="w-full p-2 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full rounded-lg bg-gray-800/50 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={loading}
           >
             <option value={30}>30 seconds</option>
@@ -173,7 +173,7 @@ export const CreatePollModal = ({ callId, onClose, onSuccess }: CreatePollModalP
           </select>
         </div>
 
-        {error && <div className="p-3 mb-4 rounded-lg bg-red-500/20 text-red-200">{error}</div>}
+        {error && <div className="mb-4 rounded-lg bg-red-500/20 p-3 text-red-200">{error}</div>}
 
         <div className="flex justify-end space-x-3">
           <Button variant="outline" onClick={onClose} disabled={loading}>
