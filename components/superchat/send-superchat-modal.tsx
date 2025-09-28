@@ -185,7 +185,7 @@ export const SendSuperchatModal = ({
   }
 
   // --- End of Changes ---
-
+{/*
   const createSuperchatEntry = async (orderRef: string) => {
     try {
       // Check if superchat for this order already exists to prevent duplicates
@@ -230,6 +230,49 @@ export const SendSuperchatModal = ({
       setLoading(false)
     }
   }
+*/}
+
+const createSuperchatEntry = async (orderRef: string) => {
+  try {
+    const { error: dbErr } = await supabase
+      .from("superchats")
+      .upsert(
+        {
+          call_id: callId,
+          sender_id: userId,
+          sender_name: senderName,
+          message,
+          amount: selectedAmount,
+          currency: "INR",
+          timestamp: new Date().toISOString(),
+          is_pinned: false,
+          order_reference: orderRef,
+          payment_status: 'pending' // Set initial status, webhook will update to 'completed'
+        },
+        {
+          onConflict: 'order_reference',
+          ignoreDuplicates: true, // This prevents errors from the race condition
+        }
+      );
+
+    if (dbErr) {
+      // If there's a real error (not a duplicate), throw it
+      throw dbErr;
+    }
+
+    // Success!
+    setPaymentStatus("success");
+    setTimeout(onSuccess, 1500);
+
+  } catch (err) {
+    // This will now only catch legitimate errors, not the race condition.
+    console.error("Error creating superchat entry:", err);
+    setError("Payment confirmed, but failed to save superchat. Please contact support.");
+    setPaymentStatus("failed");
+    setLoading(false);
+  }
+}
+
 
   const handleSubmit = () => {
     if (!message.trim()) {
