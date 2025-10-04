@@ -2,16 +2,9 @@ import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
 
 const protectedRoute = createRouteMatcher([
   "/",
-  "/upcoming",
   "/meeting(.*)",
-  "/previous",
-  "/recordings",
+  "/recording", 
   "/personal-room",
-  // The following pages are now excluded from this list:
-  // "/services",
-  // "/contact-us",
-  // "/refunds-and-cancellations",
-  // "/terms-and-conditions"
 ])
 
 export default clerkMiddleware(

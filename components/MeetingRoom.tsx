@@ -6,7 +6,6 @@ import {
   CallParticipantsList,
   CallStatsButton,
   CallingState,
-  PaginatedGridLayout,
   SpeakerLayout,
   StreamCall,
   StreamVideo,
@@ -43,8 +42,6 @@ import { useToast } from '@/hooks/use-toast';
 // Local components
 import Loader from './Loader';
 import AdminPanel from './AdminPanel';
-import MuteButton from './MuteButton';
-import EndCallButton from './EndCallButton';
 import { SuperchatPanel } from './superchat/superchat-panel';
 import { SendSuperchatModal } from './superchat/send-superchat-modal';
 import { PollsManager } from './poll/polls-manager';

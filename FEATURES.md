@@ -333,30 +333,6 @@ This document provides a comprehensive list of all features available in KCS Mee
 
 ---
 
-## 🚧 Future Features (Roadmap)
-
-### Planned Features
-- 🔄 Private/direct messages in chat
-- 🔄 Breakout rooms
-- 🔄 Waiting room
-- 🔄 Hand raise feature
-- 🔄 Whiteboard/drawing tools
-- 🔄 File sharing
-- 🔄 Meeting notes/minutes
-- 🔄 Calendar integration (Google Calendar, etc.)
-- 🔄 Email invitations
-- 🔄 Meeting reminders
-- 🔄 Recording transcription
-- 🔄 AI-powered meeting summaries
-- 🔄 Live captions/subtitles
-- 🔄 Multiple language support
-- 🔄 Custom branding options
-- 🔄 Advanced analytics dashboard
-- 🔄 Meeting templates
-- 🔄 Recurring meetings
-
----
-
 ## 📊 Feature Statistics
 
 - **Total Features**: 150+
@@ -386,5 +362,5 @@ This application is feature-complete for its intended use case as a spiritual co
 
 ---
 
-Last Updated: 2024
+Last Updated: 2025
 Version: 1.0
