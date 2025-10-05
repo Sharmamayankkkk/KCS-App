@@ -36,14 +36,21 @@ const Home = () => {
 
   return (
     <section className="flex flex-col gap-5 size-full text-white">
-      <div className="h-80 w-full flex items-center p-4 rounded-[20px] bg-hero bg-cover">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-4xl font-extrabold lg:text-7xl">{time || 'Loading...'}</h1>
-            <p className="text-lg font-medium text-sky-1 lg:text-2xl">{date || 'Loading...'}</p>
-            <p className="text-sm text-gray-400">
-              Time Zone: {userTimeZone || 'Detecting...'}
-            </p>
-          </div>
+      <div className="relative h-80 w-full flex items-center p-4 rounded-[20px] overflow-hidden">
+        <video
+          src="/images/hero-background.mp4"
+          autoPlay
+          muted
+          loop
+          className="absolute top-0 left-0 w-full h-full object-cover z-[-1]"
+        />
+        <div className="flex flex-col gap-2">
+          <h1 className="text-4xl font-extrabold lg:text-7xl">{time || 'Loading...'}</h1>
+          <p className="text-lg font-medium text-sky-1 lg:text-2xl">{date || 'Loading...'}</p>
+          <p className="text-sm text-gray-400">
+            Time Zone: {userTimeZone || 'Detecting...'}
+          </p>
+        </div>
       </div>
 
       <MeetingTypeList />

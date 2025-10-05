@@ -104,7 +104,7 @@ const config = {
         },
       },
       backgroundImage: {
-        'hero': "url('/images/hero-background.jpg')",
+        'hero': "url('/images/hero-background.mp4')",
       },
       backdropBlur: {
         xs: '2px',
