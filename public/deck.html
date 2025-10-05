@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KCS Meet | Expansion Strategy Deck</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-color: #4A90E2; --secondary-color: #50E3C2; --dark-blue: #2c3e50; --text-color: #555; --bg-color: #f9fbfd; --white: #ffffff; --border-color: #eaeff4; }
+        body { font-family: 'Poppins', sans-serif; line-height: 1.7; color: var(--text-color); background-color: var(--bg-color); margin: 0; }
+        .header { background: var(--white); padding: 1rem 2rem; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000; }
+        .logo { display: flex; align-items: center; gap: 1rem; font-size: 1.5rem; font-weight: 700; color: var(--dark-blue); }
+        .logo img { height: 40px; width: 40px; }
+        .nav { display: none; gap: 1.5rem; }
+        .nav a { text-decoration: none; color: var(--text-color); font-weight: 600; font-size: 0.95rem; }
+        .nav a:hover { color: var(--primary-color); }
+        .hamburger { display: none; cursor: pointer; z-index: 1001; }
+        .hamburger div { width: 25px; height: 3px; background-color: var(--dark-blue); margin: 5px 0; transition: all 0.3s; }
+        .mobile-nav { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.98); z-index: 999; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .mobile-nav a { font-size: 1.8rem; margin: 1.5rem 0; color: var(--dark-blue); text-decoration: none; font-weight: 600; }
+        .deck-container { max-width: 1100px; margin: 2rem auto; padding: 0 2rem; }
+        .slide { background: var(--white); padding: 3rem 4rem; border-radius: 12px; margin-bottom: 2rem; box-shadow: 0 6px 20px rgba(0,0,0,0.07); border: 1px solid var(--border-color); min-height: 500px; display: flex; flex-direction: column; justify-content: center; }
+        .slide.title-slide { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: var(--white); text-align: center; }
+        .slide.title-slide h1 { color: var(--white); font-size: 4rem; }
+        .slide.title-slide p { font-size: 1.5rem; opacity: 0.9; }
+        h1, h2 { color: var(--dark-blue); margin-top: 0; }
+        h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        ul { padding-left: 20px; font-size: 1.1rem; }
+        li { margin-bottom: 1rem; }
+        .footer { text-align: center; padding: 4rem 2rem; margin-top: 2rem; background: var(--dark-blue); color: var(--white); }
+        .footer p { margin: 0; opacity: 0.8;}
+        .close-icon .bar1 { transform: rotate(-45deg) translate(-6px, 6px); }
+        .close-icon .bar2 { opacity: 0; }
+        .close-icon .bar3 { transform: rotate(45deg) translate(-6px, -6px); }
+        @media (min-width: 769px) { .nav { display: flex; } }
+        @media (max-width: 768px) { .hamburger { display: block; } .slide { padding: 2rem; min-height: 400px;} .slide.title-slide h1 { font-size: 3rem; } }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">
+            <img src="/icons/KCS-Logo.png" alt="KCS Meet Logo"><span>KCS Meet</span>
+        </div>
+        <nav class="nav">
+            <a href="/vision.html">Vision</a>
+            <a href="/deck.html">Deck</a>
+            <a href="/model.html">Model</a>
+            <a href="/compare.html">Comparison</a>
+            <a href="/technical-compliance.html">Technical</a>
+            <a href="/pitch-deck.html">Pitch</a>
+        </nav>
+        <div class="hamburger">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+        </div>
+    </header>
+    <div class="mobile-nav">
+        <a href="/vision.html">Vision</a>
+        <a href="/deck.html">Deck</a>
+        <a href="/model.html">Model</a>
+        <a href="/compare.html">Comparison</a>
+        <a href="/technical-compliance.html">Technical</a>
+        <a href="/pitch-deck.html">Pitch</a>
+    </div>
+    <div class="deck-container">
+
+        <div class="slide title-slide">
+            <h1>KCS Meet: The Expansion Strategy</h1>
+            <p>From Internal Tool to Global Platform</p>
+        </div>
+
+        <div class="slide">
+            <h2>1. The Vision: Where Devotion Meets Connection</h2>
+            <ul>
+                <li><strong>Our Roots:</strong> Born within the Krishna Consciousness Society as an internal communication tool.</li>
+                <li><strong>Our Evolution:</strong> Matured into a feature-rich platform rivaling global competitors.</li>
+                <li><strong>Our Future:</strong> To become India’s first spiritually inspired, public communication platform, creating a sustainable revenue stream for KCS.</li>
+            </ul>
+        </div>
+
+        <div class="slide">
+            <h2>2. The Business Rationale: Why Now?</h2>
+            <ul>
+                <li><strong>Untapped Market:</strong> A growing global market for creator and community platforms, with a unique niche in the spiritual/wellness sector.</li>
+                <li><strong>Product-Market Fit:</strong> We have a proven, feature-complete product already validated by the KCS community.</li>
+                <li><strong>Strategic Alignment:</strong> Expansion creates a self-sustaining financial engine for the Krishna Consciousness Society, funding future projects.</li>
+            </ul>
+        </div>
+
+        <div class="slide">
+            <h2>3. Strategic Goals</h2>
+            <ul>
+                <li><strong>Year 1 Goals:</strong>
+                    <ul>
+                        <li>Successfully launch KCS Meet to the public.</li>
+                        <li>Achieve first 10,000 active users.</li>
+                        <li>Establish key partnerships with 5 spiritual organizations/influencers.</li>
+                        <li>Generate initial revenue through Super Chat and subscriptions.</li>
+                    </ul>
+                </li>
+                <li><strong>Year 3 Goals:</strong>
+                    <ul>
+                        <li>Become the leading communication platform for spiritual communities in India.</li>
+                        <li>Achieve 100,000+ active users.</li>
+                        <li>Expand service offerings (e.g., paid workshops, API access).</li>
+                        <li>Contribute a significant, recurring revenue share to KCS.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+    <footer class="footer">
+        <p>&copy; 2024 KCS Meet - For internal discussion and strategic planning.</p>
+    </footer>
+    <script>
+        const hamburger = document.querySelector('.hamburger');
+        const mobileNav = document.querySelector('.mobile-nav');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('close-icon');
+            if (mobileNav.style.display === 'flex') {
+                mobileNav.style.display = 'none';
+            } else {
+                mobileNav.style.display = 'flex';
+            }
+        });
+    </script>
+</body>
+</html>
