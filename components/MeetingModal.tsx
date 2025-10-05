@@ -1,9 +1,9 @@
-"use client";
-import { ReactNode } from "react";
-import { Dialog, DialogContent } from "./ui/dialog";
-import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
-import Image from "next/image";
+'use client';
+
+import { ReactNode, ElementType } from 'react';
+import { Dialog, DialogContent } from './ui/dialog';
+import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
 
 interface MeetingModalProps {
   isOpen: boolean;
@@ -14,9 +14,9 @@ interface MeetingModalProps {
   handleClick?: () => void;
   buttonText?: string;
   instantMeeting?: boolean;
-  image?: string;
+  icon?: ElementType; 
   buttonClassName?: string;
-  buttonIcon?: string;
+  buttonIcon?: ElementType;
 }
 
 const MeetingModal = ({
@@ -27,16 +27,26 @@ const MeetingModal = ({
   children,
   handleClick,
   buttonText,
-  image,
-  buttonIcon,
+  icon: Icon,
+  buttonIcon: ButtonIcon,
 }: MeetingModalProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="flex w-full max-w-[520px] flex-col gap-6 border-none bg-dark-1 px-6 py-9 text-white">
+      <DialogContent
+        className="flex w-full max-w-[520px] flex-col gap-6 border-none px-6 py-9"
+        style={{
+          backgroundColor: 'rgba(224, 219, 216, 0.8)', 
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(10px)',
+          border: '1px solid rgba(250, 245, 241, 0.3)',
+          boxShadow: '0 8px 32px 0 rgba(41, 47, 54, 0.37)',
+          color: '#292F36', 
+        }}
+      >
         <div className="flex flex-col gap-6">
-          {image && (
+          {Icon && (
             <div className="flex justify-center">
-              <Image src={image} alt="checked" width={72} height={72} />
+              <Icon className="h-16 w-16" style={{ color: '#292F36' }} />
             </div>
           )}
           <h1 className={cn("text-3xl font-bold leading-[42px]", className)}>
@@ -44,21 +54,14 @@ const MeetingModal = ({
           </h1>
           {children}
           <Button
-            className={
-              "bg-blue-1 focus-visible:ring-0 focus-visible:ring-offset-0"
-            }
+            className="focus-visible:ring-0 focus-visible:ring-offset-0"
+            style={{ backgroundColor: '#A41F13', color: '#FAF5F1' }}
             onClick={handleClick}
           >
-            {buttonIcon && (
-              <Image
-                src={buttonIcon}
-                alt="button icon"
-                width={13}
-                height={13}
-              />
-            )}{" "}
-            &nbsp;
-            {buttonText || "Schedule Meeting"}
+            {ButtonIcon && (
+              <ButtonIcon className="h-4 w-4 mr-2" />
+            )}
+            {buttonText || 'Schedule Meeting'}
           </Button>
         </div>
       </DialogContent>

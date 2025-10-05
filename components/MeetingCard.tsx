@@ -1,28 +1,28 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-
-import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
-import { useToast } from "./ui/use-toast";
+import { ElementType } from 'react';
+import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
+import { useToast } from './ui/use-toast';
+import { Copy } from 'lucide-react';
 
 interface MeetingCardProps {
   title: string;
   date: string;
-  icon: string;
+  icon: ElementType;
   isPreviousMeeting?: boolean;
-  buttonIcon1?: string;
+  buttonIcon1?: ElementType;
   buttonText?: string;
   handleClick: () => void;
   link: string;
 }
 
 const MeetingCard = ({
-  icon,
+  icon: Icon,
   title,
   date,
   isPreviousMeeting,
-  buttonIcon1,
+  buttonIcon1: ButtonIcon1,
   handleClick,
   link,
   buttonText,
@@ -30,9 +30,19 @@ const MeetingCard = ({
   const { toast } = useToast();
 
   return (
-    <section className="flex min-h-[258px] w-full flex-col justify-between rounded-[14px] bg-dark-1 px-5 py-8 xl:max-w-[568px]">
+    <section
+      className="flex min-h-[258px] w-full flex-col justify-between rounded-[14px] px-5 py-8 xl:max-w-[568px]"
+      style={{
+        backgroundColor: 'rgba(224, 219, 216, 0.6)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        border: '1px solid rgba(250, 245, 241, 0.3)',
+        boxShadow: '0 8px 32px 0 rgba(41, 47, 54, 0.37)',
+        color: '#292F36',
+      }}
+    >
       <article className="flex flex-col gap-5">
-        <Image src={icon} alt="upcoming" width={28} height={28} />
+        <Icon className="h-7 w-7" style={{ color: '#A41F13' }} />
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold">{title}</h1>
@@ -43,9 +53,13 @@ const MeetingCard = ({
       <article className={cn("flex justify-center relative", {})}>
         {!isPreviousMeeting && (
           <div className="flex gap-2">
-            <Button onClick={handleClick} className="rounded bg-blue-1 px-6">
-              {buttonIcon1 && (
-                <Image src={buttonIcon1} alt="feature" width={20} height={20} />
+            <Button
+              onClick={handleClick}
+              className="rounded px-6"
+              style={{ backgroundColor: '#A41F13', color: '#FAF5F1' }}
+            >
+              {ButtonIcon1 && (
+                <ButtonIcon1 className="h-5 w-5 mr-2" />
               )}
               &nbsp; {buttonText}
             </Button>
@@ -56,14 +70,14 @@ const MeetingCard = ({
                   title: "Link Copied",
                 });
               }}
-              className="bg-dark-4 px-6"
+              className="px-6"
+              style={{
+                backgroundColor: 'rgba(41, 47, 54, 0.6)',
+                color: '#FAF5F1',
+                border: '1px solid rgba(250, 245, 241, 0.3)',
+              }}
             >
-              <Image
-                src="/icons/copy.svg"
-                alt="feature"
-                width={20}
-                height={20}
-              />
+              <Copy className="h-5 w-5 mr-2" />
               &nbsp; Copy Link
             </Button>
           </div>
