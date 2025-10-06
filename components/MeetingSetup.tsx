@@ -1,384 +1,519 @@
-"use client"
-import { useEffect, useState, useRef, useCallback } from "react"
-import { DeviceSettings, VideoPreview, useCall, useCallStateHooks } from "@stream-io/video-react-sdk"
-import { Button } from "./ui/button"
-import { Card } from "./ui/card"
-import Alert from "./Alert"
-import { Check, Mic, MicOff, Monitor, Settings, Video, VideoOff, Image as ImageIcon } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { BackgroundSelector } from "./BackgroundSelector"
-import { useBackgroundProcessor } from "@/hooks/useBackgroundProcessor"
+'use client';
+import { useEffect, useState, useCallback } from 'react';
+import { VideoPreview, useCall, useCallStateHooks } from '@stream-io/video-react-sdk';
+import { Button } from './ui/button';
+import { Card } from './ui/card';
+import Alert from './Alert';
+import { Check, Mic, MicOff, Video, VideoOff, Image, AlertTriangle, X, Sparkles, ChevronDown, Camera, Headphones, MonitorPlay } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { BackgroundSelector } from './BackgroundSelector';
+import { useBackgroundProcessor } from '@/hooks/useBackgroundProcessor';
 
 interface BackgroundOption {
-  id: string
-  name: string
-  type: 'none' | 'blur' | 'image'
-  url?: string
-  preview?: string
+  id: string;
+  name: string;
+  type: 'none' | 'blur' | 'image';
+  url?: string;
+  preview?: string;
 }
 
 const DEFAULT_BACKGROUND: BackgroundOption = {
   id: 'none',
   name: 'No Background',
   type: 'none',
-}
+};
 
 const MeetingSetup = ({
   setIsSetupComplete,
 }: {
-  setIsSetupComplete: (value: boolean) => void
+  setIsSetupComplete: (value: boolean) => void;
 }) => {
-  // Call state hooks
-  const { useCallEndedAt, useCallStartsAt } = useCallStateHooks()
-  const callStartsAt = useCallStartsAt()
-  const callEndedAt = useCallEndedAt()
-  const callTimeNotArrived = callStartsAt && new Date(callStartsAt) > new Date()
-  const callHasEnded = !!callEndedAt
+  const { useCallEndedAt, useCallStartsAt } = useCallStateHooks();
+  const callStartsAt = useCallStartsAt();
+  const callEndedAt = useCallEndedAt();
+  const callTimeNotArrived = callStartsAt && new Date(callStartsAt) > new Date();
+  const callHasEnded = !!callEndedAt;
 
-  const call = useCall()
+  const call = useCall();
   if (!call) {
-    throw new Error("useStreamCall must be used within a StreamCall component.")
+    throw new Error('useStreamCall must be used within a StreamCall component.');
   }
 
-  // Device states
-  const [isMicEnabled, setIsMicEnabled] = useState(false)
-  const [isCameraEnabled, setIsCameraEnabled] = useState(false)
-  const [showSettings, setShowSettings] = useState(false)
-  const [isJoining, setIsJoining] = useState(false)
-  const [countdownValue, setCountdownValue] = useState<number | null>(null)
-  const [selectedBackground, setSelectedBackground] = useState<BackgroundOption>(DEFAULT_BACKGROUND)
-  const [showBackgroundSelector, setShowBackgroundSelector] = useState(false)
-  const [isProcessingBackground, setIsProcessingBackground] = useState(false)
+  const [isMicEnabled, setIsMicEnabled] = useState(false);
+  const [isCameraEnabled, setIsCameraEnabled] = useState(false);
+  const [isJoining, setIsJoining] = useState(false);
+  const [countdownValue, setCountdownValue] = useState<number | null>(null);
+  const [selectedBackground, setSelectedBackground] = useState<BackgroundOption>(DEFAULT_BACKGROUND);
+  const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
+  const [isProcessingBackground, setIsProcessingBackground] = useState(false);
+  const [showCameraDevices, setShowCameraDevices] = useState(false);
+  const [showMicDevices, setShowMicDevices] = useState(false);
   
-  const { processFrame, cleanup } = useBackgroundProcessor()
+  const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
+  const [microphones, setMicrophones] = useState<MediaDeviceInfo[]>([]);
+  const [selectedCameraId, setSelectedCameraId] = useState<string>('');
+  const [selectedMicId, setSelectedMicId] = useState<string>('');
+  
+  const { processFrame, cleanup } = useBackgroundProcessor();
 
-  // Load background from localStorage on mount
+  useEffect(() => {
+    const getDevices = async () => {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+        const audioDevices = devices.filter(device => device.kind === 'audioinput');
+        
+        setCameras(videoDevices);
+        setMicrophones(audioDevices);
+        
+        if (videoDevices.length > 0 && !selectedCameraId) {
+          setSelectedCameraId(videoDevices[0].deviceId);
+        }
+        if (audioDevices.length > 0 && !selectedMicId) {
+          setSelectedMicId(audioDevices[0].deviceId);
+        }
+      } catch (error) {
+        console.error('Error getting devices:', error);
+      }
+    };
+
+    getDevices();
+    
+    navigator.mediaDevices.addEventListener('devicechange', getDevices);
+    return () => {
+      navigator.mediaDevices.removeEventListener('devicechange', getDevices);
+    };
+  }, [selectedCameraId, selectedMicId]);
+
   useEffect(() => {
     try {
-      const savedBackground = localStorage.getItem('meetingBackground')
+      const savedBackground = localStorage.getItem('meetingBackground');
       if (savedBackground) {
-        const background = JSON.parse(savedBackground)
-        setSelectedBackground(background)
+        const background = JSON.parse(savedBackground);
+        setSelectedBackground(background);
       }
     } catch (error) {
-      console.error('Error loading background from localStorage:', error)
+      console.error('Error loading background from localStorage:', error);
     }
-  }, [])
+  }, []);
 
-  //By default keep it off
   useEffect(() => {
-      call.microphone.disable()
-        call.camera.disable()
-        }, [call])
+    call.microphone.disable();
+    call.camera.disable();
+  }, [call]);
   
   useEffect(() => {
     const setupBackgroundProcessing = async () => {
       if (!isCameraEnabled) {
-        cleanup()
-        return
+        cleanup();
+        return;
       }
 
       try {
-        setIsProcessingBackground(true)
-
-        // Register the background filter
+        setIsProcessingBackground(true);
         const { unregister } = call.camera.registerFilter((originalStream: MediaStream) => {
-          // Process the stream with selected background
-          const processedStreamPromise = processFrame(originalStream, selectedBackground)
+          const processedStreamPromise = processFrame(originalStream, selectedBackground);
           return {
             output: processedStreamPromise.then(stream => stream || originalStream),
             stop: () => cleanup()
-          }
-        })
-
-        // Store the unregister function for cleanup
-        return unregister
+          };
+        });
+        return unregister;
       } catch (error) {
-        console.error('Error setting up background processing:', error)
+        console.error('Error setting up background processing:', error);
       } finally {
-        setIsProcessingBackground(false)
+        setIsProcessingBackground(false);
       }
-    }
+    };
 
-    const unregisterPromise = setupBackgroundProcessing()
-
+    const unregisterPromise = setupBackgroundProcessing();
     return () => {
-      unregisterPromise?.then(unregister => unregister?.())
-      cleanup()
-    }
-  }, [isCameraEnabled, selectedBackground, call.camera, processFrame, cleanup])
+      unregisterPromise?.then(unregister => unregister?.());
+      cleanup();
+    };
+  }, [isCameraEnabled, selectedBackground, call.camera, processFrame, cleanup]);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
-      cleanup()
-    }
-  }, [cleanup])
+      cleanup();
+    };
+  }, [cleanup]);
 
   const handleBackgroundChange = useCallback((background: BackgroundOption) => {
-    setSelectedBackground(background)
-    setShowBackgroundSelector(false)
-    // Save to localStorage for persistence in meeting room
+    setSelectedBackground(background);
+    setShowBackgroundSelector(false);
     try {
-      localStorage.setItem('meetingBackground', JSON.stringify(background))
+      localStorage.setItem('meetingBackground', JSON.stringify(background));
     } catch (error) {
-      console.error('Error saving background to localStorage:', error)
+      console.error('Error saving background to localStorage:', error);
     }
-  }, [])
+  }, []);
 
-  // Handle device toggles
-  const toggleMic = () => {
-    setIsMicEnabled((prev) => !prev)
+  const toggleMic = async () => {
+    setIsMicEnabled((prev) => !prev);
     if (isMicEnabled) {
-      call.microphone.disable()
+      call.microphone.disable();
     } else {
-      call.microphone.enable()
+      if (selectedMicId) {
+        await call.microphone.select(selectedMicId);
+      }
+      call.microphone.enable();
     }
-  }
+  };
 
-  const toggleCamera = () => {
-    setIsCameraEnabled((prev) => !prev)
+  const toggleCamera = async () => {
+    setIsCameraEnabled((prev) => !prev);
     if (isCameraEnabled) {
-      call.camera.disable()
+      call.camera.disable();
     } else {
-      call.camera.enable()
+      if (selectedCameraId) {
+        await call.camera.select(selectedCameraId);
+      }
+      call.camera.enable();
     }
-  }
+  };
 
-  // Handle join meeting with countdown
+  const handleCameraChange = async (deviceId: string) => {
+    setSelectedCameraId(deviceId);
+    if (isCameraEnabled) {
+      await call.camera.select(deviceId);
+    }
+  };
+
+  const handleMicChange = async (deviceId: string) => {
+    setSelectedMicId(deviceId);
+    if (isMicEnabled) {
+      await call.microphone.select(deviceId);
+    }
+  };
+
   const handleJoinMeeting = () => {
-    setIsJoining(true)
-    setCountdownValue(3)
-  }
+    setIsJoining(true);
+    setCountdownValue(3);
+  };
 
-  // Handle countdown effect
   useEffect(() => {
-    let timer: NodeJS.Timeout
-
+    let timer: NodeJS.Timeout;
     if (isJoining && countdownValue !== null) {
       if (countdownValue > 0) {
         timer = setTimeout(() => {
-          setCountdownValue(countdownValue - 1)
-        }, 1000)
+          setCountdownValue(countdownValue - 1);
+        }, 1000);
       } else {
-        // Join the call when countdown reaches 0
-        call.join()
-        setIsSetupComplete(true)
+        call.join();
+        setIsSetupComplete(true);
       }
     }
-
     return () => {
-      if (timer) clearTimeout(timer)
-    }
-  }, [isJoining, countdownValue, call, setIsSetupComplete])
+      if (timer) clearTimeout(timer);
+    };
+  }, [isJoining, countdownValue, call, setIsSetupComplete]);
 
-  // Ads script
-  useEffect(() => {
-    const script = document.createElement("script")
-    script.async = true
-    script.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9082594150892887"
-    script.crossOrigin = "anonymous"
-    document.body.appendChild(script)
-
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script)
-      }
-    }
-  }, [])
-
-  // Conditional rendering for various states
   if (callTimeNotArrived) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800 p-4">
+      <div className="flex min-h-screen w-full items-center justify-center bg-[#FAF5F1] p-4">
         <Alert
           title={`Your Meeting has not started yet`}
           subtitle={`It is scheduled for ${callStartsAt?.toLocaleString()}`}
         />
       </div>
-    )
+    );
   }
 
   if (callHasEnded) {
     return (
-      <div className="flex min-h-screen w-full items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800 p-4">
-        <Alert title="The call has been ended by the host" iconUrl="/icons/call-ended.svg" />
+      <div className="flex min-h-screen w-full items-center justify-center bg-[#FAF5F1] p-4">
+        <Alert title="The call has been ended by the host" icon={<AlertTriangle size={48} className="text-[#A41F13]" />} />
       </div>
-    )
+    );
   }
 
   return (
-    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-b from-slate-900 to-slate-800 p-4">
-      <Card className="max-w-3xl w-full p-6 border-none bg-slate-800/70 backdrop-blur-lg shadow-xl rounded-xl">
-        <div className="flex flex-col gap-6">
-          {/* Header */}
-          <div className="text-center mb-2">
-            <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">Hare Krishna <br /> Ready to join?</h1>
-            <p className="text-slate-300 max-w-md mx-auto">
-              Check your audio and video settings before joining the meeting
-            </p>
+    <div className="min-h-screen w-full bg-[#FAF5F1] flex flex-col items-center justify-center p-3 sm:p-4 md:p-6">
+      <div className="w-full max-w-7xl lg:grid lg:grid-cols-5 lg:gap-8 items-start">
+        <div className="lg:col-span-3 w-full flex flex-col items-center">
+          <div className="text-center lg:text-left mb-4 sm:mb-6 md:mb-8 px-2 w-full">
+              <h1
+                  className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#292F36] mb-2 sm:mb-3"
+                  dangerouslySetInnerHTML={{ __html: 'Hare Krishna<br> Ready to join?' }}
+              />
+              <p className="text-[#8F7A6E] text-sm sm:text-base md:text-lg max-w-2xl mx-auto lg:mx-0">
+                  Setup your devices for the meeting
+              </p>
           </div>
-
-          {/* Main content container */}
-          <div className="flex flex-col md:flex-row gap-6">
-            {/* Video preview */}
-            <div className="flex-1 relative rounded-xl overflow-hidden border border-slate-700/50 shadow-inner">
+          <Card className="w-full p-0 border-none bg-white shadow-lg sm:shadow-xl rounded-xl sm:rounded-2xl overflow-hidden">
+            <div className="relative aspect-video lg:min-h-[400px] lg:h-[calc(100vh-400px)] bg-[#292F36] rounded-xl sm:rounded-2xl overflow-hidden border-4 border-white shadow-inner">
               <div
                 className={cn(
-                  "absolute inset-0 flex items-center justify-center z-10 bg-black/70 transition-opacity duration-300",
-                  isCameraEnabled ? "opacity-0 pointer-events-none" : "opacity-100",
+                  'absolute inset-0 flex flex-col items-center justify-center z-10 bg-gradient-to-br from-[#292F36] to-[#292F36]/90 transition-opacity duration-300',
+                  isCameraEnabled ? 'opacity-0 pointer-events-none' : 'opacity-100',
                 )}
               >
-                <VideoOff size={48} className="text-slate-300/80" />
+                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#8F7A6E]/20 flex items-center justify-center mb-3 sm:mb-4">
+                  <VideoOff size={32} className="text-[#8F7A6E] sm:w-10 sm:h-10" />
+                </div>
+                <p className="text-[#FAF5F1] text-sm sm:text-base font-medium">Camera is off</p>
               </div>
-              <VideoPreview className={cn("w-full h-full min-h-[280px]", !isCameraEnabled && "opacity-0")} />
+              <VideoPreview className={cn('w-full h-full', !isCameraEnabled && 'opacity-0')} />
+              
+              {isCameraEnabled && (
+                <div className="absolute top-3 left-3 sm:top-4 sm:left-4 px-2.5 py-1 sm:px-3 sm:py-1.5 bg-[#292F36]/80 backdrop-blur-sm rounded-full flex items-center gap-1.5 sm:gap-2">
+                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#A41F13] animate-pulse" />
+                  <span className="text-white text-xs sm:text-sm font-medium">Live</span>
+                </div>
+              )}
             </div>
 
-            {/* Controls */}
-            <div className="flex-1 flex flex-col justify-between gap-4">
-              {/* Device toggles */}
-              <div className="grid grid-cols-1 gap-4">
-                <h2 className="text-xl font-semibold text-white mb-2">Audio & Video</h2>
+            <div className="p-3 sm:p-4 bg-white flex items-center justify-center gap-2 sm:gap-3">
+                <button
+                    onClick={toggleMic}
+                    className={cn(
+                    'w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-200 active:scale-95',
+                    isMicEnabled
+                        ? 'bg-[#E0DBD8] text-[#292F36] hover:bg-[#8F7A6E]/30'
+                        : 'bg-[#A41F13] text-white hover:bg-[#A41F13]/90'
+                    )}
+                >
+                    {isMicEnabled ? <Mic size={20} className="sm:w-6 sm:h-6" /> : <MicOff size={20} className="sm:w-6 sm:h-6" />}
+                </button>
 
-                <div className="flex flex-col space-y-4">
-                  {/* Camera toggle */}
-                  <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      {isCameraEnabled ? (
-                        <Video className="text-emerald-400" size={20} />
-                      ) : (
-                        <VideoOff className="text-slate-400" size={20} />
-                      )}
-                      <span className="text-white">Camera</span>
-                    </div>
-                    <Button
-                      onClick={toggleCamera}
-                      variant="secondary"
-                      className={cn(
-                        "h-9 px-4 transition-all duration-300",
-                        isCameraEnabled
-                          ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                          : "bg-slate-600 hover:bg-slate-700 text-slate-300",
-                      )}
-                    >
-                      {isCameraEnabled ? "On" : "Off"}
-                    </Button>
-                  </div>
+                <button
+                    onClick={toggleCamera}
+                    className={cn(
+                    'w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center transition-all duration-200 active:scale-95',
+                    isCameraEnabled
+                        ? 'bg-[#E0DBD8] text-[#292F36] hover:bg-[#8F7A6E]/30'
+                        : 'bg-[#A41F13] text-white hover:bg-[#A41F13]/90'
+                    )}
+                >
+                    {isCameraEnabled ? <Video size={20} className="sm:w-6 sm:h-6" /> : <VideoOff size={20} className="sm:w-6 sm:h-6" />}
+                </button>
 
-                  {/* Microphone toggle */}
-                  <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      {isMicEnabled ? (
-                        <Mic className="text-emerald-400" size={20} />
-                      ) : (
-                        <MicOff className="text-slate-400" size={20} />
-                      )}
-                      <span className="text-white">Microphone</span>
-                    </div>
-                    <Button
-                      onClick={toggleMic}
-                      variant="secondary"
-                      className={cn(
-                        "h-9 px-4 transition-all duration-300",
-                        isMicEnabled
-                          ? "bg-emerald-600 hover:bg-emerald-700 text-white"
-                          : "bg-slate-600 hover:bg-slate-700 text-slate-300",
-                      )}
-                    >
-                      {isMicEnabled ? "On" : "Off"}
-                    </Button>
-                  </div>
-
-                  {/* Device settings button */}
-                  <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Settings className="text-blue-400" size={20} />
-                      <span className="text-white">Device settings</span>
-                    </div>
-                    <Button
-                      variant="secondary"
-                      className="h-9 px-4 bg-blue-600 hover:bg-blue-700 text-white"
-                      onClick={() => setShowSettings(!showSettings)}
-                    >
-                      Configure
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Device settings panel (conditionally rendered) */}
-                {showSettings && (
-                  <div className="mt-2 p-4 bg-slate-700/70 rounded-lg border border-slate-600/50 animate-fade-in">
-                    <DeviceSettings />
-                  </div>
-                )}
-
-                {/* Background Settings */}
-                <div className="flex items-center justify-between p-3 bg-slate-700/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <ImageIcon className="text-purple-400" size={20} />
-                    <div className="flex flex-col">
-                      <span className="text-white">Background</span>
-                      <span className="text-xs text-gray-400">
-                        {selectedBackground.name}
-                        {isProcessingBackground && " (Processing...)"}
-                      </span>
-                    </div>
-                  </div>
-                  <Button
-                    variant="secondary"
-                    className="h-9 px-4 bg-purple-600 hover:bg-purple-700 text-white"
+                <button
                     onClick={() => setShowBackgroundSelector(true)}
                     disabled={isProcessingBackground}
-                  >
-                    {isProcessingBackground ? "Processing..." : "Change"}
-                  </Button>
+                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#E0DBD8] text-[#292F36] hover:bg-[#8F7A6E]/30 flex items-center justify-center transition-all duration-200 active:scale-95 disabled:opacity-50"
+                >
+                    <Image size={20} className="sm:w-6 sm:h-6" />
+                </button>
+            </div>
+          </Card>
+        </div>
+
+        <div className="lg:col-span-2 w-full space-y-4 sm:space-y-5 md:space-y-6 mt-4 lg:mt-0">
+          <Card className="p-4 sm:p-5 border-none bg-white shadow-lg rounded-xl sm:rounded-2xl">
+            <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <div className={cn(
+                "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0",
+                isCameraEnabled ? "bg-[#292F36]" : "bg-[#A41F13]"
+              )}>
+                <Camera className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-[#292F36] font-bold text-base sm:text-lg">Camera</h3>
+                <p className="text-[#8F7A6E] text-xs sm:text-sm truncate">
+                  {isCameraEnabled ? 'Ready to use' : 'Currently disabled'}
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-3 sm:mb-4">
+              <button
+                onClick={() => setShowCameraDevices(!showCameraDevices)}
+                className="w-full flex items-center justify-between p-3 bg-[#FAF5F1] hover:bg-[#E0DBD8] rounded-lg transition-all duration-200"
+              >
+                <span className="text-[#292F36] text-sm font-medium truncate">
+                  {cameras.find(c => c.deviceId === selectedCameraId)?.label || 'Select camera'}
+                </span>
+                <ChevronDown className={cn(
+                  "text-[#8F7A6E] flex-shrink-0 transition-transform duration-200 w-5 h-5",
+                  showCameraDevices && "rotate-180"
+                )} />
+              </button>
+              
+              {showCameraDevices && cameras.length > 0 && (
+                <div className="mt-2 space-y-1 max-h-48 overflow-y-auto">
+                  {cameras.map((camera) => (
+                    <button
+                      key={camera.deviceId}
+                      onClick={() => {
+                        handleCameraChange(camera.deviceId);
+                        setShowCameraDevices(false);
+                      }}
+                      className={cn(
+                        "w-full text-left p-3 rounded-lg transition-all duration-200 text-sm",
+                        selectedCameraId === camera.deviceId
+                          ? "bg-[#292F36] text-white"
+                          : "bg-[#FAF5F1] text-[#292F36] hover:bg-[#E0DBD8]"
+                      )}
+                    >
+                      {camera.label || `Camera ${cameras.indexOf(camera) + 1}`}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Button
+              onClick={toggleCamera}
+              className={cn(
+                'w-full h-10 sm:h-11 rounded-lg font-semibold text-sm sm:text-base transition-all duration-200',
+                isCameraEnabled
+                  ? 'bg-[#E0DBD8] hover:bg-[#8F7A6E] text-[#292F36] hover:text-white'
+                  : 'bg-[#292F36] hover:bg-[#292F36]/90 text-white'
+              )}
+            >
+              {isCameraEnabled ? 'Turn Off' : 'Turn On'}
+            </Button>
+          </Card>
+
+          <Card className="p-4 sm:p-5 border-none bg-white shadow-lg rounded-xl sm:rounded-2xl">
+            <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+              <div className={cn(
+                "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0",
+                isMicEnabled ? "bg-[#292F36]" : "bg-[#A41F13]"
+              )}>
+                <Headphones className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-[#292F36] font-bold text-base sm:text-lg">Microphone</h3>
+                <p className="text-[#8F7A6E] text-xs sm:text-sm truncate">
+                  {isMicEnabled ? 'Ready to use' : 'Currently disabled'}
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-3 sm:mb-4">
+              <button
+                onClick={() => setShowMicDevices(!showMicDevices)}
+                className="w-full flex items-center justify-between p-3 bg-[#FAF5F1] hover:bg-[#E0DBD8] rounded-lg transition-all duration-200"
+              >
+                <span className="text-[#292F36] text-sm font-medium truncate">
+                  {microphones.find(m => m.deviceId === selectedMicId)?.label || 'Select microphone'}
+                </span>
+                <ChevronDown className={cn(
+                  "text-[#8F7A6E] flex-shrink-0 transition-transform duration-200 w-5 h-5",
+                  showMicDevices && "rotate-180"
+                )} />
+              </button>
+              
+              {showMicDevices && microphones.length > 0 && (
+                <div className="mt-2 space-y-1 max-h-48 overflow-y-auto">
+                  {microphones.map((mic) => (
+                    <button
+                      key={mic.deviceId}
+                      onClick={() => {
+                        handleMicChange(mic.deviceId);
+                        setShowMicDevices(false);
+                      }}
+                      className={cn(
+                        "w-full text-left p-3 rounded-lg transition-all duration-200 text-sm",
+                        selectedMicId === mic.deviceId
+                          ? "bg-[#292F36] text-white"
+                          : "bg-[#FAF5F1] text-[#292F36] hover:bg-[#E0DBD8]"
+                      )}
+                    >
+                      {mic.label || `Microphone ${microphones.indexOf(mic) + 1}`}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Button
+              onClick={toggleMic}
+              className={cn(
+                'w-full h-10 sm:h-11 rounded-lg font-semibold text-sm sm:text-base transition-all duration-200',
+                isMicEnabled
+                  ? 'bg-[#E0DBD8] hover:bg-[#8F7A6E] text-[#292F36] hover:text-white'
+                  : 'bg-[#292F36] hover:bg-[#292F36]/90 text-white'
+              )}
+            >
+              {isMicEnabled ? 'Turn Off' : 'Turn On'}
+            </Button>
+          </Card>
+
+          <Card className="p-4 sm:p-5 border-none bg-white shadow-lg rounded-xl sm:rounded-2xl">
+            <button
+              onClick={() => setShowBackgroundSelector(true)}
+              disabled={isProcessingBackground}
+              className="w-full flex items-center justify-between hover:bg-[#FAF5F1] p-3 rounded-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
+            >
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-[#8F7A6E] flex items-center justify-center flex-shrink-0">
+                  <MonitorPlay className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+                </div>
+                <div className="text-left flex-1 min-w-0">
+                  <p className="text-[#292F36] font-semibold text-sm sm:text-base">Background</p>
+                  <p className="text-[#8F7A6E] text-xs sm:text-sm truncate">
+                    {isProcessingBackground ? 'Processing...' : selectedBackground.name}
+                  </p>
                 </div>
               </div>
+              <div className="flex-shrink-0 px-4 py-2 bg-[#E0DBD8] rounded-lg text-[#292F36] text-sm font-medium">
+                Change
+              </div>
+            </button>
+          </Card>
 
-              {/* Share screen reminder 
-              <div className="p-3 bg-slate-700/30 rounded-lg border border-slate-600/30 mt-2">
-                <div className="flex items-center gap-2">
-                  <Monitor size={18} className="text-slate-300" />
-                  <p className="text-sm text-slate-300">You can share your screen after joining the meeting</p>
-                </div>
-              </div>  */}
-            </div>
-          </div>
-
-          {/* Join button */}
-          <div className="mt-4 flex flex-col items-center">
+          <Card className="p-4 sm:p-5 md:p-6 border-none bg-gradient-to-br from-[#A41F13] to-[#A41F13]/90 shadow-lg sm:shadow-xl rounded-xl sm:rounded-2xl">
             {isJoining ? (
-              <div className="text-center">
-                <div className="mb-2 text-5xl font-bold text-white">{countdownValue}</div>
-                <p className="text-slate-300">Joining meeting...</p>
+              <div className="text-center py-3 sm:py-4">
+                <div className="mb-3 sm:mb-4">
+                  <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/20 backdrop-blur-sm">
+                    <span className="text-4xl sm:text-5xl font-bold text-white">{countdownValue}</span>
+                  </div>
+                </div>
+                <p className="text-white/90 text-base sm:text-lg font-medium">Joining meeting...</p>
               </div>
             ) : (
-              <Button
-                className="w-full sm:w-64 h-12 bg-green-600 hover:bg-green-700 text-white font-medium text-lg rounded-full transition-all duration-300 hover:shadow-lg hover:scale-105 flex items-center justify-center gap-2"
-                onClick={handleJoinMeeting}
-              >
-                <Check size={18} />
-                Join meeting
-              </Button>
+              <div className="space-y-3 sm:space-y-4">
+                <Button
+                  onClick={handleJoinMeeting}
+                  className="w-full h-12 sm:h-14 bg-white hover:bg-[#FAF5F1] text-[#A41F13] font-bold text-base sm:text-lg rounded-lg sm:rounded-xl transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 sm:gap-3"
+                >
+                  <Check size={20} strokeWidth={3} className="sm:w-6 sm:h-6" />
+                  Join Meeting Now
+                </Button>
+                <p className="text-white/70 text-xs sm:text-sm text-center leading-relaxed px-2">
+                  By joining, you agree to our terms of service and privacy policy
+                </p>
+              </div>
             )}
+          </Card>
+        </div>
+      </div>
 
-            <p className="text-xs text-slate-400 mt-4 text-center max-w-sm">
-              By joining, you agree to our terms of service and privacy policy
+      <div className="mt-4 sm:mt-6 text-center px-2">
+          <div className="inline-flex items-center gap-2 px-3 py-2 sm:px-4 bg-white rounded-full shadow-sm">
+            <Sparkles className="text-[#A41F13] w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+            <p className="text-[#8F7A6E] text-xs sm:text-sm">
+              <span className="font-semibold">Tip:</span> Test before important meetings
             </p>
           </div>
-        </div>
-      </Card>
+      </div>
 
-      {/* Background Selector Modal */}
       {showBackgroundSelector && (
-        <BackgroundSelector
-          selectedBackground={selectedBackground}
-          onBackgroundChange={handleBackgroundChange}
-          onClose={() => setShowBackgroundSelector(false)}
-        />
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#292F36]/60 backdrop-blur-sm">
+          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-auto">
+            <button
+              onClick={() => setShowBackgroundSelector(false)}
+              className="sticky top-0 right-0 float-right mb-2 sm:mb-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all duration-200 z-10"
+            >
+              <X size={20} className="sm:w-6 sm:h-6" />
+            </button>
+            <div className="clear-both">
+              <BackgroundSelector
+                selectedBackground={selectedBackground}
+                onBackgroundChange={handleBackgroundChange}
+                onClose={() => setShowBackgroundSelector(false)}
+              />
+            </div>
+          </div>
+        </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default MeetingSetup
+export default MeetingSetup;

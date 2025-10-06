@@ -1,0 +1,156 @@
+
+# Folder Structure
+
+- actions
+  - stream.actions.ts
+- API.md
+- app
+  - api
+    - cashfree-webhook
+      - route.ts
+    - check-payment-status
+      - route.ts
+    - create-cashfree-order
+      - route.ts
+  - (auth)
+    - sign-in
+      - [[...sigin-in]]
+        - page.tsx
+    - sign-up
+      - [[...sign-up]]
+        - page.tsx
+  - globals.css
+  - layout.tsx
+  - payment
+    - callback
+      - loading.tsx
+      - page.tsx
+  - (public)
+    - contact-us
+      - page.tsx
+    - layout.tsx
+    - refunds-and-cancellations
+      - page.tsx
+    - services
+      - page.tsx
+    - terms-and-conditions
+      - page.tsx
+  - (root)
+    - (home)
+      - layout.tsx
+      - page.tsx
+      - recordings
+        - page.tsx
+    - layout.tsx
+    - meeting
+      - [id]
+        - page.tsx
+- components
+  - AdminPanel.tsx
+  - Alert.tsx
+  - BackgroundSelector.tsx
+  - CallControls.tsx
+  - CallList.tsx
+  - CustomGridLayout.tsx
+  - EndCallButton.tsx
+  - HomeCard.tsx
+  - LegalLinks.tsx
+  - Loader.tsx
+  - MeetingCard.tsx
+  - MeetingModal.tsx
+  - MeetingRoom.tsx
+  - MeetingSetup.tsx
+  - MeetingTypeList.tsx
+  - MobileNav.tsx
+  - MuteButton.tsx
+  - Navbar.tsx
+  - NavLinks.tsx
+  - poll
+    - active-poll.tsx
+    - create-poll-modal.tsx
+    - polls-manager.tsx
+  - Sidebar.tsx
+  - SocialLinks.tsx
+  - superchat
+    - send-superchat-modal.tsx
+    - superchat-message.tsx
+    - superchat-panel.tsx
+  - ui
+    - button.tsx
+    - card.tsx
+    - dialog.tsx
+    - dropdown-menu.tsx
+    - input.tsx
+    - popover.tsx
+    - sheet.tsx
+    - textarea.tsx
+    - theme-provider.tsx
+    - toaster.tsx
+    - toast.tsx
+    - use-toast.ts
+- components.json
+- constants
+  - links.ts
+- CONTRIBUTING.md
+- database.sql
+- DEPLOYMENT.md
+- FEATURES.md
+- hooks
+  - useBackgroundProcessor.ts
+  - useGetCallById.ts
+  - useGetCalls.ts
+  - use-mobile.tsx
+  - use-toast.ts
+- lib
+  - supabaseClient.ts
+  - utils.ts
+- LICENSE
+- middleware.ts
+- next.config.mjs
+- next-env.d.ts
+- package.json
+- package-lock.json
+- pnpm-lock.yaml
+- postcss.config.js
+- providers
+  - StreamClientProvider.tsx
+- public
+  - compare.html
+  - deck.html
+  - icons
+    - add-meeting.svg
+    - add-personal.svg
+    - call-ended.svg
+    - checked.svg
+    - copy.svg
+    - hamburger.svg
+    - Home.svg
+    - join-meeting.svg
+    - KCS-Logo.png
+    - KCS.png
+    - KCS.svg
+    - KCS-white.png
+    - loading-circle.svg
+    - play.svg
+    - previous.svg
+    - recordings.svg
+    - schedule.svg
+    - share.svg
+    - three-dots.svg
+    - upcoming.svg
+    - Video.svg
+  - images
+    - hero-background.jpg
+    - hero-background.mp4
+  - index.html
+  - manifest.json
+  - model.html
+  - pitch-deck.html
+  - technical-compliance.html
+  - vision.html
+- README.md
+- SETUP.md
+- style
+  - globals.css
+- tailwind.config.ts
+- tsconfig.json
