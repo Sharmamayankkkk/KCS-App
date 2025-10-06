@@ -44,12 +44,16 @@ import Loader from './Loader';
 import AdminPanel from './AdminPanel';
 import { SuperchatPanel } from './superchat/superchat-panel';
 import { SendSuperchatModal } from './superchat/send-superchat-modal';
-import { PollsManager } from './poll/polls-manager';
-import { ActivePoll } from './poll/active-poll';
+
 import CustomGridLayout from './CustomGridLayout';
 import CallControls from './CallControls';
 import { BackgroundSelector } from './BackgroundSelector';
 import { useBackgroundProcessor } from '@/hooks/useBackgroundProcessor';
+
+// STEP 1: Update Imports
+import PollsPanel from './PollsPanel';
+// REMOVED: import { PollsManager } from './poll/polls-manager';
+// REMOVED: import { ActivePoll } from './poll/active-poll';
 
 // Move constants outside component to prevent recreation
 const BROADCAST_PLATFORMS = [
@@ -115,9 +119,16 @@ interface MeetingRoomProps {
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
+  
+  // STEP 2.1: Simplify activePanel State
   const [activePanel, setActivePanel] = useState<
-    'none' | 'participants' | 'chat' | 'superchat' | 'polls' | 'activePoll'
+    'none' | 'participants' | 'chat' | 'superchat'
   >('none');
+  
+  // STEP 2.2: Add New State for the Polls Panel
+  const [showPollsPanel, setShowPollsPanel] = useState(false);
+  const [hasNewPoll, setHasNewPoll] = useState(false);
+
   const [showSendSuperchat, setShowSendSuperchat] = useState(false);
   const [messageText, setMessageText] = useState('');
   const { useCallCallingState } = useCallStateHooks();
@@ -367,7 +378,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   // Optimized panel toggle
   const togglePanel = useCallback(
     (
-      panelName: 'participants' | 'chat' | 'superchat' | 'polls' | 'activePoll',
+      panelName: 'participants' | 'chat' | 'superchat',
     ) => {
       setActivePanel((current) => (current === panelName ? 'none' : panelName));
     },
@@ -501,38 +512,14 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   }, [activePanel, call?.id]);
 
-  // Active polls check with optimization
+  // STEP 3: Update Real-time Poll Notifications
+  // REPLACE THE ENTIRE OLD useEffect BLOCK WITH THIS NEW ONE
+  // New poll notification handler
   useEffect(() => {
-    if (!call?.id) return;
-
-    const checkForActivePolls = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('polls')
-          .select('*')
-          .eq('call_id', call.id)
-          .eq('is_active', true)
-          .order('created_at', { ascending: false })
-          .limit(1);
-
-        if (error) throw error;
-
-        if (data && data.length > 0 && !isAdmin) {
-          setActivePanel('activePoll');
-          toast({
-            title: 'New Poll',
-            description: 'A new poll is available!',
-          });
-        }
-      } catch (err) {
-        console.error('Error checking for active polls:', err);
-      }
-    };
-
-    checkForActivePolls();
+    if (!call?.id || showPollsPanel) return;
 
     const subscription = supabase
-      .channel(`new-polls-${call.id}`)
+      .channel(`new-poll-notification-${call.id}`)
       .on(
         'postgres_changes',
         {
@@ -543,10 +530,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         },
         () => {
           if (!isAdmin) {
-            setActivePanel('activePoll');
+            setHasNewPoll(true);
             toast({
-              title: 'New Poll',
-              description: 'A new poll is available!',
+              title: 'A new poll has started!',
+              description: 'Open the polls panel to cast your vote.',
             });
           }
         },
@@ -556,7 +543,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     return () => {
       supabase.removeChannel(subscription);
     };
-  }, [call?.id, isAdmin, toast]);
+  }, [call?.id, isAdmin, showPollsPanel, toast]);
+
 
   // Memoized broadcast control component
   const BroadcastControl = useMemo(
@@ -718,11 +706,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         <section className="relative w-full h-full flex flex-col">
           <div className="relative flex items-center justify-center size-full">
             <div
+              // STEP 4.1: Update Main Layout Resizing
               className={cn(
                 'flex transition-all duration-300 ease-in-out size-full',
                 {
-                  'max-w-[1000px]': activePanel === 'none',
-                  'max-w-[800px]': activePanel !== 'none',
+                  'max-w-[calc(100%-350px)]': activePanel !== 'none' || showPollsPanel,
                 },
               )}
             >
@@ -829,26 +817,18 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 />
               </div>
             )}
+            
+            {/* STEP 4.2 & 4.3: Replace Old Poll Components and Add New PollsPanel */}
+            {/* REMOVED: Old PollsManager JSX */}
+            {/* REMOVED: Old ActivePoll JSX */}
 
-            {activePanel === 'polls' && call?.id && (
-              <div className="fixed top-0 right-0 w-[300px] sm:w-[350px] h-full z-[100] overflow-hidden flex flex-col bg-[#19232d]/95 backdrop-blur-md rounded-l-lg">
-                <PollsManager
-                  callId={call.id}
-                  userId={userData?.id || ''}
-                  isAdmin={isAdmin}
-                  onClose={() => setActivePanel('none')}
-                />
-              </div>
-            )}
-
-            {activePanel === 'activePoll' && call?.id && (
-              <div className="fixed right-0 transition-all duration-300 ease-in-out md:relative w-[300px] sm:w-[350px] h-[calc(100vh-100px)] md:h-[calc(100vh-86px)] z-[100] md:z-10 overflow-hidden">
-                <ActivePoll
-                  callId={call.id}
-                  userId={userData?.id || ''}
-                  onClose={() => setActivePanel('none')}
-                />
-              </div>
+            {showPollsPanel && call?.id && (
+              <PollsPanel
+                callId={call.id}
+                userId={userData.id}
+                isAdmin={isAdmin}
+                onClose={() => setShowPollsPanel(false)}
+              />
             )}
           </div>
 
@@ -996,16 +976,22 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     )}
                   </DropdownMenuItem>
 
+                  {/* STEP 5: Update the Polls Button */}
                   <DropdownMenuItem
-                    onClick={() =>
-                      togglePanel(isAdmin ? 'polls' : 'activePoll')
-                    }
+                    onClick={() => {
+                      setShowPollsPanel(true);
+                      setHasNewPoll(false);
+                    }}
                     className="flex items-center px-3 py-2.5 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none group"
                   >
                     <BarChart2 className="mr-2 size-4 text-gray-400 group-hover:text-white transition-colors" />
-                    <span>Polls</span>
-                    {(activePanel === 'polls' ||
-                      activePanel === 'activePoll') && (
+                    <span className="relative">
+                      Polls
+                      {hasNewPoll && (
+                        <span className="absolute -top-1 -right-3 w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse" />
+                      )}
+                    </span>
+                    {showPollsPanel && (
                       <span className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
                     )}
                   </DropdownMenuItem>
