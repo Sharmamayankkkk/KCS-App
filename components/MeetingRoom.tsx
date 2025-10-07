@@ -20,10 +20,8 @@ import {
   LayoutList,
   MessageSquare,
   X,
-  Cast,
   Crown,
   BarChart2,
-  AlertCircle,
   MoreVertical,
   Settings,
   Image as ImageIcon,
@@ -41,37 +39,14 @@ import { useToast } from '@/hooks/use-toast';
 
 // Local components
 import Loader from './Loader';
-import AdminPanel from './AdminPanel';
+import AdminControls from './AdminPanel/AdminControls';
 import { SuperchatPanel } from './superchat/superchat-panel';
 import { SendSuperchatModal } from './superchat/send-superchat-modal';
-
 import CustomGridLayout from './CustomGridLayout';
 import CallControls from './CallControls';
 import { BackgroundSelector } from './BackgroundSelector';
 import { useBackgroundProcessor } from '@/hooks/useBackgroundProcessor';
-
-// STEP 1: Update Imports
 import PollsPanel from './PollsPanel';
-// REMOVED: import { PollsManager } from './poll/polls-manager';
-// REMOVED: import { ActivePoll } from './poll/active-poll';
-
-// Move constants outside component to prevent recreation
-const BROADCAST_PLATFORMS = [
-  {
-    id: 'youtube',
-    name: 'YouTube',
-    defaultUrl: process.env.NEXT_PUBLIC_YOUTUBE_STREAM_URL || '',
-    defaultKey: process.env.NEXT_PUBLIC_YOUTUBE_STREAM_KEY || '',
-    icon: 'youtube',
-  },
-  {
-    id: 'facebook',
-    name: 'Facebook',
-    defaultUrl: '',
-    defaultKey: '',
-    icon: 'facebook',
-  },
-];
 
 const LAYOUT_OPTIONS = [
   { name: 'Grid', value: 'grid', icon: <LayoutList className="mr-2 size-4" /> },
@@ -120,12 +95,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
   
-  // STEP 2.1: Simplify activePanel State
   const [activePanel, setActivePanel] = useState<
     'none' | 'participants' | 'chat' | 'superchat'
   >('none');
   
-  // STEP 2.2: Add New State for the Polls Panel
   const [showPollsPanel, setShowPollsPanel] = useState(false);
   const [hasNewPoll, setHasNewPoll] = useState(false);
 
@@ -135,10 +108,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const call = useCall();
   const callingState = useCallCallingState();
   const chatEndRef = useRef<HTMLDivElement | null>(null);
-  const [activeBroadcasts, setActiveBroadcasts] = useState<string[]>([]);
-  const [broadcastError, setBroadcastError] = useState<string>('');
-  const [showBroadcastForm, setShowBroadcastForm] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState('');
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [buttonHoverStates, setButtonHoverStates] = useState<
     Record<string, boolean>
@@ -146,13 +115,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showControls, setShowControls] = useState(true);
   const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   
-  // Background processing state
   const [selectedBackground, setSelectedBackground] = useState<BackgroundOption>(DEFAULT_BACKGROUND);
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
   const [isProcessingBackground, setIsProcessingBackground] = useState(false);
   const { processFrame, cleanup } = useBackgroundProcessor();
 
-  // Load background from localStorage on mount
   useEffect(() => {
     try {
       const savedBackground = localStorage.getItem('meetingBackground')
@@ -165,17 +132,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   }, [])
 
-  // Memoize environment variables
-  const { youtubeStreamUrl, youtubeStreamKey } = useMemo(
-    () => ({
-      youtubeStreamUrl: process.env.NEXT_PUBLIC_YOUTUBE_STREAM_URL || '',
-      youtubeStreamKey: process.env.NEXT_PUBLIC_YOUTUBE_STREAM_KEY || '',
-    }),
-    [],
-  );
-
-  const [streamUrl, setStreamUrl] = useState(youtubeStreamUrl);
-  const [streamKey, setStreamKey] = useState(youtubeStreamKey);
   const [messages, setMessages] = useState<
     { id: string; text: string; sender: string }[]
   >([]);
@@ -185,7 +141,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   const { toast } = useToast();
 
-  // Memoize admin check
   const isAdmin = useMemo(() => {
     const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || '')
       .split(',')
@@ -194,14 +149,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     return adminEmails.includes(userEmail);
   }, [userData?.primaryEmailAddress?.emailAddress]);
 
-  // Optimize controls visibility with useCallback
   const resetControlsTimer = useCallback(() => {
     setShowControls(true);
     if (hideTimeout.current) clearTimeout(hideTimeout.current);
     hideTimeout.current = setTimeout(() => setShowControls(false), 3000);
   }, []);
 
-  // Controls visibility effect
   useEffect(() => {
     const events = ['mousemove', 'click', 'touchstart'];
     events.forEach((event) =>
@@ -217,7 +170,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [resetControlsTimer]);
 
-  // Video Client Initialization with cleanup
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
 
@@ -234,7 +186,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [apiKey, userToken, userData]);
 
-  // Background processing effect
   useEffect(() => {
     if (!call) return;
 
@@ -242,9 +193,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       try {
         setIsProcessingBackground(true);
 
-        // Register the background filter
         const { unregister } = call.camera.registerFilter((originalStream: MediaStream) => {
-          // Process the stream with selected background
           const processedStreamPromise = processFrame(originalStream, selectedBackground);
           return {
             output: processedStreamPromise.then(stream => stream || originalStream),
@@ -252,7 +201,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
           };
         });
 
-        // Store the unregister function for cleanup
         return unregister;
       } catch (error) {
         console.error('Error setting up background processing:', error);
@@ -269,10 +217,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [call, selectedBackground, processFrame, cleanup]);
 
-  // Background change handler
   const handleBackgroundChange = useCallback((background: BackgroundOption) => {
     setSelectedBackground(background);
-    // Save to localStorage for persistence
     try {
       localStorage.setItem('meetingBackground', JSON.stringify(background));
     } catch (error) {
@@ -280,83 +226,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   }, []);
 
-  // Memoized broadcast functions
-  const startBroadcast = useCallback(async () => {
-    if (!streamUrl || !streamKey || !selectedPlatform) {
-      toast({
-        description: 'Please fill in all the broadcast details.',
-        type: 'destructive',
-      });
-      return;
-    }
-
-    try {
-      setBroadcastError('');
-
-      if (!call) {
-        throw new Error('Call object is not available');
-      }
-
-      await call.startRTMPBroadcasts({
-        broadcasts: [
-          {
-            name: selectedPlatform,
-            stream_url: streamUrl,
-            stream_key: streamKey,
-          },
-        ],
-      });
-
-      toast({
-        title: 'Broadcast Started',
-        description: `${selectedPlatform} broadcast started successfully!`,
-      });
-      setActiveBroadcasts((prev) => [...prev, selectedPlatform]);
-      setShowBroadcastForm(false);
-      setSelectedPlatform('');
-    } catch (error: any) {
-      console.error('Error starting broadcast:', error);
-      const errorMessages: Record<string, string> = {
-        'Invalid stream key': 'Invalid stream key. Please check your details.',
-        Unauthorized: 'Authorization error. Please check your permissions.',
-      };
-
-      const errorMessage = Object.keys(errorMessages).find((key) =>
-        error.message?.includes(key),
-      );
-      const description = errorMessage
-        ? errorMessages[errorMessage]
-        : `Failed to start ${selectedPlatform} broadcast: ${error.message}`;
-
-      toast({
-        title: 'Error',
-        description,
-        type: 'destructive',
-      });
-    }
-  }, [streamUrl, streamKey, selectedPlatform, call, toast]);
-
-  const stopBroadcast = useCallback(
-    async (platformName: string) => {
-      try {
-        if (!call) {
-          setBroadcastError('Call object is not available.');
-          return;
-        }
-
-        await call.stopRTMPBroadcast(platformName);
-        setActiveBroadcasts((prev) =>
-          prev.filter((name) => name !== platformName),
-        );
-      } catch (error: any) {
-        console.error('Error stopping broadcast:', error);
-        setBroadcastError(`Failed to stop ${platformName} broadcast.`);
-      }
-    },
-    [call],
-  );
-
-  // Optimized message sending
   const sendMessage = useCallback(
     async (messageText: string) => {
       if (!messageText.trim() || !call?.id) return;
@@ -375,7 +244,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     [call?.id, userData?.fullName],
   );
 
-  // Optimized panel toggle
   const togglePanel = useCallback(
     (
       panelName: 'participants' | 'chat' | 'superchat',
@@ -385,7 +253,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     [],
   );
 
-  // Optimized button hover handler
   const handleButtonHover = useCallback(
     (buttonId: string, isHovering: boolean) => {
       setButtonHoverStates((prev) => ({
@@ -396,13 +263,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     [],
   );
 
-  // Optimized success handler
   const handleSuperchatSuccess = useCallback(() => {
     setShowSendSuperchat(false);
     setActivePanel('superchat');
   }, []);
 
-  // Memoized layout component
   const CallLayout = useMemo(() => {
     const layouts = {
       grid: <CustomGridLayout />,
@@ -412,7 +277,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     return layouts[layout] || layouts['speaker-left'];
   }, [layout]);
 
-  // Chat Messages Management with optimization
   useEffect(() => {
     if (!activePanel || activePanel !== 'chat' || !call?.id) return;
 
@@ -460,35 +324,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [activePanel, call?.id]);
 
-  // Auto-scroll chat effect
   useEffect(() => {
     if (chatEndRef.current) {
       chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
-  // Broadcast status check with optimization
-  useEffect(() => {
-    if (!call) return;
-
-    const checkBroadcastStatus = async () => {
-      try {
-        const resp = await call.get();
-        const isBroadcasting = resp.call.egress.broadcasting;
-        if (isBroadcasting) {
-          setActiveBroadcasts((prev) => [...prev]);
-        } else {
-          setActiveBroadcasts([]);
-        }
-      } catch (error) {
-        console.error('Error checking broadcast status:', error);
-      }
-    };
-
-    checkBroadcastStatus();
-  }, [call]);
-
-  // Unread messages tracking with optimization
   useEffect(() => {
     if (activePanel !== 'chat') {
       const handleNewMessage = () => {
@@ -512,9 +353,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     }
   }, [activePanel, call?.id]);
 
-  // STEP 3: Update Real-time Poll Notifications
-  // REPLACE THE ENTIRE OLD useEffect BLOCK WITH THIS NEW ONE
-  // New poll notification handler
   useEffect(() => {
     if (!call?.id || showPollsPanel) return;
 
@@ -546,158 +384,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   }, [call?.id, isAdmin, showPollsPanel, toast]);
 
 
-  // Memoized broadcast control component
-  const BroadcastControl = useMemo(
-    () => (
-      <>
-        <DropdownMenu>
-          <DropdownMenuTrigger
-            onMouseEnter={() => handleButtonHover('broadcast', true)}
-            onMouseLeave={() => handleButtonHover('broadcast', false)}
-            className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md"
-          >
-            <div className="relative">
-              <Cast className="text-white size-5" />
-              {buttonHoverStates['broadcast'] && (
-                <span className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded whitespace-nowrap opacity-90">
-                  Broadcast
-                </span>
-              )}
-            </div>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            side="top"
-            align="center"
-            className="bg-gray-800 border-gray-700 text-white rounded-lg shadow-xl animate-in fade-in-80 zoom-in-95 w-48"
-          >
-            {BROADCAST_PLATFORMS.map((platform) => (
-              <DropdownMenuItem
-                key={platform.id}
-                onClick={() => {
-                  if (activeBroadcasts.includes(platform.id)) {
-                    stopBroadcast(platform.id);
-                  } else {
-                    setSelectedPlatform(platform.id);
-                    setStreamUrl(platform.defaultUrl);
-                    setStreamKey(platform.defaultKey);
-                    setShowBroadcastForm(true);
-                  }
-                }}
-                className="flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-gray-700/70 rounded-md focus:bg-gray-700 focus:outline-none"
-              >
-                <div className="flex items-center justify-between w-full">
-                  <span className="flex items-center">
-                    <Cast className="mr-2 size-4" />
-                    {platform.name}
-                  </span>
-                  <span
-                    className={cn(
-                      'text-xs font-medium px-1.5 py-0.5 rounded-md',
-                      activeBroadcasts.includes(platform.id)
-                        ? 'bg-red-500/20 text-red-300'
-                        : 'bg-gray-700 text-gray-300',
-                    )}
-                  >
-                    {activeBroadcasts.includes(platform.id) ? 'LIVE' : 'OFF'}
-                  </span>
-                </div>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        {/* Broadcast Form Modal */}
-        {showBroadcastForm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-            <div className="w-full p-6 rounded-lg bg-[#243341] max-w-md relative bottom-20 shadow-2xl border border-gray-700/30">
-              <button
-                onClick={() => setShowBroadcastForm(false)}
-                className="absolute right-4 top-4 text-gray-400 hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-full p-1"
-              >
-                <X size={20} />
-              </button>
-
-              <h3 className="mb-4 text-xl font-bold text-white">
-                Start{' '}
-                {BROADCAST_PLATFORMS.find((p) => p.id === selectedPlatform)
-                  ?.name || selectedPlatform}{' '}
-                Broadcast
-              </h3>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-white">
-                    Stream URL
-                  </label>
-                  <input
-                    type="text"
-                    value={streamUrl}
-                    onChange={(e) => setStreamUrl(e.target.value)}
-                    placeholder="rtmp://..."
-                    className="w-full p-2.5 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500/80 border border-gray-700"
-                  />
-                </div>
-
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-white">
-                    Stream Key
-                  </label>
-                  <input
-                    type="password"
-                    value={streamKey}
-                    onChange={(e) => setStreamKey(e.target.value)}
-                    placeholder="Enter stream key..."
-                    className="w-full p-2.5 text-white rounded-lg bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500/80 border border-gray-700"
-                  />
-                  <p className="mt-1 text-xs text-gray-400">
-                    Your stream key is kept secure and never stored.
-                  </p>
-                </div>
-
-                {broadcastError && (
-                  <div className="p-3 rounded-lg bg-red-500/20 flex items-center">
-                    <AlertCircle size={16} className="text-red-400 mr-2" />
-                    <span className="text-red-200 text-sm">
-                      {broadcastError}
-                    </span>
-                  </div>
-                )}
-
-                <div className="flex justify-end mt-6 space-x-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowBroadcastForm(false)}
-                    className="bg-transparent border border-gray-600 hover:bg-gray-700 text-white rounded-lg"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={startBroadcast}
-                    className="bg-red-500 hover:bg-red-600 text-white rounded-lg shadow-md transition-all duration-200"
-                  >
-                    Start Broadcast
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </>
-    ),
-    [
-      handleButtonHover,
-      buttonHoverStates,
-      activeBroadcasts,
-      stopBroadcast,
-      selectedPlatform,
-      streamUrl,
-      streamKey,
-      showBroadcastForm,
-      broadcastError,
-      startBroadcast,
-    ],
-  );
-
   if (callingState !== CallingState.JOINED) return <Loader />;
 
   return videoClient && call ? (
@@ -706,7 +392,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         <section className="relative w-full h-full flex flex-col">
           <div className="relative flex items-center justify-center size-full">
             <div
-              // STEP 4.1: Update Main Layout Resizing
               className={cn(
                 'flex transition-all duration-300 ease-in-out size-full',
                 {
@@ -717,14 +402,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               {CallLayout}
             </div>
 
-            {/* Participants panel */}
             {activePanel === 'participants' && (
               <div className="fixed top-0 right-0 p-4 bg-[#19232d]/95 backdrop-blur-md rounded-l-lg w-[300px] sm:w-[350px] h-full z-[100] overflow-hidden flex flex-col">
                 <CallParticipantsList onClose={() => setActivePanel('none')} />
               </div>
             )}
 
-            {/* Chat Panel */}
             {activePanel === 'chat' && (
               <div className="fixed top-0 right-0 p-4 transition-all duration-300 ease-in-out bg-[#19232d]/95 backdrop-blur-md rounded-l-lg w-[300px] sm:w-[350px] h-full z-[100] overflow-hidden flex flex-col">
                 <div className="flex flex-col h-full">
@@ -806,7 +489,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
             )}
 
-            {/* Other panels remain the same */}
             {activePanel === 'superchat' && call?.id && (
               <div className="fixed top-0 right-0 w-[300px] sm:w-[350px] h-full z-[100] overflow-hidden flex flex-col bg-[#19232d]/95 backdrop-blur-md rounded-l-lg">
                 <SuperchatPanel
@@ -818,10 +500,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               </div>
             )}
             
-            {/* STEP 4.2 & 4.3: Replace Old Poll Components and Add New PollsPanel */}
-            {/* REMOVED: Old PollsManager JSX */}
-            {/* REMOVED: Old ActivePoll JSX */}
-
             {showPollsPanel && call?.id && (
               <PollsPanel
                 callId={call.id}
@@ -832,7 +510,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             )}
           </div>
 
-          {/* Bottom Controls */}
           <div
             className={`
               fixed bottom-0 w-full px-4 pb-4
@@ -851,13 +528,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
               {isAdmin && (
                 <div className="flex items-center gap-2">
-                  <AdminPanel />
-                  {BroadcastControl}
+                  <AdminControls />
                   <div className="h-8 w-px bg-gray-700/50 mx-1"></div>
                 </div>
               )}
 
-              {/* Layout Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger
                   onMouseEnter={() => handleButtonHover('layout', true)}
@@ -895,13 +570,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
-              {/* Chat Button with notification indicator */}
               <button
                 onMouseEnter={() => handleButtonHover("chat", true)}
                 onMouseLeave={() => handleButtonHover("chat", false)}
                 onClick={() => {
                   togglePanel("chat")
-                  setUnreadMessages(0) // Reset unread count when opening chat
+                  setUnreadMessages(0) 
                 }}
                 className="size-11 rounded-full transition-all duration-200 hover:bg-gray-700 focus:ring-2 focus:ring-blue-500/40 focus:outline-none flex items-center justify-center bg-gray-800/80 border border-gray-700/50 shadow-md relative"
               >
@@ -920,7 +594,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                 </div>
               </button>
 
-              {/* Main Menu Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger
                   onMouseEnter={() => handleButtonHover("menu", true)}
@@ -976,7 +649,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
                     )}
                   </DropdownMenuItem>
 
-                  {/* STEP 5: Update the Polls Button */}
                   <DropdownMenuItem
                     onClick={() => {
                       setShowPollsPanel(true);
@@ -1010,7 +682,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             </div>
           </div>
 
-          {/* Send Superchat Modal */}
           {showSendSuperchat && call?.id && (
             <SendSuperchatModal
               callId={call.id}
@@ -1021,7 +692,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             />
           )}
 
-          {/* Background Selector Modal */}
           {showBackgroundSelector && (
             <BackgroundSelector
               selectedBackground={selectedBackground}
