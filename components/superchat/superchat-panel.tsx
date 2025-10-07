@@ -20,7 +20,7 @@ export const SuperchatPanel = ({ callId, isAdmin = false, onClose }: SuperchatPa
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    audioRef.current = new Audio('/superchat-alert.mp3');
+    audioRef.current = new Audio('/superchat-notification.wav');
   }, []);
 
   const calculateDuration = (amount: number): number => {

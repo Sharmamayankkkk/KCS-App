@@ -854,8 +854,6 @@ className="ml-auto h-2 w-2 rounded-full bg-blue-500"></span>
               
      </DropdownMenuItem>
 
-                  {/* REMOVED: Superchat DropdownMenuItem */}
-
                   {/* STEP 5: Update the Polls Button */}
                   <DropdownMenuItem
                     onClick={() => {
