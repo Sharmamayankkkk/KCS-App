@@ -1,6 +1,8 @@
 import type { Config } from 'tailwindcss';
 
-const config = {
+// By explicitly typing the constant with ': Config', we ensure compatibility 
+// across different TypeScript setups, which resolves the errors.
+const config: Config = {
   darkMode: ['class'],
   content: [
     './pages/**/*.{ts,tsx}',
@@ -14,7 +16,7 @@ const config = {
       center: true,
       padding: '2rem',
       screens: {
-        'xs': '320px',    // Added xs breakpoint
+        'xs': '320px',
         'sm': '640px',
         'md': '768px',
         'lg': '1024px',
@@ -24,36 +26,17 @@ const config = {
     },
     extend: {
       colors: {
-        // Video call specific colors
+        'primary-accent': '#A41F13',
+        'light-background': '#FAF5F1',
+        'secondary-background': '#E0DBD8',
+        'primary-text': '#292F36',
+        'secondary-text': '#8F7A6E',
+        
         video: {
-          primary: '#1a1a1a',
-          secondary: '#2a2a2a',
-          accent: '#0E78F9',
-          text: '#ffffff',
-        },
-        // Your existing color palette
-        dark: {
-          1: '#1C1F2E',
-          2: '#161925',
-          3: '#252A41',
-          4: '#1E2757',
-        },
-        blue: {
-          1: '#0E78F9',
-        },
-        sky: {
-          1: '#C9DDFF',
-          2: '#ECF0FF',
-          3: '#F5FCFF',
-        },
-        orange: {
-          1: '#FF742E',
-        },
-        purple: {
-          1: '#830EF9',
-        },
-        yellow: {
-          1: '#F9A90E',
+          background: '#FAF5F1',
+          'background-secondary': '#E0DBD8',
+          accent: '#A41F13',
+          text: '#292F36',
         },
       },
       spacing: {
@@ -74,6 +57,17 @@ const config = {
       borderRadius: {
         'video': '12px',
       },
+
+      /* ✅ Added soft shadow styles */
+      boxShadow: {
+        'soft': '5px 5px 10px #d9d5d2, -5px -5px 10px #ffffff',
+        'soft-hover': '3px 3px 8px #d9d5d2, -3px -3px 8px #ffffff',
+        'soft-inset': 'inset 2px 2px 5px #d9d5d2, inset -2px -2px 5px #ffffff',
+        'soft-destructive': '5px 5px 10px #931c11, -5px -5px 10px #b52215',
+        'soft-destructive-hover': '3px 3px 8px #931c11, -3px -3px 8px #b52215',
+        'soft-destructive-inset': 'inset 2px 2px 5px #931c11, inset -2px -2px 5px #b52215',
+      },
+
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
@@ -112,7 +106,6 @@ const config = {
       transitionDuration: {
         '250': '250ms',
       },
-      // Add support for CSS Grid layouts
       gridTemplateColumns: {
         'video-grid': 'repeat(auto-fit, minmax(250px, 1fr))',
       },
@@ -123,9 +116,7 @@ const config = {
   },
   plugins: [
     require('tailwindcss-animate'),
-    // Add plugin for safe area insets if needed
-    // require('tailwindcss-safe-area'),
   ],
-} satisfies Config;
+};
 
 export default config;

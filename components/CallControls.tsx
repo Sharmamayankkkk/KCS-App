@@ -1,117 +1,188 @@
-import React, { useState, useRef, useEffect, MouseEvent } from 'react';
-import { OwnCapability } from '@stream-io/video-client';
+import React, { useCallback, useState, useEffect } from 'react';
 import {
-  Restricted,
   SpeakingWhileMutedNotification,
-  RecordCallButton,
-  ReactionsButton,
-  ScreenShareButton,
   ToggleAudioPublishingButton,
   ToggleVideoPublishingButton,
   CancelCallButton,
+  useCall,
+  useCallStateHooks,
 } from '@stream-io/video-react-sdk';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { Settings, LayoutList, Image as ImageIcon, Smile, Share, Circle } from 'lucide-react';
+import Image from 'next/image';
+
+type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
+
+const LAYOUT_OPTIONS = [
+  { name: 'Grid', value: 'grid', icon: LayoutList },
+  { name: 'Speaker Left', value: 'speaker-left', icon: LayoutList },
+  { name: 'Speaker Right', value: 'speaker-right', icon: LayoutList },
+];
 
 type CallControlsProps = {
   onLeave: () => void;
+  setLayout?: (layout: CallLayoutType) => void;
+  setShowBackgroundSelector?: (show: boolean) => void;
 };
 
-export const CallControls: React.FC<CallControlsProps> = ({ onLeave }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+export const CallControls: React.FC<CallControlsProps> = ({ 
+  onLeave, 
+  setLayout, 
+  setShowBackgroundSelector 
+}) => {
+  const call = useCall();
+  const { 
+    useIsCallRecordingInProgress, 
+    useScreenShareState, 
+    useHasOngoingScreenShare 
+  } = useCallStateHooks();
+  const isCallRecordingInProgress = useIsCallRecordingInProgress();
+  const { screenShare, isMute: isScreenSharing } = useScreenShareState();
+  const isSomeoneScreenSharing = useHasOngoingScreenShare();
+  const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | MouseEventInit | Event) => {
-      if (
-        dropdownRef.current &&
-        !(event.target instanceof Node) ||
-        !dropdownRef.current.contains(event.target)
-      ) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside as EventListener);
+    if (!call) return;
+    const eventHandlers = [
+      call.on('call.recording_started', () => setIsAwaitingResponse(false)),
+      call.on('call.recording_stopped', () => setIsAwaitingResponse(false)),
+    ];
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside as EventListener);
+      eventHandlers.forEach((unsubscribe) => unsubscribe());
     };
-  }, []);
+  }, [call]);
+
+  // ✅ FINAL: Filled in the recording logic
+  const toggleRecording = useCallback(async () => {
+    if (!call) return;
+    try {
+      setIsAwaitingResponse(true);
+      if (isCallRecordingInProgress) {
+        await call.stopRecording();
+      } else {
+        await call.startRecording();
+      }
+    } catch (e) {
+      console.error(`Failed to toggle recording`, e);
+    } finally {
+      setIsAwaitingResponse(false);
+    }
+  }, [call, isCallRecordingInProgress]);
+
+  // ✅ FINAL: Filled in the screen share logic
+  const toggleScreenShare = useCallback(async () => {
+    try {
+      await screenShare.toggle();
+    } catch (e) {
+      console.error('Failed to toggle screen share', e);
+    }
+  }, [screenShare]);
+  
+  const sendReaction = useCallback(async (reaction: {
+    type: string;
+    emoji_code?: string;
+    custom?: Record<string, string>;
+  }) => {
+    try {
+      await call?.sendReaction(reaction);
+    } catch (e) {
+      console.error('Failed to send reaction', e);
+    }
+  }, [call]);
 
   return (
-    <div className="str-video__call-controls" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-      <Restricted requiredGrants={[OwnCapability.SEND_AUDIO]}>
-        <SpeakingWhileMutedNotification>
-          <ToggleAudioPublishingButton />
-        </SpeakingWhileMutedNotification>
-      </Restricted>
+    <div className="flex items-center gap-2">
+      <SpeakingWhileMutedNotification>
+        <ToggleAudioPublishingButton />
+      </SpeakingWhileMutedNotification>
+      <ToggleVideoPublishingButton />
 
-      <Restricted requiredGrants={[OwnCapability.SEND_VIDEO]}>
-        <ToggleVideoPublishingButton />
-      </Restricted>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="default" size="icon" title="More Controls">
+            <Settings />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="top" align="center" className="w-56">
+          <DropdownMenuItem onClick={() => setShowBackgroundSelector?.(true)}>
+            <ImageIcon className="mr-2 size-4" />
+            <span>Change Background</span>
+          </DropdownMenuItem>
+          
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <LayoutList className="mr-2 size-4" />
+              <span>Change Layout</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              {LAYOUT_OPTIONS.map((option) => (
+                <DropdownMenuItem 
+                  key={option.name} 
+                  onClick={() => setLayout?.(option.value as CallLayoutType)}
+                >
+                  <option.icon className="mr-2 size-4" />
+                  {option.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
 
-      {/* Dropdown */}
-      <div
-        ref={dropdownRef}
-        style={{ position: 'relative', display: 'inline-block' }}
-      >
-        <button
-          onClick={() => setDropdownOpen((prev) => !prev)}
-          style={{
-            backgroundColor: 'black',
-            color: 'white',
-            border: 'none',
-            padding: '6px 10px',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '18px',
-          }}
-          aria-haspopup="true"
-          aria-expanded={dropdownOpen}
-        >
-          &#9881; {/* gear icon */}
-        </button>
-
-        {dropdownOpen && (
-          <div
-            style={{
-              position: 'absolute',
-              bottom: '120%', // open upward
-              right: 0,
-              backgroundColor: 'black',
-              color: 'white',
-              borderRadius: '6px',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
-              padding: '10px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-              zIndex: 1000,
-              width: '180px',
-            }}
+          <DropdownMenuSeparator />
+          
+          <DropdownMenuItem 
+            onClick={toggleRecording} 
+            disabled={isAwaitingResponse || !call}
           >
-            <strong style={{ fontSize: '14px', marginBottom: '5px' }}>More Controls</strong>
+            <Circle className="mr-2 size-4" fill={isCallRecordingInProgress ? "red" : "currentColor"} />
+            <span>{isCallRecordingInProgress ? 'Stop Recording' : 'Record Call'}</span>
+          </DropdownMenuItem>
 
-            <Restricted requiredGrants={[OwnCapability.START_RECORD_CALL, OwnCapability.STOP_RECORD_CALL]}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <RecordCallButton />
-                <span style={{ fontSize: '13px' }}>Record</span>
-              </div>
-            </Restricted>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>
+              <Smile className="mr-2 size-4" />
+              <span>React</span>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+               <DropdownMenuItem onClick={() => sendReaction({ type: 'raised-hand', emoji_code: ':raise-hand:' })}>
+                ✋ Raise Hand
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => sendReaction({ type: 'like', emoji_code: ':like:' })}>
+                👍 Like
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => sendReaction({ type: 'fireworks', emoji_code: ':fireworks:' })}>
+                🎉 Fireworks
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                onClick={() => {
+                  const imageUrl = `${window.location.origin}/icons/KCS-Logo.png`;
+                  sendReaction({ type: 'custom', custom: { 'image_url': imageUrl } });
+                }}
+              >
+                <Image src="https://meet.krishnaconsciousnesssociety.com/icons/KCS.png" alt="KCS Logo" width={20} height={20} className="mr-2" />
+                <span>KCS Reaction</span>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
 
-            <Restricted requiredGrants={[OwnCapability.CREATE_REACTION]}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ReactionsButton />
-                <span style={{ fontSize: '13px' }}>React</span>
-              </div>
-            </Restricted>
-
-            <Restricted requiredGrants={[OwnCapability.SCREENSHARE]}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <ScreenShareButton />
-                <span style={{ fontSize: '13px' }}>Share Screen</span>
-              </div>
-            </Restricted>
-          </div>
-        )}
-      </div>
+          <DropdownMenuItem 
+            onClick={toggleScreenShare}
+            disabled={!isScreenSharing && isSomeoneScreenSharing}
+          >
+            <Share className="mr-2 size-4" />
+            <span>{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
 
       <CancelCallButton onLeave={onLeave} />
     </div>

@@ -21,7 +21,7 @@ const MeetingPage = () => {
 
   if (!call) {
     return (
-      <p className="text-center text-3xl font-bold text-white">
+      <p className="text-center text-3xl font-bold text-foreground">
         Call Not Found
       </p>
     );
@@ -30,7 +30,7 @@ const MeetingPage = () => {
   // Add check for user
   if (!user) {
     return (
-      <p className="text-center text-3xl font-bold text-white">
+      <p className="text-center text-3xl font-bold text-foreground">
         Please sign in to join this meeting
       </p>
     );

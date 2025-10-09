@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { ShieldAlert } from 'lucide-react';
-
 import { useIsMobile } from '@/hooks/use-mobile';
 import { EndCallButton } from './EndCallButton';
 import { MuteButton } from './MuteButton';
@@ -33,7 +32,7 @@ const AdminControls = () => {
   const mobilePanelStyle: React.CSSProperties = {
     ...basePanelStyle,
     position: 'fixed',
-    top: '20%',
+    top: '-70%',
     left: '50%',
     transform: 'translate(-50%, -50%)',
     width: '90vw',
