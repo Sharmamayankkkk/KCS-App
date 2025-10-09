@@ -83,10 +83,10 @@ interface MeetingRoomProps {
   userToken: string;
   userData: {
     id: string;
-    fullName?: string;
+    fullName?: string | null;
     primaryEmailAddress?: {
       emailAddress: string;
-    };
+    } | null;
     [key: string]: any;
   };
 }
