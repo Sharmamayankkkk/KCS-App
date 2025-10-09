@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'KCS Meet',
   description: 'Divine Connections Beyond Boundaries',
   icons: {
-    icon: '/icons/logo.svg',
+    icon: '/icons/KCS.svg',
   },
 };
 
