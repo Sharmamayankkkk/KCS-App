@@ -175,7 +175,7 @@ This will create all necessary tables:
 
 ## Step 6: Set Up Cashfree Payments
 
-Cashfree handles Super Chat payments. This is optional if you don't need monetization.
+Cashfree handles Super Chat payments. This is optional if you don\'t need monetization.
 
 ### 6.1 Create Cashfree Account
 
@@ -199,7 +199,7 @@ Cashfree handles Super Chat payments. This is optional if you don't need monetiz
 3. Select events: Payment Success, Payment Failed
 4. Save the configuration
 
-**Note**: You'll need to update this URL after deployment.
+**Note**: You\'ll need to update this URL after deployment.
 
 ---
 
@@ -345,7 +345,7 @@ If you want to stream meetings to YouTube or Facebook:
 
 ## Troubleshooting
 
-### Issue: Application won't start
+### Issue: Application won\'t start
 
 **Solution**:
 - Check if all dependencies are installed: `npm install`
@@ -381,7 +381,7 @@ If you want to stream meetings to YouTube or Facebook:
 
 **Solution**:
 - Verify Cashfree credentials
-- Ensure you're using TEST mode for development
+- Ensure you\'re using TEST mode for development
 - Check Cashfree dashboard for transaction logs
 - Verify webhook URL is correct
 
@@ -458,4 +458,4 @@ Before going live:
 
 ---
 
-**Congratulations!** 🎉 You've successfully set up KCS Meet!
+**Congratulations!** 🎉 You\'ve successfully set up KCS Meet!

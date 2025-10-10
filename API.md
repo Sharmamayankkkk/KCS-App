@@ -60,14 +60,14 @@ The following routes require authentication:
 ### Accessing User Info
 
 ```typescript
-import { auth } from '@clerk/nextjs';
+import { auth } from \'@clerk/nextjs\';
 
 export async function GET() {
   const { userId } = auth();
   
   if (!userId) {
     return Response.json(
-      { error: 'Unauthorized' }, 
+      { error: \'Unauthorized\' }, 
       { status: 401 }
     );
   }
@@ -142,15 +142,15 @@ Content-Type: application/json
 
 **Usage Example**:
 ```typescript
-const response = await fetch('/api/create-cashfree-order', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch(\'/api/create-cashfree-order\', {
+  method: \'POST\',
+  headers: { \'Content-Type\': \'application/json\' },
   body: JSON.stringify({
     amount: 100,
     userId: user.id,
     callId: call.id,
     orderId: `SC-${call.id}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-    currency: 'INR'
+    currency: \'INR\'
   })
 });
 
@@ -217,7 +217,7 @@ const response = await fetch(
 );
 const data = await response.json();
 
-if (data.status === 'SUCCESS') {
+if (data.status === \'SUCCESS\') {
   // Payment successful
   showSuccessMessage();
 }
@@ -252,7 +252,7 @@ Content-Type: application/json
       "cf_payment_id": "12345",
       "payment_status": "SUCCESS",
       "payment_amount": 100.00,
-      "payment_time": "2024-01-15T10:30:00Z"
+      "payment_time": "2025-01-15T10:30:00Z"
     },
     "customer_details": {
       "customer_name": "John Doe",
@@ -316,21 +316,21 @@ Content-Type: application/json
 
 ```typescript
 try {
-  const response = await fetch('/api/create-cashfree-order', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch(\'/api/create-cashfree-order\', {
+    method: \'POST\',
+    headers: { \'Content-Type\': \'application/json\' },
     body: JSON.stringify(orderData)
   });
 
   if (!response.ok) {
     const error = await response.json();
-    throw new Error(error.message || 'Request failed');
+    throw new Error(error.message || \'Request failed\');
   }
 
   const data = await response.json();
   // Handle success
 } catch (error) {
-  console.error('API Error:', error);
+  console.error(\'API Error:\', error);
   // Show error to user
 }
 ```
@@ -394,7 +394,7 @@ When rate limit exceeded:
 Cashfree webhooks include signature verification:
 
 ```typescript
-import crypto from 'crypto';
+import crypto from \'crypto\';
 
 function verifyWebhookSignature(
   payload: string,
@@ -404,9 +404,9 @@ function verifyWebhookSignature(
 ): boolean {
   const signedPayload = `${timestamp}.${payload}`;
   const expectedSignature = crypto
-    .createHmac('sha256', secret)
+    .createHmac(\'sha256\', secret)
     .update(signedPayload)
-    .digest('hex');
+    .digest(\'hex\');
   
   return signature === expectedSignature;
 }
@@ -479,14 +479,14 @@ curl -X POST https://your-domain.com/api/cashfree-webhook \
   -H "Content-Type: application/json" \
   -H "x-webhook-signature: test_signature" \
   -H "x-webhook-timestamp: 1234567890" \
-  -d '{
+  -d \'{
     "type": "PAYMENT_SUCCESS_WEBHOOK",
     "data": {
       "order": {
         "order_id": "test_order_123"
       }
     }
-  }'
+  }\'
 ```
 
 ---
@@ -498,11 +498,11 @@ curl -X POST https://your-domain.com/api/cashfree-webhook \
 All database operations use Supabase client:
 
 ```typescript
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from \'@/lib/supabaseClient\';
 
 // Insert
 const { data, error } = await supabase
-  .from('superchats')
+  .from(\'superchats\')
   .insert({
     call_id: callId,
     sender_id: userId,
@@ -512,23 +512,23 @@ const { data, error } = await supabase
 
 // Query
 const { data, error } = await supabase
-  .from('polls')
-  .select('*')
-  .eq('call_id', callId)
-  .order('created_at', { ascending: false });
+  .from(\'polls\')
+  .select(\'*\')
+  .eq(\'call_id\', callId)
+  .order(\'created_at\', { ascending: false });
 
 // Update
 const { error } = await supabase
-  .from('polls')
+  .from(\'polls\')
   .update({ is_active: false })
-  .eq('id', pollId);
+  .eq(\'id\', pollId);
 
 // Delete
 const { error } = await supabase
-  .from('poll_votes')
+  .from(\'poll_votes\')
   .delete()
-  .eq('user_id', userId)
-  .eq('poll_id', pollId);
+  .eq(\'user_id\', userId)
+  .eq(\'poll_id\', pollId);
 ```
 
 ### Real-time Subscriptions
@@ -538,15 +538,15 @@ const { error } = await supabase
 const subscription = supabase
   .channel(`messages-${callId}`)
   .on(
-    'postgres_changes',
+    \'postgres_changes\',
     {
-      event: 'INSERT',
-      schema: 'public',
-      table: 'chat_messages',
+      event: \'INSERT\',
+      schema: \'public\',
+      table: \'chat_messages\',
       filter: `call_id=eq.${callId}`
     },
     (payload) => {
-      console.log('New message:', payload.new);
+      console.log(\'New message:\', payload.new);
     }
   )
   .subscribe();
@@ -564,7 +564,7 @@ supabase.removeChannel(subscription);
 Server-side token generation for Stream.io:
 
 ```typescript
-import { StreamClient } from '@stream-io/node-sdk';
+import { StreamClient } from \'@stream-io/node-sdk\';
 
 const apiKey = process.env.NEXT_PUBLIC_STREAM_API_KEY!;
 const apiSecret = process.env.STREAM_SECRET_KEY!;
@@ -579,13 +579,13 @@ const token = client.createToken(userId);
 
 ```typescript
 // Create call
-const call = client.video.call('default', callId);
+const call = client.video.call(\'default\', callId);
 await call.getOrCreate({
   data: {
     created_by_id: userId,
     starts_at: new Date().toISOString(),
     custom: {
-      description: 'Meeting description'
+      description: \'Meeting description\'
     }
   }
 });
@@ -604,7 +604,7 @@ await call.end();
    ```typescript
    if (!amount || !userId || !callId) {
      return Response.json(
-       { error: 'Missing required fields' },
+       { error: \'Missing required fields\' },
        { status: 400 }
      );
    }
@@ -615,9 +615,9 @@ await call.end();
    try {
      // API logic
    } catch (error) {
-     console.error('API Error:', error);
+     console.error(\'API Error:\', error);
      return Response.json(
-       { error: 'Internal server error' },
+       { error: \'Internal server error\' },
        { status: 500 }
      );
    }
@@ -636,7 +636,7 @@ await call.end();
 
 4. **Implement logging**
    ```typescript
-   console.log('Order created:', { orderId, amount });
+   console.log(\'Order created:\', { orderId, amount });
    ```
 
 5. **Return consistent responses**
@@ -657,13 +657,13 @@ await call.end();
 # Create order
 curl -X POST http://localhost:3000/api/create-cashfree-order \
   -H "Content-Type: application/json" \
-  -d '{
+  -d \'{
     "amount": 100,
     "userId": "user_123",
     "callId": "call_456",
     "orderId": "SC-call_456-1234567890",
     "currency": "INR"
-  }'
+  }\'
 
 # Check payment status
 curl http://localhost:3000/api/check-payment-status?orderId=SC-call_456-1234567890
@@ -679,17 +679,17 @@ curl http://localhost:3000/api/check-payment-status?orderId=SC-call_456-12345678
 ### Integration Tests
 
 ```typescript
-describe('Payment API', () => {
-  it('should create order successfully', async () => {
-    const response = await fetch('/api/create-cashfree-order', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+describe(\'Payment API\', () => {
+  it(\'should create order successfully\', async () => {
+    const response = await fetch(\'/api/create-cashfree-order\', {
+      method: \'POST\',
+      headers: { \'Content-Type\': \'application/json\' },
       body: JSON.stringify({
         amount: 100,
-        userId: 'test_user',
-        callId: 'test_call',
-        orderId: 'test_order',
-        currency: 'INR'
+        userId: \'test_user\',
+        callId: \'test_call\',
+        orderId: \'test_order\',
+        currency: \'INR\'
       })
     });
 
@@ -710,5 +710,5 @@ For API-related questions:
 
 ---
 
-**Last Updated**: 2024  
+**Last Updated**: 2025
 **API Version**: 1.0

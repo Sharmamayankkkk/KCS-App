@@ -8,8 +8,9 @@ import { Analytics } from "@vercel/analytics/react";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "./globals.css";
+import "../public/styles.css";
 import { Toaster } from "@/components/ui/toaster";
-import { SupabaseProvider } from "@/providers/SupabaseProvider"; // ✅ Import the provider
+import { SupabaseProvider } from "@/providers/SupabaseProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,8 +20,9 @@ export const metadata: Metadata = {
   description: "Experience spiritual connection through technology with KCS Meet...",
 };
 
-export const viewport = { /* ... */ };
-export const themeColor = "#2196F3";
+export const viewport = {
+  themeColor: "#A41F13",
+};
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
@@ -36,11 +38,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               logoImageUrl: "/icons/KCS-Logo.png",
             },
             variables: {
-              colorText: "#1A1C23",
-              colorPrimary: "#2196F3",
-              colorBackground: "#E8EAF2",
-              colorInputBackground: "#D8DCE9",
-              colorInputText: "#1A1C23",
+              colorPrimary: "#A41F13",
+              colorBackground: "#FFFFFF",
             },
           }}
         >
