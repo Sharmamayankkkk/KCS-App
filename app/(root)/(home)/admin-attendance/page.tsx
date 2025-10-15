@@ -190,14 +190,14 @@ const AdminAttendancePage = () => {
     }
   };
 
-  const getStatusBadgeStyle = (status: string): React.CSSProperties => ({
+  const getStatusBadgeStyle = (status: string) => ({
     backgroundColor: getStatusColor(status),
     color: '#FFFFFF',
     padding: '4px 12px',
     borderRadius: '12px',
     fontSize: '0.875rem',
     fontWeight: '600',
-    textTransform: 'capitalize',
+    textTransform: 'capitalize' as const,
   });
 
   const filteredStats = stats.filter(

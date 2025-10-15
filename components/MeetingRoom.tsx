@@ -216,7 +216,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
           <div className={cn(`fixed bottom-0 w-full px-4 pb-4 transition-opacity duration-300`, showControls ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none')}>
             <div className="flex flex-wrap items-center justify-center gap-2 p-3 mx-auto transition rounded-2xl sm:gap-3 bg-background/80 backdrop-blur-md max-w-max shadow-lg border">
               <CallControls
-                onLeave={() => router.push('/')}
+                onLeave={() => router.push('/home')}
                 setLayout={setLayout}
                 setShowBackgroundSelector={setShowBackgroundSelector}
               />
