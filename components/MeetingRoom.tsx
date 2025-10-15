@@ -16,6 +16,7 @@ import { PanelRightOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { useSupabase } from '@/providers/SupabaseProvider';
+import { markAttendance, updateAttendanceOnLeave } from '@/actions/attendance.actions';
 
 // Local components
 import Loader from './Loader';
@@ -106,6 +107,36 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       if (hideTimeout.current) clearTimeout(hideTimeout.current);
     };
   }, [resetControlsTimer]);
+
+  // Track attendance when joining the call
+  useEffect(() => {
+    const trackAttendance = async () => {
+      if (call && userData?.id && callingState === CallingState.JOINED) {
+        try {
+          const result = await markAttendance(call.id, userData.id, 'present');
+          if (!result.success) {
+            console.error('Failed to mark attendance:', result.error);
+          }
+        } catch (error) {
+          console.error('Error marking attendance:', error);
+        }
+      }
+    };
+
+    trackAttendance();
+  }, [call, userData?.id, callingState]);
+
+  // Update attendance when leaving the call
+  useEffect(() => {
+    return () => {
+      if (call && userData?.id) {
+        // Mark the time when user leaves
+        updateAttendanceOnLeave(call.id, userData.id).catch((error) => {
+          console.error('Error updating attendance on leave:', error);
+        });
+      }
+    };
+  }, [call, userData?.id]);
 
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
