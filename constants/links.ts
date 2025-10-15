@@ -7,18 +7,33 @@ import {
   Mail,
   Send,
   Video,
+  ClipboardList,
+  ShieldCheck,
 } from 'lucide-react';
 
 export const sidebarLinks = [
   {
     icon: Home,
-    route: '/',
+    route: '/home',
     label: 'Home',
   },
   {
     icon: Video,
     route: '/recordings',
     label: 'Recordings',
+  },
+  {
+    icon: ClipboardList,
+    route: '/attendance',
+    label: 'My Attendance',
+  },
+];
+
+export const adminSidebarLinks = [
+  {
+    icon: ShieldCheck,
+    route: '/admin-attendance',
+    label: 'Manage Attendance',
   },
 ];
 

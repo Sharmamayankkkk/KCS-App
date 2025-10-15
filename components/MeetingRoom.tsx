@@ -16,6 +16,7 @@ import { PanelRightOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { useSupabase } from '@/providers/SupabaseProvider';
+import { markAttendance, updateAttendanceOnLeave } from '@/actions/attendance.actions';
 
 // Local components
 import Loader from './Loader';
@@ -107,6 +108,36 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [resetControlsTimer]);
 
+  // Track attendance when joining the call
+  useEffect(() => {
+    const trackAttendance = async () => {
+      if (call && userData?.id && callingState === CallingState.JOINED) {
+        try {
+          const result = await markAttendance(call.id, userData.id, 'present');
+          if (!result.success) {
+            console.error('Failed to mark attendance:', result.error);
+          }
+        } catch (error) {
+          console.error('Error marking attendance:', error);
+        }
+      }
+    };
+
+    trackAttendance();
+  }, [call, userData?.id, callingState]);
+
+  // Update attendance when leaving the call
+  useEffect(() => {
+    return () => {
+      if (call && userData?.id) {
+        // Mark the time when user leaves
+        updateAttendanceOnLeave(call.id, userData.id).catch((error) => {
+          console.error('Error updating attendance on leave:', error);
+        });
+      }
+    };
+  }, [call, userData?.id]);
+
   useEffect(() => {
     if (!apiKey || !userToken || !userData) return;
     const _client = new StreamVideoClient({ apiKey, user: userData, token: userToken });
@@ -185,7 +216,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
           <div className={cn(`fixed bottom-0 w-full px-4 pb-4 transition-opacity duration-300`, showControls ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none')}>
             <div className="flex flex-wrap items-center justify-center gap-2 p-3 mx-auto transition rounded-2xl sm:gap-3 bg-background/80 backdrop-blur-md max-w-max shadow-lg border">
               <CallControls
-                onLeave={() => router.push('/')}
+                onLeave={() => router.push('/home')}
                 setLayout={setLayout}
                 setShowBackgroundSelector={setShowBackgroundSelector}
               />

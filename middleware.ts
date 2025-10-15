@@ -1,10 +1,13 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
 
 const protectedRoute = createRouteMatcher([
-  "/",
+  "/home",
   "/meeting(.*)",
   "/recording", 
+  "/recordings",
   "/personal-room",
+  "/attendance",
+  "/admin-attendance",
 ])
 
 export default clerkMiddleware(
