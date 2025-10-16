@@ -7,6 +7,7 @@ export interface AttendanceRecord {
   id: number;
   call_id: string;
   user_id: string;
+  username?: string;
   status: 'present' | 'absent' | 'late';
   joined_at?: string;
   left_at?: string;
@@ -17,6 +18,7 @@ export interface AttendanceRecord {
   updated_at: string;
 }
 
+// ... (rest of the interfaces remain the same)
 export interface AttendanceStats {
   user_id: string;
   username: string;
@@ -39,6 +41,7 @@ export interface CallAttendanceStats {
   late_count: number;
   attendance_percentage: number;
 }
+
 
 // Check if user is admin
 export const isUserAdmin = async (): Promise<boolean> => {
@@ -63,6 +66,7 @@ export const isUserAdmin = async (): Promise<boolean> => {
 export const markAttendance = async (
   callId: string,
   userId: string,
+  username: string, // Added username
   status: 'present' | 'late' = 'present',
   joinedAt?: Date
 ): Promise<{ success: boolean; error?: string; data?: AttendanceRecord }> => {
@@ -73,6 +77,7 @@ export const markAttendance = async (
         {
           call_id: callId,
           user_id: userId,
+          username, // Save the username
           status,
           joined_at: joinedAt?.toISOString() || new Date().toISOString(),
         },
@@ -92,6 +97,9 @@ export const markAttendance = async (
     return { success: false, error: error.message };
   }
 };
+
+// ... (the rest of the file remains the same)
+
 
 // Update attendance when user leaves a call
 export const updateAttendanceOnLeave = async (
@@ -127,18 +135,8 @@ export const getUserAttendance = async (
 ): Promise<{ success: boolean; data?: any[]; error?: string }> => {
   try {
     const { data, error } = await supabase
-      .from('attendance')
-      .select(
-        `
-        *,
-        calls (
-          id,
-          created_at,
-          started_at,
-          state
-        )
-      `
-      )
+      .from('detailed_attendance')
+      .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -190,22 +188,8 @@ export const getAllAttendance = async (
     }
 
     const { data, error } = await supabase
-      .from('attendance')
-      .select(
-        `
-        *,
-        users!attendance_user_id_fkey (
-          id,
-          username,
-          email
-        ),
-        calls (
-          id,
-          created_at,
-          started_at
-        )
-      `
-      )
+      .from('detailed_attendance')
+      .select('*')
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -257,18 +241,8 @@ export const getCallAttendance = async (
 ): Promise<{ success: boolean; data?: any[]; error?: string }> => {
   try {
     const { data, error } = await supabase
-      .from('attendance')
-      .select(
-        `
-        *,
-        users!attendance_user_id_fkey (
-          id,
-          username,
-          email,
-          image_url
-        )
-      `
-      )
+      .from('detailed_attendance')
+      .select('*')
       .eq('call_id', callId)
       .order('created_at', { ascending: false });
 
@@ -360,22 +334,8 @@ export const getAttendanceByDateRange = async (
     }
 
     const { data, error } = await supabase
-      .from('attendance')
-      .select(
-        `
-        *,
-        users!attendance_user_id_fkey (
-          id,
-          username,
-          email
-        ),
-        calls (
-          id,
-          created_at,
-          started_at
-        )
-      `
-      )
+      .from('detailed_attendance')
+      .select('*')
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString())
       .order('created_at', { ascending: false });
@@ -388,6 +348,34 @@ export const getAttendanceByDateRange = async (
     return { success: true, data: data || [] };
   } catch (error: any) {
     console.error('Error fetching attendance by date range:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Update attendance for all when admin ends call
+export const endCallForAllParticipants = async (
+  callId: string
+): Promise<{ success: boolean; error?: string }> => {
+  try {
+    const isAdmin = await isUserAdmin();
+    if (!isAdmin) {
+      return { success: false, error: 'Unauthorized' };
+    }
+
+    const { error } = await supabase
+      .from('attendance')
+      .update({ left_at: new Date().toISOString() })
+      .eq('call_id', callId)
+      .is('left_at', null);
+
+    if (error) {
+      console.error('Error ending call for all participants:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error ending call for all participants:', error);
     return { success: false, error: error.message };
   }
 };

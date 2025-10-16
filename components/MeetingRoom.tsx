@@ -1,21 +1,20 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import { useRouter } from 'next/navigation';
+import { useUser } from '@clerk/nextjs';
 import {
   CallingState,
-  SpeakerLayout,
   StreamCall,
   StreamVideo,
   StreamVideoClient,
-  useCallStateHooks,
   useCall,
+  useCallStateHooks,
+  SpeakerLayout,
 } from '@stream-io/video-react-sdk';
-import '@stream-io/video-react-sdk/dist/css/styles.css';
-import { useRouter } from 'next/navigation';
 import { PanelRightOpen } from 'lucide-react';
-import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
-import { useSupabase } from '@/providers/SupabaseProvider';
+import { Button } from './ui/button';
 import { markAttendance, updateAttendanceOnLeave } from '@/actions/attendance.actions';
 
 // Local components
@@ -50,36 +49,32 @@ interface MeetingRoomProps {
   userData: {
     id: string;
     fullName?: string | null;
-    primaryEmailAddress?: {
-      emailAddress: string;
-    } | null;
+    primaryEmailAddress?: { emailAddress: string } | null;
     [key: string]: any;
   };
 }
 
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
-  const supabase = useSupabase();
+  const { user } = useUser();
   const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const [showSendSuperchat, setShowSendSuperchat] = useState(false);
-  const { useCallCallingState } = useCallStateHooks();
-  const call = useCall();
-  const callingState = useCallCallingState();
   const [showControls, setShowControls] = useState(true);
-  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
   const [selectedBackground, setSelectedBackground] = useState<BackgroundOption>(DEFAULT_BACKGROUND);
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
-  const [isProcessingBackground, setIsProcessingBackground] = useState(false);
-  const { processFrame, cleanup } = useBackgroundProcessor();
   const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
+  const call = useCall();
+  const { useCallCallingState } = useCallStateHooks();
+  const callingState = useCallCallingState();
+  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
+  const { processFrame, cleanup } = useBackgroundProcessor();
 
   useEffect(() => {
     try {
       const savedBackground = localStorage.getItem('meetingBackground');
       if (savedBackground) {
-        const background = JSON.parse(savedBackground);
-        setSelectedBackground(background);
+        setSelectedBackground(JSON.parse(savedBackground));
       }
     } catch (error) {
       console.error('Error loading background from localStorage:', error);
@@ -108,12 +103,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [resetControlsTimer]);
 
-  // Track attendance when joining the call
   useEffect(() => {
     const trackAttendance = async () => {
       if (call && userData?.id && callingState === CallingState.JOINED) {
         try {
-          const result = await markAttendance(call.id, userData.id, 'present');
+          const username = userData.fullName || user?.fullName || 'Anonymous';
+          const result = await markAttendance(call.id, userData.id, username, 'present');
           if (!result.success) {
             console.error('Failed to mark attendance:', result.error);
           }
@@ -122,15 +117,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         }
       }
     };
-
     trackAttendance();
-  }, [call, userData?.id, callingState]);
+  }, [call, user, userData, callingState]);
 
-  // Update attendance when leaving the call
   useEffect(() => {
     return () => {
       if (call && userData?.id) {
-        // Mark the time when user leaves
         updateAttendanceOnLeave(call.id, userData.id).catch((error) => {
           console.error('Error updating attendance on leave:', error);
         });
@@ -152,7 +144,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     if (!call) return;
     const setupBackgroundProcessing = async () => {
       try {
-        setIsProcessingBackground(true);
         const { unregister } = call.camera.registerFilter((originalStream: MediaStream) => {
           const processedStreamPromise = processFrame(originalStream, selectedBackground);
           return {
@@ -163,8 +154,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
         return unregister;
       } catch (error) {
         console.error('Error setting up background processing:', error);
-      } finally {
-        setIsProcessingBackground(false);
       }
     };
     const unregisterPromise = setupBackgroundProcessing();

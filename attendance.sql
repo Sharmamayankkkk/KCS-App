@@ -88,7 +88,7 @@ ALTER TABLE attendance ENABLE ROW LEVEL SECURITY;
 -- Policy: Users can view their own attendance
 CREATE POLICY "Users can view own attendance" ON attendance
     FOR SELECT
-    USING (auth.uid() = user_id);
+    USING (auth.uid()::text = user_id);
 
 -- Policy: Admins can view all attendance (modify based on your admin check)
 -- Note: This requires setting up proper admin roles in your auth system

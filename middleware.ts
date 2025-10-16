@@ -1,9 +1,10 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
+import { NextResponse } from "next/server"
 
 const protectedRoute = createRouteMatcher([
   "/home",
   "/meeting(.*)",
-  "/recording", 
+  "/recording",
   "/recordings",
   "/personal-room",
   "/attendance",
@@ -12,6 +13,13 @@ const protectedRoute = createRouteMatcher([
 
 export default clerkMiddleware(
   (auth, req) => {
+    // If a user is logged in and they visit the landing page, redirect them to the home page.
+    if (auth().userId && req.nextUrl.pathname === "/") {
+      const homeUrl = new URL("/home", req.url)
+      return NextResponse.redirect(homeUrl)
+    }
+
+    // Protect the routes that require authentication.
     if (protectedRoute(req)) auth().protect()
   },
   {
@@ -20,5 +28,5 @@ export default clerkMiddleware(
 )
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!.+\.[\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 }

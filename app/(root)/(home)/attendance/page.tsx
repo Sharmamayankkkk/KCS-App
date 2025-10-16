@@ -101,25 +101,19 @@ const AttendancePage = () => {
   };
 
   const formatDuration = (minutes?: number) => {
-    if (!minutes) return 'N/A';
+    if (minutes === undefined || minutes === null) return 'N/A';
+    if (minutes < 1) return '< 1m';
     const hours = Math.floor(minutes / 60);
     const mins = Math.round(minutes % 60);
-    if (hours > 0) {
-      return `${hours}h ${mins}m`;
-    }
-    return `${mins}m`;
+    return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'present':
-        return '#10B981'; // Green
-      case 'absent':
-        return '#EF4444'; // Red
-      case 'late':
-        return '#F59E0B'; // Orange
-      default:
-        return '#6B7280'; // Gray
+      case 'present': return '#10B981'; // Green
+      case 'absent': return '#EF4444'; // Red
+      case 'late': return '#F59E0B'; // Orange
+      default: return '#6B7280'; // Gray
     }
   };
 
@@ -140,173 +134,52 @@ const AttendancePage = () => {
       </h1>
 
       {error && (
-        <div
-          className="rounded-lg p-4"
-          style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}
-        >
+        <div className="rounded-lg p-4" style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}>
           {error}
         </div>
       )}
 
-      {/* Statistics Cards */}
       {stats && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <div
-            className="rounded-lg p-6"
-            style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-          >
-            <div className="flex items-center gap-3">
-              <Calendar className="h-8 w-8" style={{ color: '#A41F13' }} />
-              <div>
-                <p className="text-sm opacity-80">Total Meetings</p>
-                <p className="text-2xl font-bold">{stats.total_meetings || 0}</p>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="rounded-lg p-6"
-            style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-          >
-            <div className="flex items-center gap-3">
-              <TrendingUp className="h-8 w-8" style={{ color: '#10B981' }} />
-              <div>
-                <p className="text-sm opacity-80">Attendance Rate</p>
-                <p className="text-2xl font-bold">
-                  {stats.attendance_percentage?.toFixed(1) || 0}%
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="rounded-lg p-6"
-            style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-          >
-            <div className="flex items-center gap-3">
-              <BarChart3 className="h-8 w-8" style={{ color: '#3B82F6' }} />
-              <div>
-                <p className="text-sm opacity-80">Present</p>
-                <p className="text-2xl font-bold">{stats.present_count || 0}</p>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="rounded-lg p-6"
-            style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-          >
-            <div className="flex items-center gap-3">
-              <Clock className="h-8 w-8" style={{ color: '#F59E0B' }} />
-              <div>
-                <p className="text-sm opacity-80">Total Duration</p>
-                <p className="text-2xl font-bold">
-                  {formatDuration(stats.total_duration_minutes)}
-                </p>
-              </div>
-            </div>
-          </div>
+          <StatCard icon={<Calendar />} label="Total Meetings" value={stats.total_meetings || 0} />
+          <StatCard icon={<TrendingUp />} label="Attendance Rate" value={`${stats.attendance_percentage?.toFixed(1) || 0}%`} />
+          <StatCard icon={<BarChart3 />} label="Present" value={stats.present_count || 0} />
+          <StatCard icon={<Clock />} label="Total Duration" value={formatDuration(stats.total_duration_minutes)} />
         </div>
       )}
 
-      {/* Attendance Visualization */}
       {stats && stats.total_meetings > 0 && (
-        <div
-          className="rounded-lg p-6"
-          style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-        >
+        <div className="rounded-lg p-6" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
           <h2 className="mb-4 text-xl font-semibold">Attendance Overview</h2>
           <div className="space-y-4">
-            <div>
-              <div className="mb-2 flex justify-between">
-                <span>Present</span>
-                <span className="font-semibold">{stats.present_count || 0}</span>
-              </div>
-              <div className="h-4 w-full overflow-hidden rounded-full" style={{ backgroundColor: '#1F2937' }}>
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${((stats.present_count || 0) / (stats.total_meetings || 1)) * 100}%`,
-                    backgroundColor: '#10B981',
-                  }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="mb-2 flex justify-between">
-                <span>Absent</span>
-                <span className="font-semibold">{stats.absent_count || 0}</span>
-              </div>
-              <div className="h-4 w-full overflow-hidden rounded-full" style={{ backgroundColor: '#1F2937' }}>
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${((stats.absent_count || 0) / (stats.total_meetings || 1)) * 100}%`,
-                    backgroundColor: '#EF4444',
-                  }}
-                />
-              </div>
-            </div>
-
-            <div>
-              <div className="mb-2 flex justify-between">
-                <span>Late</span>
-                <span className="font-semibold">{stats.late_count || 0}</span>
-              </div>
-              <div className="h-4 w-full overflow-hidden rounded-full" style={{ backgroundColor: '#1F2937' }}>
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${((stats.late_count || 0) / (stats.total_meetings || 1)) * 100}%`,
-                    backgroundColor: '#F59E0B',
-                  }}
-                />
-              </div>
-            </div>
+            <ProgressBar label="Present" value={stats.present_count} total={stats.total_meetings} color="#10B981" />
+            <ProgressBar label="Absent" value={stats.absent_count} total={stats.total_meetings} color="#EF4444" />
+            <ProgressBar label="Late" value={stats.late_count} total={stats.total_meetings} color="#F59E0B" />
           </div>
         </div>
       )}
 
-      {/* Attendance Records */}
-      <div
-        className="rounded-lg p-6"
-        style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-      >
-        <h2 className="mb-4 text-xl font-semibold">Attendance History</h2>
+      <div className="rounded-lg p-6" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
+        <h2 className="mb-4 text-xl text-white font-semibold">Attendance History</h2>
         {attendance.length === 0 ? (
           <p className="text-center opacity-70">No attendance records found</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr style={{ borderBottom: '2px solid #8F7A6E' }}>
-                  <th className="pb-3 text-left">Date</th>
-                  <th className="pb-3 text-left">Time</th>
-                  <th className="pb-3 text-left">Status</th>
-                  <th className="pb-3 text-left">Duration</th>
+                <tr style={{ borderBottom: '2px solid #374151', color: '#B0A8A3' }}>
+                  <th className="pb-3 text-left font-semibold">Date</th>
+                  <th className="pb-3 text-left font-semibold">Time</th>
+                  <th className="pb-3 text-left font-semibold">Status</th>
+                  <th className="pb-3 text-left font-semibold">Duration</th>
                 </tr>
               </thead>
               <tbody>
                 {attendance.map((record) => (
-                  <tr
-                    key={record.id}
-                    style={{ borderBottom: '1px solid #8F7A6E' }}
-                    className="transition-colors hover:bg-opacity-5"
-                  >
-                    <td className="py-3">
-                      {formatDate(record.calls?.created_at || record.created_at)}
-                    </td>
-                    <td className="py-3">
-                      {record.joined_at
-                        ? formatTime(record.joined_at)
-                        : 'N/A'}
-                    </td>
-                    <td className="py-3">
-                      <span style={getStatusBadgeStyle(record.status)}>
-                        {record.status}
-                      </span>
-                    </td>
+                  <tr key={record.id} style={{ borderBottom: '1px solid #374151', color: '#E0DBD8' }} className="transition-colors hover:bg-opacity-5">
+                    <td className="py-3">{formatDate(record.calls?.created_at || record.created_at)}</td>
+                    <td className="py-3">{record.joined_at ? formatTime(record.joined_at) : 'N/A'}</td>
+                    <td className="py-3"><span style={getStatusBadgeStyle(record.status)}>{record.status}</span></td>
                     <td className="py-3">{formatDuration(record.duration_minutes)}</td>
                   </tr>
                 ))}
@@ -318,5 +191,31 @@ const AttendancePage = () => {
     </section>
   );
 };
+
+// Helper Components
+const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string | number }) => (
+    <div className="rounded-lg p-6 flex items-center gap-4" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
+        <div className="text-red-500">{icon}</div>
+        <div>
+            <p className="text-sm opacity-80">{label}</p>
+            <p className="text-2xl font-bold">{value}</p>
+        </div>
+    </div>
+);
+
+const ProgressBar = ({ label, value, total, color }: { label: string, value: number, total: number, color: string }) => (
+    <div>
+        <div className="mb-2 flex justify-between font-medium">
+            <span>{label}</span>
+            <span>{value || 0}</span>
+        </div>
+        <div className="h-4 w-full overflow-hidden rounded-full" style={{ backgroundColor: '#1F2937' }}>
+            <div
+                className="h-full rounded-full transition-all duration-500"
+                style={{ width: `${((value || 0) / (total || 1)) * 100}%`, backgroundColor: color }}
+            />
+        </div>
+    </div>
+);
 
 export default AttendancePage;

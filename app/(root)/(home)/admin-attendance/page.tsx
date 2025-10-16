@@ -1,16 +1,15 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useUser } from '@clerk/nextjs';
 import {
-  Users,
   Calendar,
   TrendingUp,
   Edit2,
   Trash2,
   Search,
-  ChevronDown,
-  ChevronUp,
+  Save,
+  XCircle,
 } from 'lucide-react';
 import {
   getAllUsersAttendanceStats,
@@ -20,7 +19,9 @@ import {
   isUserAdmin,
 } from '@/actions/attendance.actions';
 import Loader from '@/components/Loader';
+import { Button } from '@/components/ui/button';
 
+// Interfaces remain the same
 interface AttendanceStats {
   user_id: string;
   username: string;
@@ -66,16 +67,13 @@ const AdminAttendancePage = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editStatus, setEditStatus] = useState<'present' | 'absent' | 'late'>('present');
   const [editNotes, setEditNotes] = useState('');
-  const [expandedUser, setExpandedUser] = useState<string | null>(null);
 
   useEffect(() => {
     const checkAdminAndFetchData = async () => {
       if (!user) return;
-
       try {
         setLoading(true);
         setError(null);
-
         const adminStatus = await isUserAdmin();
         setIsAdmin(adminStatus);
 
@@ -87,20 +85,15 @@ const AdminAttendancePage = () => {
 
         const [statsResult, attendanceResult] = await Promise.all([
           getAllUsersAttendanceStats(),
-          getAllAttendance(200, 0),
+          getAllAttendance(500, 0),
         ]);
 
-        if (!statsResult.success) {
-          setError(statsResult.error || 'Failed to fetch statistics');
-        } else {
-          setStats(statsResult.data || []);
-        }
+        if (statsResult.success) setStats(statsResult.data || []);
+        else setError(statsResult.error || 'Failed to fetch statistics');
 
-        if (!attendanceResult.success) {
-          setError(attendanceResult.error || 'Failed to fetch attendance records');
-        } else {
-          setAllAttendance(attendanceResult.data || []);
-        }
+        if (attendanceResult.success) setAllAttendance(attendanceResult.data || []);
+        else setError((prev) => `${prev ? `${prev}, ` : ''}${attendanceResult.error || 'Failed to fetch records'}`);
+
       } catch (err: any) {
         setError(err.message || 'An error occurred');
       } finally {
@@ -108,9 +101,7 @@ const AdminAttendancePage = () => {
       }
     };
 
-    if (isLoaded && user) {
-      checkAdminAndFetchData();
-    }
+    if (isLoaded && user) checkAdminAndFetchData();
   }, [user, isLoaded]);
 
   const handleEdit = (record: AttendanceRecord) => {
@@ -119,386 +110,196 @@ const AdminAttendancePage = () => {
     setEditNotes(record.notes || '');
   };
 
-  const handleSave = async (id: number) => {
-    const result = await updateAttendance(id, {
-      status: editStatus,
-      notes: editNotes,
-    });
+  const handleCancel = () => setEditingId(null);
 
-    if (result.success) {
+  const handleSave = async (id: number) => {
+    const result = await updateAttendance(id, { status: editStatus, notes: editNotes });
+    if (result.success && result.data) {
       setAllAttendance((prev) =>
-        prev.map((record) =>
-          record.id === id
-            ? { ...record, status: editStatus, notes: editNotes }
-            : record
-        )
+        prev.map((r) => r.id === id ? { ...r, status: result.data!.status, notes: result.data!.notes } : r)
       );
       setEditingId(null);
     } else {
-      alert('Failed to update attendance: ' + result.error);
+      alert('Failed to update: ' + result.error);
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this attendance record?')) {
-      return;
-    }
-
-    const result = await deleteAttendance(id);
-    if (result.success) {
-      setAllAttendance((prev) => prev.filter((record) => record.id !== id));
-    } else {
-      alert('Failed to delete attendance: ' + result.error);
+    if (confirm('Are you sure?')) {
+      const result = await deleteAttendance(id);
+      if (result.success) setAllAttendance((prev) => prev.filter((r) => r.id !== id));
+      else alert('Failed to delete: ' + result.error);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
+  const filteredAttendance = useMemo(() => {
+    const lowerCaseSearch = searchTerm.toLowerCase();
+    return allAttendance.filter(record => {
+      const user = record.users;
+      return (
+        user?.username?.toLowerCase().includes(lowerCaseSearch) ||
+        user?.email?.toLowerCase().includes(lowerCaseSearch) ||
+        record.call_id.toLowerCase().includes(lowerCaseSearch) ||
+        record.status.toLowerCase().includes(lowerCaseSearch)
+      );
     });
-  };
+  }, [allAttendance, searchTerm]);
 
-  const formatTime = (dateString: string) => {
-    return new Date(dateString).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
+  const groupedAttendance = useMemo(() => {
+    const groups: { [key: string]: AttendanceRecord[] } = {};
+    filteredAttendance.forEach(record => {
+      const recordDate = new Date(record.created_at);
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      let dateKey: string;
+      if (recordDate.toDateString() === today.toDateString()) dateKey = 'Today';
+      else if (recordDate.toDateString() === yesterday.toDateString()) dateKey = 'Yesterday';
+      else dateKey = recordDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+      
+      if (!groups[dateKey]) groups[dateKey] = [];
+      groups[dateKey].push(record);
     });
+    return groups;
+  }, [filteredAttendance]);
+
+  // Formatting helpers
+  const formatDate = (ds?: string) => ds ? new Date(ds).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : 'N/A';
+  const formatTime = (ds?: string) => ds ? new Date(ds).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }) : 'N/A';
+  const formatDuration = (m?: number) => {
+    if (m === undefined || m === null) return 'N/A';
+    if (m < 1) return '< 1m';
+    const h = Math.floor(m / 60);
+    const mins = Math.round(m % 60);
+    return h > 0 ? `${h}h ${mins}m` : `${mins}m`;
   };
 
-  const formatDuration = (minutes?: number) => {
-    if (!minutes) return 'N/A';
-    const hours = Math.floor(minutes / 60);
-    const mins = Math.round(minutes % 60);
-    if (hours > 0) {
-      return `${hours}h ${mins}m`;
-    }
-    return `${mins}m`;
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'present':
-        return '#10B981';
-      case 'absent':
-        return '#EF4444';
-      case 'late':
-        return '#F59E0B';
-      default:
-        return '#6B7280';
-    }
-  };
-
-  const getStatusBadgeStyle = (status: string) => ({
-    backgroundColor: getStatusColor(status),
-    color: '#FFFFFF',
-    padding: '4px 12px',
-    borderRadius: '12px',
-    fontSize: '0.875rem',
-    fontWeight: '600',
-    textTransform: 'capitalize' as const,
-  });
-
-  const filteredStats = stats.filter(
-    (stat) =>
-      stat.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      stat.email?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-
-  const getUserAttendanceRecords = (userId: string) => {
-    return allAttendance.filter((record) => record.user_id === userId);
-  };
-
-  if (!isLoaded || loading) {
-    return <Loader />;
-  }
-
-  if (!user || !isAdmin) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <p className="text-xl" style={{ color: '#292F36' }}>
-          You do not have permission to view this page
-        </p>
-      </div>
-    );
-  }
+  if (!isLoaded || loading) return <Loader />;
+  if (!user || !isAdmin) return <div className="flex h-full items-center justify-center text-xl text-[#292F36]">Access Denied.</div>;
 
   return (
     <section className="flex size-full flex-col gap-6">
-      <h1 className="text-3xl font-bold" style={{ color: '#292F36' }}>
-        Admin Attendance Management
-      </h1>
+      <h1 className="text-3xl font-bold" style={{ color: '#292F36' }}>Admin Attendance Management</h1>
+      {error && <div className="rounded-lg bg-red-100 p-4 text-red-800">{error}</div>}
 
-      {error && (
-        <div
-          className="rounded-lg p-4"
-          style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}
-        >
-          {error}
-        </div>
-      )}
-
-      {/* Overview Cards */}
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div
-          className="rounded-lg p-6"
-          style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-        >
-          <div className="flex items-center gap-3">
-            <Users className="h-8 w-8" style={{ color: '#A41F13' }} />
-            <div>
-              <p className="text-sm opacity-80">Total Users</p>
-              <p className="text-2xl font-bold">{stats.length}</p>
-            </div>
-          </div>
-        </div>
-
-        <div
-          className="rounded-lg p-6"
-          style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-        >
-          <div className="flex items-center gap-3">
-            <Calendar className="h-8 w-8" style={{ color: '#3B82F6' }} />
-            <div>
-              <p className="text-sm opacity-80">Total Records</p>
-              <p className="text-2xl font-bold">{allAttendance.length}</p>
-            </div>
-          </div>
-        </div>
-
-        <div
-          className="rounded-lg p-6"
-          style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-        >
-          <div className="flex items-center gap-3">
-            <TrendingUp className="h-8 w-8" style={{ color: '#10B981' }} />
-            <div>
-              <p className="text-sm opacity-80">Avg Attendance</p>
-              <p className="text-2xl font-bold">
-                {stats.length > 0
-                  ? (
-                      stats.reduce((sum, s) => sum + (s.attendance_percentage || 0), 0) /
-                      stats.length
-                    ).toFixed(1)
-                  : 0}
-                %
-              </p>
-            </div>
-          </div>
-        </div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <StatCard icon={<Calendar />} label="Total Records" value={allAttendance.length} />
+        <StatCard icon={<TrendingUp />} label="Avg. Attendance" value={`${stats.length > 0 ? (stats.reduce((s, c) => s + (c.attendance_percentage || 0), 0) / stats.length).toFixed(1) : 0}%`} />
       </div>
 
-      {/* Search Bar */}
-      <div
-        className="rounded-lg p-4"
-        style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-      >
-        <div className="flex items-center gap-2">
-          <Search className="h-5 w-5 opacity-70" />
-          <input
-            type="text"
-            placeholder="Search by username or email..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 bg-transparent outline-none placeholder:opacity-50"
-            style={{ color: '#FAF5F1' }}
-          />
+      <div className="rounded-lg p-6" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
+        <div className="flex items-center gap-2 rounded-lg p-4 mb-4" style={{ backgroundColor: '#1F2937'}}>
+            <Search className="h-5 w-5 opacity-70" />
+            <input
+                type="text"
+                placeholder="Search records..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="flex-1 bg-transparent outline-none placeholder:opacity-50"
+            />
         </div>
-      </div>
 
-      {/* User Statistics Table with Expandable Attendance Records */}
-      <div
-        className="rounded-lg p-6"
-        style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
-      >
-        <h2 className="mb-4 text-xl font-semibold">User Attendance Statistics</h2>
-        {filteredStats.length === 0 ? (
-          <p className="text-center opacity-70">No users found</p>
-        ) : (
-          <div className="space-y-2">
-            {filteredStats.map((stat) => (
-              <div key={stat.user_id}>
-                <div
-                  className="cursor-pointer rounded-lg p-4 transition-colors"
-                  style={{ backgroundColor: '#1F2937' }}
-                  onClick={() =>
-                    setExpandedUser(expandedUser === stat.user_id ? null : stat.user_id)
-                  }
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <p className="font-semibold">{stat.username}</p>
-                      <p className="text-sm opacity-70">{stat.email}</p>
-                    </div>
-                    <div className="flex items-center gap-6">
-                      <div className="text-center">
-                        <p className="text-sm opacity-70">Meetings</p>
-                        <p className="font-semibold">{stat.total_meetings || 0}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm opacity-70">Present</p>
-                        <p className="font-semibold" style={{ color: '#10B981' }}>
-                          {stat.present_count || 0}
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm opacity-70">Absent</p>
-                        <p className="font-semibold" style={{ color: '#EF4444' }}>
-                          {stat.absent_count || 0}
-                        </p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm opacity-70">Rate</p>
-                        <p className="font-semibold">
-                          {stat.attendance_percentage?.toFixed(1) || 0}%
-                        </p>
-                      </div>
-                      {expandedUser === stat.user_id ? (
-                        <ChevronUp className="h-5 w-5" />
-                      ) : (
-                        <ChevronDown className="h-5 w-5" />
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Expanded Attendance Records */}
-                {expandedUser === stat.user_id && (
-                  <div
-                    className="mt-2 rounded-lg p-4"
-                    style={{ backgroundColor: '#374151' }}
-                  >
-                    <h3 className="mb-3 font-semibold">Attendance Records</h3>
-                    <div className="space-y-2">
-                      {getUserAttendanceRecords(stat.user_id).map((record) => (
-                        <div
-                          key={record.id}
-                          className="flex items-center justify-between rounded p-3"
-                          style={{ backgroundColor: '#1F2937' }}
-                        >
-                          {editingId === record.id ? (
-                            <>
-                              <div className="flex flex-1 items-center gap-4">
-                                <div>
-                                  <p className="text-sm">
-                                    {formatDate(
-                                      record.calls?.created_at || record.created_at
-                                    )}
-                                  </p>
-                                </div>
-                                <select
-                                  value={editStatus}
-                                  onChange={(e) =>
-                                    setEditStatus(
-                                      e.target.value as 'present' | 'absent' | 'late'
-                                    )
-                                  }
-                                  className="rounded px-3 py-1"
-                                  style={{
-                                    backgroundColor: '#292F36',
-                                    color: '#FAF5F1',
-                                  }}
-                                >
-                                  <option value="present">Present</option>
-                                  <option value="absent">Absent</option>
-                                  <option value="late">Late</option>
-                                </select>
-                                <input
-                                  type="text"
-                                  placeholder="Notes..."
-                                  value={editNotes}
-                                  onChange={(e) => setEditNotes(e.target.value)}
-                                  className="flex-1 rounded px-3 py-1"
-                                  style={{
-                                    backgroundColor: '#292F36',
-                                    color: '#FAF5F1',
-                                  }}
-                                />
-                              </div>
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleSave(record.id)}
-                                  className="rounded px-3 py-1"
-                                  style={{
-                                    backgroundColor: '#10B981',
-                                    color: '#FFFFFF',
-                                  }}
-                                >
-                                  Save
-                                </button>
-                                <button
-                                  onClick={() => setEditingId(null)}
-                                  className="rounded px-3 py-1"
-                                  style={{
-                                    backgroundColor: '#6B7280',
-                                    color: '#FFFFFF',
-                                  }}
-                                >
-                                  Cancel
-                                </button>
-                              </div>
-                            </>
-                          ) : (
-                            <>
-                              <div className="flex flex-1 items-center gap-4">
-                                <div>
-                                  <p className="text-sm">
-                                    {formatDate(
-                                      record.calls?.created_at || record.created_at
-                                    )}
-                                  </p>
-                                  <p className="text-xs opacity-70">
-                                    {record.joined_at
-                                      ? formatTime(record.joined_at)
-                                      : 'N/A'}
-                                  </p>
-                                </div>
-                                <span style={getStatusBadgeStyle(record.status)}>
-                                  {record.status}
-                                </span>
-                                <p className="text-sm">
-                                  {formatDuration(record.duration_minutes)}
-                                </p>
-                                {record.notes && (
-                                  <p className="text-sm opacity-70">{record.notes}</p>
-                                )}
-                              </div>
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleEdit(record)}
-                                  className="rounded p-2 transition-colors"
-                                  style={{ backgroundColor: '#3B82F6' }}
-                                >
-                                  <Edit2 className="h-4 w-4" />
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(record.id)}
-                                  className="rounded p-2 transition-colors"
-                                  style={{ backgroundColor: '#EF4444' }}
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      ))}
-                      {getUserAttendanceRecords(stat.user_id).length === 0 && (
-                        <p className="text-center text-sm opacity-70">
-                          No attendance records
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                )}
+        <div className="overflow-x-auto">
+          {Object.keys(groupedAttendance).length === 0 ? (
+            <p className="text-center py-8 opacity-70">No records found for your search.</p>
+          ) : (
+            Object.entries(groupedAttendance).map(([date, records]) => (
+              <div key={date} className="mb-8">
+                <h3 className="text-xl font-semibold mb-4" style={{ color: '#FAF5F1' }}>{date}</h3>
+                <table className="w-full text-left">
+                  <thead className="border-b border-gray-600">
+                    <tr style={{ color: '#B0A8A3' }}>
+                      <th className="p-3 font-semibold">User</th>
+                      <th className="p-3 font-semibold">Call Info</th>
+                      <th className="p-3 font-semibold">Status</th>
+                      <th className="p-3 font-semibold">Notes</th>
+                      <th className="p-3 font-semibold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {records.map((record) => (
+                      <tr key={record.id} className="border-b border-gray-700 hover:bg-gray-800/50">
+                        {editingId === record.id ? (
+                          <EditableRow record={record} onSave={handleSave} onCancel={handleCancel} editStatus={editStatus} setEditStatus={setEditStatus} editNotes={editNotes} setEditNotes={setEditNotes} />
+                        ) : (
+                          <DisplayRow record={record} onEdit={handleEdit} onDelete={handleDelete} formatters={{ formatDate, formatTime, formatDuration }} />
+                        )}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
-            ))}
-          </div>
-        )}
+            ))
+          )}
+        </div>
       </div>
     </section>
   );
 };
+
+// Helper Components (StatCard, DisplayRow, EditableRow) remain the same, but with corrected styling from previous steps.
+const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string | number }) => (
+    <div className="rounded-lg p-6 flex items-center gap-4" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
+        <div className="text-red-500">{icon}</div>
+        <div>
+            <p className="text-sm opacity-80">{label}</p>
+            <p className="text-2xl font-bold">{value}</p>
+        </div>
+    </div>
+);
+
+const DisplayRow = ({ record, onEdit, onDelete, formatters }: any) => (
+    <>
+        <td className="p-3">
+            <p className="font-semibold" style={{ color: '#FAF5F1' }}>{record.users?.username || 'Unknown User'}</p>
+            <p className="text-sm" style={{ color: '#B0A8A3' }}>{record.users?.email}</p>
+        </td>
+        <td className="p-3 text-sm" style={{ color: '#E0DBD8' }}>
+            <p><strong style={{ color: '#FAF5F1' }}>Date:</strong> {formatters.formatDate(record.created_at)}</p>
+            <p><strong style={{ color: '#FAF5F1' }}>Joined:</strong> {formatters.formatTime(record.joined_at)}</p>
+            <p><strong style={{ color: '#FAF5F1' }}>Duration:</strong> {formatters.formatDuration(record.duration_minutes)}</p>
+        </td>
+        <td className="p-3">
+            <span style={{ color: '#FFFFFF' }} className={`px-3 py-1 text-sm font-semibold rounded-full capitalize ${record.status === 'present' ? 'bg-green-500' : record.status === 'late' ? 'bg-yellow-500' : 'bg-red-500'}`}>
+                {record.status}
+            </span>
+        </td>
+        <td className="p-3 text-sm max-w-xs truncate" style={{ color: '#E0DBD8' }}>{record.notes || '-'}</td>
+        <td className="p-3">
+            <div className="flex gap-2">
+                <Button variant="outline" size="icon" onClick={() => onEdit(record)}><Edit2 className="h-4 w-4" /></Button>
+                <Button variant="destructive" size="icon" onClick={() => onDelete(record.id)}><Trash2 className="h-4 w-4" /></Button>
+            </div>
+        </td>
+    </>
+);
+
+const EditableRow = ({ record, onSave, onCancel, editStatus, setEditStatus, editNotes, setEditNotes }: any) => (
+    <>
+        <td className="p-3">
+            <p className="font-semibold" style={{ color: '#FAF5F1' }}>{record.users?.username || 'Unknown User'}</p>
+            <p className="text-sm" style={{ color: '#B0A8A3' }}>{record.users?.email}</p>
+        </td>
+        <td colSpan={2} className="p-3">
+            <div className='flex gap-2'>
+                <select value={editStatus} onChange={(e) => setEditStatus(e.target.value)} className="rounded bg-gray-700 px-2 py-1" style={{ color: '#FAF5F1' }}>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                    <option value="late">Late</option>
+                </select>
+            </div>
+        </td>
+        <td className="p-3">
+            <input type="text" value={editNotes} onChange={(e) => setEditNotes(e.target.value)} placeholder="Edit notes..." className="w-full rounded bg-gray-700 px-2 py-1" style={{ color: '#FAF5F1' }}/>
+        </td>
+        <td className="p-3">
+            <div className="flex gap-2">
+                <Button variant="ghost" size="icon" onClick={() => onSave(record.id)}><Save className="h-4 w-4 text-green-500" /></Button>
+                <Button variant="ghost" size="icon" onClick={onCancel}><XCircle className="h-4 w-4 text-red-500" /></Button>
+            </div>
+        </td>
+    </>
+);
 
 export default AdminAttendancePage;
