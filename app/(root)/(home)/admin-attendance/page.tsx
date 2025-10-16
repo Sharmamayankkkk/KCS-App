@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -10,6 +11,7 @@ import {
   Search,
   Save,
   XCircle,
+  BookOpen,
 } from 'lucide-react';
 import {
   getAllUsersAttendanceStats,
@@ -21,7 +23,6 @@ import {
 import Loader from '@/components/Loader';
 import { Button } from '@/components/ui/button';
 
-// Interfaces remain the same
 interface AttendanceStats {
   user_id: string;
   username: string;
@@ -38,21 +39,20 @@ interface AttendanceRecord {
   id: number;
   call_id: string;
   user_id: string;
+  username?: string; // Use the username directly from the attendance record
   status: 'present' | 'absent' | 'late';
   joined_at?: string;
   left_at?: string;
   duration_minutes?: number;
   notes?: string;
   created_at: string;
-  users?: {
+  users?: { // This may be undefined due to schema cache issues, so we rely on the top-level username
     id: string;
     username: string;
     email: string;
   };
-  calls?: {
-    id: string;
-    created_at: string;
-    started_at?: string;
+  meeting?: {
+    title: string;
   };
 }
 
@@ -135,11 +135,11 @@ const AdminAttendancePage = () => {
   const filteredAttendance = useMemo(() => {
     const lowerCaseSearch = searchTerm.toLowerCase();
     return allAttendance.filter(record => {
-      const user = record.users;
       return (
-        user?.username?.toLowerCase().includes(lowerCaseSearch) ||
-        user?.email?.toLowerCase().includes(lowerCaseSearch) ||
+        record.username?.toLowerCase().includes(lowerCaseSearch) ||
+        record.users?.email?.toLowerCase().includes(lowerCaseSearch) || // Email might not be available
         record.call_id.toLowerCase().includes(lowerCaseSearch) ||
+        record.meeting?.title?.toLowerCase().includes(lowerCaseSearch) ||
         record.status.toLowerCase().includes(lowerCaseSearch)
       );
     });
@@ -193,7 +193,7 @@ const AdminAttendancePage = () => {
             <Search className="h-5 w-5 opacity-70" />
             <input
                 type="text"
-                placeholder="Search records..."
+                placeholder="Search by user, email, meeting, or status..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="flex-1 bg-transparent outline-none placeholder:opacity-50"
@@ -211,7 +211,7 @@ const AdminAttendancePage = () => {
                   <thead className="border-b border-gray-600">
                     <tr style={{ color: '#B0A8A3' }}>
                       <th className="p-3 font-semibold">User</th>
-                      <th className="p-3 font-semibold">Call Info</th>
+                      <th className="p-3 font-semibold">Meeting Info</th>
                       <th className="p-3 font-semibold">Status</th>
                       <th className="p-3 font-semibold">Notes</th>
                       <th className="p-3 font-semibold">Actions</th>
@@ -238,7 +238,6 @@ const AdminAttendancePage = () => {
   );
 };
 
-// Helper Components (StatCard, DisplayRow, EditableRow) remain the same, but with corrected styling from previous steps.
 const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string | number }) => (
     <div className="rounded-lg p-6 flex items-center gap-4" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
         <div className="text-red-500">{icon}</div>
@@ -252,20 +251,23 @@ const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string
 const DisplayRow = ({ record, onEdit, onDelete, formatters }: any) => (
     <>
         <td className="p-3">
-            <p className="font-semibold" style={{ color: '#FAF5F1' }}>{record.users?.username || 'Unknown User'}</p>
-            <p className="text-sm" style={{ color: '#B0A8A3' }}>{record.users?.email}</p>
+            <p className="font-semibold" style={{ color: '#FAF5F1' }}>{record.username || 'Unknown User'}</p>
+            {record.users?.email && <p className="text-sm" style={{ color: '#B0A8A3' }}>{record.users.email}</p>}
         </td>
         <td className="p-3 text-sm" style={{ color: '#E0DBD8' }}>
-            <p><strong style={{ color: '#FAF5F1' }}>Date:</strong> {formatters.formatDate(record.created_at)}</p>
-            <p><strong style={{ color: '#FAF5F1' }}>Joined:</strong> {formatters.formatTime(record.joined_at)}</p>
-            <p><strong style={{ color: '#FAF5F1' }}>Duration:</strong> {formatters.formatDuration(record.duration_minutes)}</p>
+            <p className="font-semibold flex items-center gap-1.5" style={{ color: '#FAF5F1' }}>
+              <BookOpen className="h-4 w-4 opacity-80" />
+              {record.meeting?.title || 'Meeting'}
+            </p>
+            <p><strong style={{ color: '#B0A8A3' }}>Joined:</strong> {formatters.formatTime(record.joined_at)}</p>
+            <p><strong style={{ color: '#B0A8A3' }}>Duration:</strong> {formatters.formatDuration(record.duration_minutes)}</p>
         </td>
         <td className="p-3">
             <span style={{ color: '#FFFFFF' }} className={`px-3 py-1 text-sm font-semibold rounded-full capitalize ${record.status === 'present' ? 'bg-green-500' : record.status === 'late' ? 'bg-yellow-500' : 'bg-red-500'}`}>
                 {record.status}
             </span>
         </td>
-        <td className="p-3 text-sm max-w-xs truncate" style={{ color: '#E0DBD8' }}>{record.notes || '-'}</td>
+        <td className="p-3 text-sm max-w-xs truncate" style={{ color: '#E0DBD8' }}>{record.notes || '-'}</td >
         <td className="p-3">
             <div className="flex gap-2">
                 <Button variant="outline" size="icon" onClick={() => onEdit(record)}><Edit2 className="h-4 w-4" /></Button>
@@ -278,8 +280,7 @@ const DisplayRow = ({ record, onEdit, onDelete, formatters }: any) => (
 const EditableRow = ({ record, onSave, onCancel, editStatus, setEditStatus, editNotes, setEditNotes }: any) => (
     <>
         <td className="p-3">
-            <p className="font-semibold" style={{ color: '#FAF5F1' }}>{record.users?.username || 'Unknown User'}</p>
-            <p className="text-sm" style={{ color: '#B0A8A3' }}>{record.users?.email}</p>
+            <p className="font-semibold" style={{ color: '#FAF5F1' }}>{record.username || 'Unknown User'}</p>
         </td>
         <td colSpan={2} className="p-3">
             <div className='flex gap-2'>

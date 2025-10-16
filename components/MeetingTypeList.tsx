@@ -324,6 +324,19 @@ Rama Rama, Hare Hare`;
             }}
             onChange={(e) => setValues({ ...values, title: e.target.value })}
           />
+          <label className="text-base font-normal leading-[22.4px]" style={{ color: '#292F36' }}>
+            Add a description
+          </label>
+          <Textarea
+            className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            style={{
+              backgroundColor: 'rgba(250, 245, 241, 0.5)',
+              color: '#292F36'
+            }}
+            onChange={(e) =>
+              setValues({ ...values, description: e.target.value })
+            }
+          />
         </div>
       </MeetingModal>
       

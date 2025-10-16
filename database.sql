@@ -1,222 +1,132 @@
--- Query 1
+-- WARNING: This schema is for context only and is not meant to be run.
+-- Table order and constraints may not be valid for execution.
 
--- Users Table
-CREATE TABLE users (
-    id TEXT PRIMARY KEY,
-    email TEXT NOT NULL UNIQUE,
-    username TEXT NOT NULL,
-    first_name TEXT,
-    last_name TEXT,
-    image_url TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE public.attendance (
+  id integer NOT NULL DEFAULT nextval('attendance_id_seq'::regclass),
+  call_id text NOT NULL,
+  user_id text NOT NULL,
+  status text NOT NULL CHECK (status = ANY (ARRAY['present'::text, 'absent'::text, 'late'::text])),
+  joined_at timestamp with time zone,
+  left_at timestamp with time zone,
+  duration_minutes integer DEFAULT 0,
+  marked_by text DEFAULT 'system'::text,
+  notes text,
+  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  username character varying,
+  CONSTRAINT attendance_pkey PRIMARY KEY (id),
+  CONSTRAINT attendance_call_id_fkey FOREIGN KEY (call_id) REFERENCES public.meetings(call_id)
 );
-
--- Calls Table
-CREATE TABLE calls (
-    id TEXT PRIMARY KEY,
-    created_by_id TEXT NOT NULL REFERENCES users(id),
-    state JSONB,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    started_at TIMESTAMP WITH TIME ZONE
+CREATE TABLE public.broadcast_settings (
+  id bigint NOT NULL,
+  layout text NOT NULL,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT broadcast_settings_pkey PRIMARY KEY (id)
 );
-
--- Participants Table
-CREATE TABLE participants (
-    id SERIAL PRIMARY KEY,
-    call_id TEXT NOT NULL REFERENCES calls(id),
-    user_id TEXT NOT NULL REFERENCES users(id),
-    joined_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    left_at TIMESTAMP WITH TIME ZONE,
-    UNIQUE(call_id, user_id)
+CREATE TABLE public.calls (
+  id text NOT NULL,
+  created_by_id text NOT NULL,
+  state jsonb,
+  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  started_at timestamp with time zone,
+  CONSTRAINT calls_pkey PRIMARY KEY (id),
+  CONSTRAINT calls_created_by_id_fkey FOREIGN KEY (created_by_id) REFERENCES public.users(id)
 );
-
--- Recordings Table
-CREATE TABLE recordings (
-    id TEXT PRIMARY KEY,
-    call_id TEXT NOT NULL REFERENCES calls(id),
-    filename TEXT NOT NULL,
-    start_time TIMESTAMP WITH TIME ZONE,
-    end_time TIMESTAMP WITH TIME ZONE,
-    url TEXT NOT NULL
+CREATE TABLE public.chat_messages (
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  call_id text NOT NULL,
+  sender text NOT NULL,
+  text text NOT NULL,
+  is_pinned boolean NOT NULL DEFAULT false,
+  attachment_url text,
+  attachment_name text,
+  CONSTRAINT chat_messages_pkey PRIMARY KEY (id)
 );
-
--- Polls Table
-CREATE TABLE polls (
-    id SERIAL PRIMARY KEY,
-    call_id TEXT NOT NULL REFERENCES calls(id),
-    question TEXT NOT NULL,
-    options JSONB NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE public.meetings (
+  id integer NOT NULL DEFAULT nextval('meetings_id_seq'::regclass),
+  call_id text NOT NULL UNIQUE,
+  title text NOT NULL,
+  description text,
+  start_time timestamp with time zone NOT NULL,
+  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT meetings_pkey PRIMARY KEY (id)
 );
-
--- Poll Votes Table
-CREATE TABLE poll_votes (
-    id SERIAL PRIMARY KEY,
-    poll_id INTEGER NOT NULL REFERENCES polls(id),
-    user_id TEXT NOT NULL REFERENCES users(id),
-    option_index INTEGER NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(poll_id, user_id)
+CREATE TABLE public.participants (
+  id integer NOT NULL DEFAULT nextval('participants_id_seq'::regclass),
+  call_id text NOT NULL,
+  user_id text NOT NULL,
+  joined_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  left_at timestamp with time zone,
+  CONSTRAINT participants_pkey PRIMARY KEY (id),
+  CONSTRAINT participants_call_id_fkey FOREIGN KEY (call_id) REFERENCES public.calls(id),
+  CONSTRAINT participants_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id)
 );
-
--- Superchats Table
-CREATE TABLE superchats (
-    id SERIAL PRIMARY KEY,
-    call_id TEXT NOT NULL REFERENCES calls(id),
-    user_id TEXT NOT NULL REFERENCES users(id),
-    message TEXT NOT NULL,
-    amount NUMERIC(10, 2) NOT NULL,
-    payment_status TEXT NOT NULL DEFAULT 'pending',
-    order_reference TEXT NOT NULL UNIQUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE public.poll_options (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  poll_id bigint,
+  text text,
+  position smallint,
+  CONSTRAINT poll_options_pkey PRIMARY KEY (id),
+  CONSTRAINT poll_options_poll_id_fkey FOREIGN KEY (poll_id) REFERENCES public.polls(id)
 );
-
--- Query 2
--- Chat Messages Table
-CREATE TABLE chat_messages (
-    id SERIAL PRIMARY KEY,
-    call_id TEXT NOT NULL REFERENCES calls(id),
-    user_id TEXT NOT NULL REFERENCES users(id),
-    message TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE public.poll_votes (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  user_id text,
+  poll_option_id bigint,
+  poll_id bigint,
+  CONSTRAINT poll_votes_pkey PRIMARY KEY (id),
+  CONSTRAINT poll_votes_poll_option_id_fkey FOREIGN KEY (poll_option_id) REFERENCES public.poll_options(id),
+  CONSTRAINT poll_votes_poll_id_fkey FOREIGN KEY (poll_id) REFERENCES public.polls(id)
 );
-
--- Query 3
--- Rename the 'message' column to 'text'
-ALTER TABLE chat_messages
-RENAME COLUMN message TO text;
-
--- Drop the old user_id column and its foreign key constraint
-ALTER TABLE chat_messages
-DROP COLUMN user_id;
-
--- Add the new 'sender' column that the code is using
-ALTER TABLE chat_messages
-ADD COLUMN sender TEXT;
-
--- Query 4
--- Drop the existing, incorrect tables first to avoid conflicts
-DROP TABLE IF EXISTS "public"."poll_votes";
-DROP TABLE IF EXISTS "public"."poll_options";
-DROP TABLE IF EXISTS "public"."polls";
-DROP TABLE IF EXISTS "public"."chat_messages";
-
--- Recreate the Polls table with all required columns
-CREATE TABLE "public"."polls" (
-    "id" bigint NOT NULL,
-    "created_at" timestamp with time zone DEFAULT now() NOT NULL,
-    "call_id" text,
-    "question" text,
-    "is_active" boolean DEFAULT true,
-    "duration_seconds" integer
+CREATE TABLE public.polls (
+  id bigint GENERATED ALWAYS AS IDENTITY NOT NULL,
+  created_at timestamp with time zone NOT NULL DEFAULT now(),
+  call_id text,
+  question text,
+  is_active boolean DEFAULT true,
+  duration_seconds integer,
+  end_time timestamp with time zone,
+  CONSTRAINT polls_pkey PRIMARY KEY (id)
 );
-ALTER TABLE "public"."polls" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
-    SEQUENCE NAME "public"."polls_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
+CREATE TABLE public.recordings (
+  id text NOT NULL,
+  call_id text NOT NULL,
+  filename text NOT NULL,
+  start_time timestamp with time zone,
+  end_time timestamp with time zone,
+  url text NOT NULL,
+  CONSTRAINT recordings_pkey PRIMARY KEY (id),
+  CONSTRAINT recordings_call_id_fkey FOREIGN KEY (call_id) REFERENCES public.calls(id)
 );
-ALTER TABLE ONLY "public"."polls" ADD CONSTRAINT "polls_pkey" PRIMARY KEY (id);
-
-
--- Create the Poll Options table
-CREATE TABLE "public"."poll_options" (
-    "id" bigint NOT NULL,
-    "created_at" timestamp with time zone DEFAULT now() NOT NULL,
-    "poll_id" bigint,
-    "text" text,
-    "position" smallint
+CREATE TABLE public.superchats (
+  id integer NOT NULL DEFAULT nextval('superchats_id_seq'::regclass),
+  call_id text NOT NULL,
+  sender_id text NOT NULL,
+  message text NOT NULL,
+  amount numeric NOT NULL,
+  payment_status text NOT NULL DEFAULT 'pending'::text,
+  order_reference text NOT NULL UNIQUE,
+  timestamp timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  sender_name text,
+  currency text,
+  is_pinned boolean DEFAULT false,
+  CONSTRAINT superchats_pkey PRIMARY KEY (id),
+  CONSTRAINT superchats_call_id_fkey FOREIGN KEY (call_id) REFERENCES public.calls(id),
+  CONSTRAINT superchats_user_id_fkey FOREIGN KEY (sender_id) REFERENCES public.users(id)
 );
-ALTER TABLE "public"."poll_options" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
-    SEQUENCE NAME "public"."poll_options_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
+CREATE TABLE public.users (
+  id text NOT NULL,
+  email text NOT NULL UNIQUE,
+  username text NOT NULL,
+  first_name text,
+  last_name text,
+  image_url text,
+  created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT users_pkey PRIMARY KEY (id)
 );
-ALTER TABLE ONLY "public"."poll_options" ADD CONSTRAINT "poll_options_pkey" PRIMARY KEY (id);
-ALTER TABLE ONLY "public"."poll_options" ADD CONSTRAINT "poll_options_poll_id_fkey" FOREIGN KEY (poll_id) REFERENCES public.polls(id) ON DELETE CASCADE;
-
-
--- Create the Poll Votes table
-CREATE TABLE "public"."poll_votes" (
-    "id" bigint NOT NULL,
-    "created_at" timestamp with time zone DEFAULT now() NOT NULL,
-    "user_id" text,
-    "poll_option_id" bigint
-);
-ALTER TABLE "public"."poll_votes" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
-    SEQUENCE NAME "public"."poll_votes_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-ALTER TABLE ONLY "public"."poll_votes" ADD CONSTRAINT "poll_votes_pkey" PRIMARY KEY (id);
-ALTER TABLE ONLY "public"."poll_votes" ADD CONSTRAINT "poll_votes_poll_option_id_fkey" FOREIGN KEY (poll_option_id) REFERENCES public.poll_options(id) ON DELETE CASCADE;
-
-
--- Recreate the Chat Messages table with the correct columns
-CREATE TABLE "public"."chat_messages" (
-    "id" bigint NOT NULL,
-    "call_id" text,
-    "sender" text,
-    "text" text,
-    "created_at" timestamp with time zone DEFAULT now() NOT NULL
-);
-ALTER TABLE "public"."chat_messages" ALTER COLUMN "id" ADD GENERATED BY DEFAULT AS IDENTITY (
-    SEQUENCE NAME "public"."messages_id_seq"
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1
-);
-ALTER TABLE ONLY "public"."chat_messages" ADD CONSTRAINT "messages_pkey" PRIMARY KEY (id);
-
--- IMPORTANT: Enable Realtime on the new tables
--- You might need to do this in the Supabase UI under Database > Replication,
--- but this command attempts to do it via SQL.
-alter publication supabase_realtime add table polls, poll_options, poll_votes, chat_messages;
-
-
--- Query 5
-ALTER TABLE polls
-ADD COLUMN end_time TIMESTAMP WITH TIME ZONE;
-
--- Query 6
--- Add the poll_id column to the poll_votes table
-ALTER TABLE "public"."poll_votes"
-ADD COLUMN "poll_id" bigint;
-
--- Add a foreign key to ensure data integrity
-ALTER TABLE "public"."poll_votes"
-ADD CONSTRAINT "poll_votes_poll_id_fkey"
-FOREIGN KEY ("poll_id")
-REFERENCES "public"."polls"(id)
-ON DELETE CASCADE;
-
--- Query 7: Fix superchats table schema (Revised)
--- Rename user_id to sender_id to match the application code
-ALTER TABLE "public"."superchats" RENAME COLUMN "user_id" TO "sender_id";
-
--- Add sender_name column to store the name of the user sending the superchat
-ALTER TABLE "public"."superchats" ADD COLUMN "sender_name" TEXT;
-
--- Add currency column
-ALTER TABLE "public"."superchats" ADD COLUMN "currency" TEXT;
-
--- Add is_pinned column for the pinning feature
-ALTER TABLE "public"."superchats" ADD COLUMN "is_pinned" BOOLEAN DEFAULT false;
-
--- Rename created_at to timestamp to match the application code
-ALTER TABLE "public"."superchats" RENAME COLUMN "created_at" TO "timestamp";
-
--- Note: The 'payment_status' column is intentionally kept for webhook functionality.
-

@@ -16,9 +16,9 @@ export interface AttendanceRecord {
   notes?: string;
   created_at: string;
   updated_at: string;
+  meeting_title?: string;
 }
 
-// ... (rest of the interfaces remain the same)
 export interface AttendanceStats {
   user_id: string;
   username: string;
@@ -31,19 +31,6 @@ export interface AttendanceStats {
   total_duration_minutes: number;
 }
 
-export interface CallAttendanceStats {
-  call_id: string;
-  call_date: string;
-  created_by_id: string;
-  total_participants: number;
-  present_count: number;
-  absent_count: number;
-  late_count: number;
-  attendance_percentage: number;
-}
-
-
-// Check if user is admin
 export const isUserAdmin = async (): Promise<boolean> => {
   try {
     const user = await currentUser();
@@ -62,22 +49,77 @@ export const isUserAdmin = async (): Promise<boolean> => {
   }
 };
 
-// Mark attendance when user joins a call
 export const markAttendance = async (
   callId: string,
   userId: string,
-  username: string, // Added username
+  username: string,
   status: 'present' | 'late' = 'present',
   joinedAt?: Date
 ): Promise<{ success: boolean; error?: string; data?: AttendanceRecord }> => {
   try {
-    const { data, error } = await supabase
+    // Step 1: Ensure the user exists in our public.users table to prevent race conditions.
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('id', userId)
+      .single();
+
+    if (userError || !user) {
+      // User does not exist, so create them. This handles the race condition with Clerk webhooks.
+      const clerkUser = await currentUser();
+      if (clerkUser && clerkUser.id === userId) {
+        const { error: insertUserError } = await supabase.from('users').insert({
+          id: clerkUser.id,
+          email: clerkUser.emailAddresses[0]?.emailAddress || '',
+          username: clerkUser.username || username,
+          first_name: clerkUser.firstName,
+          last_name: clerkUser.lastName,
+          image_url: clerkUser.imageUrl,
+        });
+
+        if (insertUserError) {
+          console.error('Error creating user during attendance marking:', insertUserError);
+          return { success: false, error: `Failed to create user: ${insertUserError.message}` };
+        }
+      } else {
+          // Fallback if clerk user isn't found, though this is unlikely.
+         const { error: insertUserError } = await supabase.from('users').insert({
+            id: userId,
+            email: 'email@placeholder.com', // Placeholder
+            username: username,
+          });
+           if (insertUserError) {
+              console.error('Error creating placeholder user during attendance marking:', insertUserError);
+              return { success: false, error: `Failed to create user: ${insertUserError.message}` };
+           }
+      }
+    }
+
+    // Step 2: Ensure a meeting record exists.
+    const { error: meetingError } = await supabase.from('meetings').upsert(
+      {
+        call_id: callId,
+        title: 'Instant Meeting',
+        start_time: new Date().toISOString(),
+      },
+      {
+        onConflict: 'call_id',
+      }
+    );
+
+    if (meetingError) {
+      console.error('Error ensuring meeting record exists:', meetingError);
+      return { success: false, error: `Failed to ensure meeting record: ${meetingError.message}` };
+    }
+
+    // Step 3: Now that user and meeting are guaranteed to exist, mark the attendance.
+    const { data, error: attendanceError } = await supabase
       .from('attendance')
       .upsert(
         {
           call_id: callId,
           user_id: userId,
-          username, // Save the username
+          username,
           status,
           joined_at: joinedAt?.toISOString() || new Date().toISOString(),
         },
@@ -86,22 +128,18 @@ export const markAttendance = async (
       .select()
       .single();
 
-    if (error) {
-      console.error('Error marking attendance:', error);
-      return { success: false, error: error.message };
+    if (attendanceError) {
+      console.error('Error marking attendance:', attendanceError);
+      return { success: false, error: attendanceError.message };
     }
 
     return { success: true, data: data as AttendanceRecord };
   } catch (error: any) {
-    console.error('Error marking attendance:', error);
+    console.error('Error in markAttendance flow:', error);
     return { success: false, error: error.message };
   }
 };
 
-// ... (the rest of the file remains the same)
-
-
-// Update attendance when user leaves a call
 export const updateAttendanceOnLeave = async (
   callId: string,
   userId: string,
@@ -127,7 +165,6 @@ export const updateAttendanceOnLeave = async (
   }
 };
 
-// Get user's attendance records
 export const getUserAttendance = async (
   userId: string,
   limit = 50,
@@ -135,8 +172,11 @@ export const getUserAttendance = async (
 ): Promise<{ success: boolean; data?: any[]; error?: string }> => {
   try {
     const { data, error } = await supabase
-      .from('detailed_attendance')
-      .select('*')
+      .from('attendance')
+      .select(`
+        *,
+        meetings (title)
+      `)
       .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
@@ -153,7 +193,6 @@ export const getUserAttendance = async (
   }
 };
 
-// Get user's attendance statistics
 export const getUserAttendanceStats = async (
   userId: string
 ): Promise<{ success: boolean; data?: AttendanceStats; error?: string }> => {
@@ -176,7 +215,6 @@ export const getUserAttendanceStats = async (
   }
 };
 
-// Get all attendance records (admin only)
 export const getAllAttendance = async (
   limit = 100,
   offset = 0
@@ -188,8 +226,12 @@ export const getAllAttendance = async (
     }
 
     const { data, error } = await supabase
-      .from('detailed_attendance')
-      .select('*')
+      .from('attendance')
+      .select(`
+        *,
+        meetings (title),
+        users (username, email)
+      `)
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -205,7 +247,6 @@ export const getAllAttendance = async (
   }
 };
 
-// Get all users' attendance statistics (admin only)
 export const getAllUsersAttendanceStats = async (): Promise<{
   success: boolean;
   data?: AttendanceStats[];
@@ -225,7 +266,7 @@ export const getAllUsersAttendanceStats = async (): Promise<{
 
     if (error) {
       console.error('Error fetching all users attendance stats:', error);
-      return { success: false, error: error.message, isAdmin: true };
+      return { success: false, error: message, isAdmin: true };
     }
 
     return { success: true, data: data as AttendanceStats[], isAdmin: true };
@@ -235,14 +276,17 @@ export const getAllUsersAttendanceStats = async (): Promise<{
   }
 };
 
-// Get attendance for a specific call (admin only)
 export const getCallAttendance = async (
   callId: string
 ): Promise<{ success: boolean; data?: any[]; error?: string }> => {
   try {
     const { data, error } = await supabase
-      .from('detailed_attendance')
-      .select('*')
+      .from('attendance')
+      .select(`
+        *,
+        meetings (title),
+        users (username, email)
+      `)
       .eq('call_id', callId)
       .order('created_at', { ascending: false });
 
@@ -258,7 +302,6 @@ export const getCallAttendance = async (
   }
 };
 
-// Update attendance record (admin only)
 export const updateAttendance = async (
   attendanceId: number,
   updates: Partial<AttendanceRecord>
@@ -295,7 +338,6 @@ export const updateAttendance = async (
   }
 };
 
-// Delete attendance record (admin only)
 export const deleteAttendance = async (
   attendanceId: number
 ): Promise<{ success: boolean; error?: string }> => {
@@ -322,7 +364,6 @@ export const deleteAttendance = async (
   }
 };
 
-// Get attendance statistics for a date range (admin only)
 export const getAttendanceByDateRange = async (
   startDate: Date,
   endDate: Date
@@ -334,8 +375,12 @@ export const getAttendanceByDateRange = async (
     }
 
     const { data, error } = await supabase
-      .from('detailed_attendance')
-      .select('*')
+      .from('attendance')
+      .select(`
+        *,
+        meetings (title),
+        users (username, email)
+      `)
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString())
       .order('created_at', { ascending: false });
@@ -352,7 +397,6 @@ export const getAttendanceByDateRange = async (
   }
 };
 
-// Update attendance for all when admin ends call
 export const endCallForAllParticipants = async (
   callId: string
 ): Promise<{ success: boolean; error?: string }> => {

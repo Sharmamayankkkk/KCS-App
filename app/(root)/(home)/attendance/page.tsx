@@ -1,8 +1,9 @@
+
 'use client';
 
 import { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { Calendar, Clock, TrendingUp, BarChart3 } from 'lucide-react';
+import { Calendar, Clock, TrendingUp, BarChart3, BookOpen } from 'lucide-react';
 import { getUserAttendance, getUserAttendanceStats } from '@/actions/attendance.actions';
 import Loader from '@/components/Loader';
 
@@ -14,10 +15,8 @@ interface AttendanceRecord {
   left_at?: string;
   duration_minutes?: number;
   created_at: string;
-  calls?: {
-    id: string;
-    created_at: string;
-    started_at?: string;
+  meeting?: {
+    title: string;
   };
 }
 
@@ -150,7 +149,7 @@ const AttendancePage = () => {
 
       {stats && stats.total_meetings > 0 && (
         <div className="rounded-lg p-6" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
-          <h2 className="mb-4 text-xl font-semibold">Attendance Overview</h2>
+          <h2 className="mb-4 text-xl font-semibold text-white">Attendance Overview</h2>
           <div className="space-y-4">
             <ProgressBar label="Present" value={stats.present_count} total={stats.total_meetings} color="#10B981" />
             <ProgressBar label="Absent" value={stats.absent_count} total={stats.total_meetings} color="#EF4444" />
@@ -168,19 +167,19 @@ const AttendancePage = () => {
             <table className="w-full">
               <thead>
                 <tr style={{ borderBottom: '2px solid #374151', color: '#B0A8A3' }}>
+                  <th className="pb-3 text-left font-semibold">Meeting</th>
                   <th className="pb-3 text-left font-semibold">Date</th>
-                  <th className="pb-3 text-left font-semibold">Time</th>
                   <th className="pb-3 text-left font-semibold">Status</th>
                   <th className="pb-3 text-left font-semibold">Duration</th>
                 </tr>
               </thead>
               <tbody>
                 {attendance.map((record) => (
-                  <tr key={record.id} style={{ borderBottom: '1px solid #374151', color: '#E0DBD8' }} className="transition-colors hover:bg-opacity-5">
-                    <td className="py-3">{formatDate(record.calls?.created_at || record.created_at)}</td>
-                    <td className="py-3">{record.joined_at ? formatTime(record.joined_at) : 'N/A'}</td>
+                  <tr key={record.id} style={{ borderBottom: '1px solid #374151' }} className="transition-colors hover:bg-opacity-5">
+                    <td className="py-3 font-medium" style={{ color: '#FFFFFF' }}>{record.meeting?.title || 'Meeting'}</td>
+                    <td className="py-3 text-gray-300">{formatDate(record.created_at)}</td>
                     <td className="py-3"><span style={getStatusBadgeStyle(record.status)}>{record.status}</span></td>
-                    <td className="py-3">{formatDuration(record.duration_minutes)}</td>
+                    <td className="py-3 text-gray-300">{formatDuration(record.duration_minutes)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -205,7 +204,7 @@ const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string
 
 const ProgressBar = ({ label, value, total, color }: { label: string, value: number, total: number, color: string }) => (
     <div>
-        <div className="mb-2 flex justify-between font-medium">
+        <div className="mb-2 flex justify-between font-medium text-white">
             <span>{label}</span>
             <span>{value || 0}</span>
         </div>
