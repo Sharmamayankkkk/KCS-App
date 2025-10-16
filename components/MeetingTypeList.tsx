@@ -23,6 +23,7 @@ const MeetingTypeList = () => {
     dateTime: new Date(),
     description: '',
     link: '',
+    title: '',
   });
   const [callDetail, setCallDetail] = useState<Call>();
   const { toast } = useToast();
@@ -30,7 +31,13 @@ const MeetingTypeList = () => {
   const createMeeting = async () => {
     if (!client || !user) return;
     try {
-      if (!values.dateTime) {
+      if (!values.title && (meetingState === 'isInstantMeeting' || meetingState === 'isScheduleMeeting')) {
+        toast({
+          title: 'Please add a meeting title',
+        });
+        return;
+      }
+      if (!values.dateTime && meetingState === 'isScheduleMeeting') {
         toast({
           title: 'Please select a date and time',
         });
@@ -39,20 +46,45 @@ const MeetingTypeList = () => {
       const id = Math.random().toString(36).substring(2, 11);
       const call = client.call('default', id);
       if (!call) throw new Error('Failed to create meeting');
+      
       const startsAt = values.dateTime.toISOString() || new Date(Date.now()).toISOString();
-      const description = values.description || 'Instant Meeting';
+      const description = values.description || '';
+      
       await call.getOrCreate({
         data: {
           starts_at: startsAt,
           custom: {
+            title: values.title,
             description,
           },
         },
       });
+      
       setCallDetail(call);
-      if (!values.description) {
+
+      // Save meeting metadata to the database
+      const response = await fetch('/api/meetings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          call_id: call.id,
+          title: values.title,
+          description: values.description,
+          start_time: startsAt,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save meeting metadata');
+      }
+      
+      if (meetingState === 'isInstantMeeting') {
         router.push(`/meeting/${call.id}`);
       }
+      
       toast({
         title: 'Meeting Created',
       });
@@ -70,7 +102,8 @@ const MeetingTypeList = () => {
 Jaya Srila Prabhupada 🙏🏻
 Jaya H.G. Gauranga Sundar Das Gurudev 🙏🏻
 
-${values.description || 'Join our meeting'}
+${values.title || 'Join our meeting'}
+${values.description}
 
 Join the meet here:
 ${meetingLink}
@@ -83,7 +116,6 @@ Rama Rama, Hare Hare`;
   const handleShare = async () => {
     const encodedMessage = encodeURIComponent(shareMessage);
     
-    // Check if native share is available (mobile devices)
     if (navigator.share) {
       try {
         await navigator.share({
@@ -97,7 +129,6 @@ Rama Rama, Hare Hare`;
         }
       }
     } else {
-      // Fallback: Copy to clipboard for desktop
       navigator.clipboard.writeText(shareMessage);
       toast({ 
         title: 'Message Copied!',
@@ -162,6 +193,19 @@ Rama Rama, Hare Hare`;
         >
           <div className="flex flex-col gap-2.5">
             <label className="text-base font-normal leading-[22.4px]" style={{ color: '#292F36' }}>
+              Add a Title
+            </label>
+            <Input
+              className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+              style={{
+                backgroundColor: 'rgba(250, 245, 241, 0.5)',
+                color: '#292F36'
+              }}
+              onChange={(e) =>
+                setValues({ ...values, title: e.target.value })
+              }
+            />
+            <label className="text-base font-normal leading-[22.4px]" style={{ color: '#292F36' }}>
               Add a description
             </label>
             <Textarea
@@ -211,7 +255,6 @@ Rama Rama, Hare Hare`;
             </p>
 
             <div className="flex flex-col gap-3">
-              {/* Copy Link Button */}
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(meetingLink);
@@ -223,7 +266,6 @@ Rama Rama, Hare Hare`;
                 Copy Meeting Link
               </button>
 
-              {/* Share Button */}
               <button
                 onClick={handleShare}
                 className="flex items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-3 text-white hover:bg-green-600 transition"
@@ -232,7 +274,6 @@ Rama Rama, Hare Hare`;
                 Share Meeting
               </button>
 
-              {/* Quick Share Options */}
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={shareToWhatsApp}
@@ -269,7 +310,22 @@ Rama Rama, Hare Hare`;
         title="Start an Instant Meeting"
         buttonText="Start Meeting"
         handleClick={createMeeting}
-      />
+      >
+        <div className="flex flex-col gap-2.5">
+          <label className="text-base font-normal leading-[22.4px]" style={{ color: '#292F36' }}>
+            Meeting Title
+          </label>
+          <Input
+            placeholder="Enter meeting title"
+            className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            style={{
+              backgroundColor: 'rgba(250, 245, 241, 0.5)',
+              color: '#292F36'
+            }}
+            onChange={(e) => setValues({ ...values, title: e.target.value })}
+          />
+        </div>
+      </MeetingModal>
       
       <MeetingModal
         isOpen={meetingState === 'isJoiningMeeting'}
