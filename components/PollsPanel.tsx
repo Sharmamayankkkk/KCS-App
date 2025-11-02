@@ -366,10 +366,11 @@ const PollOption = ({ option, hasVoted, isVotedOption, totalVotes, showResults, 
     return (
       <div className="relative w-full h-12 rounded-lg bg-gray-200/70 overflow-hidden">
         <motion.div
-          className={cn("absolute top-0 left-0 h-full", isVotedOption ? 'bg-blue-500' : 'bg-gray-400/80')}
+          className={cn("absolute top-0 left-0 h-full", isVotedOption ? 'bg-primary-accent' : 'bg-secondary-background')}
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
+          style={isVotedOption ? { backgroundColor: '#A41F13' } : { backgroundColor: '#8F7A6E' }}
         />
         <div className="absolute inset-0 flex items-center justify-between px-4">
           <span className={cn("font-semibold", isVotedOption ? 'text-white' : 'text-gray-800')}>{option.text}</span>

@@ -34,7 +34,7 @@ const AMOUNT_TIERS = [
     label: "₹25",
     duration: "30s",
     icon: Star,
-    color: "blue",
+    color: "light",
     description: "Nitya Seva",
   },
   {
@@ -42,7 +42,7 @@ const AMOUNT_TIERS = [
     label: "₹50",
     duration: "1m 10s",
     icon: Zap,
-    color: "purple",
+    color: "secondary",
     description: "Bhakti Boost",
   },
   {
@@ -50,7 +50,7 @@ const AMOUNT_TIERS = [
     label: "₹100",
     duration: "2m 30s",
     icon: Sparkles,
-    color: "pink",
+    color: "medium",
     description: "Gopi Glimmer",
   },
   {
@@ -58,7 +58,7 @@ const AMOUNT_TIERS = [
     label: "₹250",
     duration: "6m",
     icon: Gem,
-    color: "orange",
+    color: "accent",
     description: "Vaikuntha Vibes",
   },
   {
@@ -66,7 +66,7 @@ const AMOUNT_TIERS = [
     label: "₹500",
     duration: "12m",
     icon: Crown,
-    color: "red",
+    color: "accent-dark",
     description: "Raja Bhakta Blessing",
   },
   {
@@ -74,7 +74,7 @@ const AMOUNT_TIERS = [
     label: "₹1000",
     duration: "25m",
     icon: Trophy,
-    color: "emerald",
+    color: "premium",
     description: "Parama Bhakta Offering",
   },
   {
@@ -82,7 +82,7 @@ const AMOUNT_TIERS = [
     label: "₹5000",
     duration: "1h 10m",
     icon: Award,
-    color: "gold",
+    color: "ultimate",
     description: "Goloka Mahadhaan",
   },
 ]
@@ -319,85 +319,85 @@ export const SendSuperchatModal = ({
         glow: string
       }
     > = {
-      emerald: {
+      light: {
         bg: isSelected
-          ? "bg-gradient-to-br from-emerald-500 to-emerald-600"
-          : "bg-gradient-to-br from-emerald-50 to-emerald-100 hover:from-emerald-100 hover:to-emerald-200",
-        text: isSelected ? "text-white" : "text-emerald-700",
+          ? "bg-gradient-to-br from-[#E0DBD8] to-[#D0C9C5]"
+          : "bg-gradient-to-br from-[#FAF5F1] to-[#E0DBD8] hover:from-[#E0DBD8] hover:to-[#D0C9C5]",
+        text: isSelected ? "text-[#292F36]" : "text-[#292F36]",
         border: isSelected
-          ? "border-emerald-500 shadow-lg shadow-emerald-200"
-          : "border-emerald-200 hover:border-emerald-300",
-        icon: isSelected ? "text-white" : "text-emerald-600",
-        glow: isSelected ? "shadow-lg shadow-emerald-200" : "",
+          ? "border-[#8F7A6E] shadow-lg shadow-[#E0DBD8]"
+          : "border-[#E0DBD8] hover:border-[#8F7A6E]",
+        icon: isSelected ? "text-[#A41F13]" : "text-[#8F7A6E]",
+        glow: isSelected ? "shadow-lg shadow-[#E0DBD8]" : "",
       },
-      blue: {
+      secondary: {
         bg: isSelected
-          ? "bg-gradient-to-br from-blue-500 to-blue-600"
-          : "bg-gradient-to-br from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200",
-        text: isSelected ? "text-white" : "text-blue-700",
+          ? "bg-gradient-to-br from-[#8F7A6E] to-[#7A6A5F]"
+          : "bg-gradient-to-br from-[#E0DBD8] to-[#D0C9C5] hover:from-[#D0C9C5] hover:to-[#C0B9B5]",
+        text: isSelected ? "text-white" : "text-[#292F36]",
         border: isSelected
-          ? "border-blue-500 shadow-lg shadow-blue-200"
-          : "border-blue-200 hover:border-blue-300",
-        icon: isSelected ? "text-white" : "text-blue-600",
-        glow: isSelected ? "shadow-lg shadow-blue-200" : "",
+          ? "border-[#8F7A6E] shadow-lg shadow-[#8F7A6E]/30"
+          : "border-[#8F7A6E] hover:border-[#7A6A5F]",
+        icon: isSelected ? "text-white" : "text-[#8F7A6E]",
+        glow: isSelected ? "shadow-lg shadow-[#8F7A6E]/30" : "",
       },
-      purple: {
+      medium: {
         bg: isSelected
-          ? "bg-gradient-to-br from-purple-500 to-purple-600"
-          : "bg-gradient-to-br from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200",
-        text: isSelected ? "text-white" : "text-purple-700",
+          ? "bg-gradient-to-br from-[#A41F13] to-[#8F1A10]"
+          : "bg-gradient-to-br from-[#FAF5F1] to-[#E0DBD8] hover:from-[#E0DBD8] hover:to-[#D0C9C5]",
+        text: isSelected ? "text-white" : "text-[#292F36]",
         border: isSelected
-          ? "border-purple-500 shadow-lg shadow-purple-200"
-          : "border-purple-200 hover:border-purple-300",
-        icon: isSelected ? "text-white" : "text-purple-600",
-        glow: isSelected ? "shadow-lg shadow-purple-200" : "",
+          ? "border-[#A41F13] shadow-lg shadow-[#A41F13]/30"
+          : "border-[#A41F13]/30 hover:border-[#A41F13]",
+        icon: isSelected ? "text-white" : "text-[#A41F13]",
+        glow: isSelected ? "shadow-lg shadow-[#A41F13]/30" : "",
       },
-      pink: {
+      accent: {
         bg: isSelected
-          ? "bg-gradient-to-br from-pink-500 to-pink-600"
-          : "bg-gradient-to-br from-pink-50 to-pink-100 hover:from-pink-100 hover:to-pink-200",
-        text: isSelected ? "text-white" : "text-pink-700",
+          ? "bg-gradient-to-br from-[#A41F13] to-[#8F1A10]"
+          : "bg-gradient-to-br from-[#E0DBD8] to-[#D0C9C5] hover:from-[#D0C9C5] hover:to-[#C0B9B5]",
+        text: isSelected ? "text-white" : "text-[#292F36]",
         border: isSelected
-          ? "border-pink-500 shadow-lg shadow-pink-200"
-          : "border-pink-200 hover:border-pink-300",
-        icon: isSelected ? "text-white" : "text-pink-600",
-        glow: isSelected ? "shadow-lg shadow-pink-200" : "",
+          ? "border-[#A41F13] shadow-lg shadow-[#A41F13]/40"
+          : "border-[#A41F13]/30 hover:border-[#A41F13]",
+        icon: isSelected ? "text-white" : "text-[#A41F13]",
+        glow: isSelected ? "shadow-lg shadow-[#A41F13]/40" : "",
       },
-      orange: {
+      "accent-dark": {
         bg: isSelected
-          ? "bg-gradient-to-br from-orange-500 to-orange-600"
-          : "bg-gradient-to-br from-orange-50 to-orange-100 hover:from-orange-100 hover:to-orange-200",
-        text: isSelected ? "text-white" : "text-orange-700",
+          ? "bg-gradient-to-br from-[#8F1A10] to-[#7A1610]"
+          : "bg-gradient-to-br from-[#E0DBD8] to-[#D0C9C5] hover:from-[#D0C9C5] hover:to-[#C0B9B5]",
+        text: isSelected ? "text-white" : "text-[#292F36]",
         border: isSelected
-          ? "border-orange-500 shadow-lg shadow-orange-200"
-          : "border-orange-200 hover:border-orange-300",
-        icon: isSelected ? "text-white" : "text-orange-600",
-        glow: isSelected ? "shadow-lg shadow-orange-200" : "",
+          ? "border-[#8F1A10] shadow-lg shadow-[#A41F13]/50"
+          : "border-[#A41F13]/30 hover:border-[#A41F13]",
+        icon: isSelected ? "text-white" : "text-[#A41F13]",
+        glow: isSelected ? "shadow-lg shadow-[#A41F13]/50" : "",
       },
-      red: {
+      premium: {
         bg: isSelected
-          ? "bg-gradient-to-br from-red-500 to-red-600"
-          : "bg-gradient-to-br from-red-50 to-red-100 hover:from-red-100 hover:to-red-200",
-        text: isSelected ? "text-white" : "text-red-700",
+          ? "bg-gradient-to-br from-[#7A1610] to-[#6A1210]"
+          : "bg-gradient-to-br from-[#D0C9C5] to-[#C0B9B5] hover:from-[#C0B9B5] hover:to-[#B0A9A5]",
+        text: isSelected ? "text-white" : "text-[#292F36]",
         border: isSelected
-          ? "border-red-500 shadow-lg shadow-red-200"
-          : "border-red-200 hover:border-red-300",
-        icon: isSelected ? "text-white" : "text-red-600",
-        glow: isSelected ? "shadow-lg shadow-red-200" : "",
+          ? "border-[#7A1610] shadow-lg shadow-[#A41F13]/60"
+          : "border-[#A41F13]/30 hover:border-[#A41F13]",
+        icon: isSelected ? "text-white" : "text-[#A41F13]",
+        glow: isSelected ? "shadow-lg shadow-[#A41F13]/60" : "",
       },
-      gold: {
+      ultimate: {
         bg: isSelected
-          ? "bg-gradient-to-br from-yellow-500 via-amber-500 to-orange-500"
-          : "bg-gradient-to-br from-yellow-50 to-amber-100 hover:from-yellow-100 hover:to-amber-200",
-        text: isSelected ? "text-white" : "text-amber-700",
+          ? "bg-gradient-to-br from-[#6A1210] to-[#5A0F0D]"
+          : "bg-gradient-to-br from-[#C0B9B5] to-[#B0A9A5] hover:from-[#B0A9A5] hover:to-[#A09995]",
+        text: isSelected ? "text-white" : "text-[#292F36]",
         border: isSelected
-          ? "border-amber-500 shadow-lg shadow-amber-200"
-          : "border-amber-200 hover:border-amber-300",
-        icon: isSelected ? "text-white" : "text-amber-600",
-        glow: isSelected ? "shadow-lg shadow-amber-200" : "",
+          ? "border-[#6A1210] shadow-lg shadow-[#A41F13]/70"
+          : "border-[#A41F13]/30 hover:border-[#A41F13]",
+        icon: isSelected ? "text-white" : "text-[#A41F13]",
+        glow: isSelected ? "shadow-lg shadow-[#A41F13]/70" : "",
       },
     }
-    return colors[color] || colors.blue
+    return colors[color] || colors.light
   }
 
   return (
@@ -413,27 +413,28 @@ export const SendSuperchatModal = ({
       >
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="px-4 py-4 sm:py-2 sm:px-6 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-purple-50">
+          <div className="px-4 py-4 sm:py-2 sm:px-6 border-b border-gray-100" style={{ background: 'linear-gradient(to right, #FAF5F1, #E0DBD8)' }}>
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(to bottom right, #A41F13, #8F1A10)' }}>
                                   <Send size={20} className="text-white" />
                                                 </div>
                 {/* <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
                   <Loader2 size={20} className="text-white" />
                 </div> */}
                 <div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold" style={{ color: '#292F36' }}>
                     Send Superchat
                   </h3>
-                  <p className="text-xs sm:text-sm md:text-base text-gray-500 mt-1">
+                  <p className="text-xs sm:text-sm md:text-base mt-1" style={{ color: '#8F7A6E' }}>
                     Support with a highlighted message
                   </p>
                 </div>
               </div>
               <button
                 onClick={handleClose}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                style={{ color: '#8F7A6E' }}
                 disabled={loading}
               >
                 <X size={20} />
@@ -444,10 +445,10 @@ export const SendSuperchatModal = ({
           <div className="px-4 py-6 sm:px-6 space-y-6">
             {!scriptLoaded && (
               <div className="py-8 text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center">
-                  <Loader2 size={24} className="animate-spin text-blue-600" />
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FAF5F1' }}>
+                  <Loader2 size={24} className="animate-spin" style={{ color: '#A41F13' }} />
                 </div>
-                <p className="text-gray-600 font-medium">Loading payment gateway...</p>
+                <p className="font-medium" style={{ color: '#8F7A6E' }}>Loading payment gateway...</p>
                 <p className="text-gray-400 text-sm mt-1">Please wait a moment</p>
               </div>
             )}

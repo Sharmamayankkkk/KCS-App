@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import HomeCard from './HomeCard';
 import MeetingModal from './MeetingModal';
@@ -11,6 +11,7 @@ import { Textarea } from './ui/textarea';
 import ReactDatePicker from 'react-datepicker';
 import { Input } from './ui/input';
 import { PlusSquare, LogIn, Calendar, Video, CheckSquare, Copy, Share2, MessageCircle, Send, Facebook, ClipboardCheck } from 'lucide-react';
+import { isUserAdmin } from '@/lib/utils';
 
 const MeetingTypeList = () => {
   const router = useRouter();
@@ -28,8 +29,24 @@ const MeetingTypeList = () => {
   const [callDetail, setCallDetail] = useState<Call>();
   const { toast } = useToast();
 
+  const isAdmin = useMemo(() => {
+    const userEmail = user?.emailAddresses?.[0]?.emailAddress || '';
+    return isUserAdmin(userEmail);
+  }, [user]);
+
   const createMeeting = async () => {
     if (!client || !user) return;
+    
+    // Check if user is admin before creating meeting
+    if (!isAdmin) {
+      toast({
+        title: 'Access Denied',
+        description: 'Only administrators can create meetings.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    
     try {
       if (!values.title && (meetingState === 'isInstantMeeting' || meetingState === 'isScheduleMeeting')) {
         toast({
@@ -153,36 +170,42 @@ Rama Rama, Hare Hare`;
 
   return (
     <section className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-      <HomeCard
-        icon={PlusSquare}
-        title="New Meeting"
-        description="Start an instant meeting"
-        handleClick={() => setMeetingState('isInstantMeeting')}
-      />
+      {isAdmin && (
+        <HomeCard
+          icon={PlusSquare}
+          title="New Meeting"
+          description="Start an instant meeting"
+          handleClick={() => setMeetingState('isInstantMeeting')}
+        />
+      )}
       <HomeCard
         icon={LogIn}
         title="Join Meeting"
         description="via invitation link"
         handleClick={() => setMeetingState('isJoiningMeeting')}
       />
-      <HomeCard
-        icon={Calendar}
-        title="Schedule Meeting"
-        description="Plan your meeting"
-        handleClick={() => setMeetingState('isScheduleMeeting')}
-      />
+      {isAdmin && (
+        <HomeCard
+          icon={Calendar}
+          title="Schedule Meeting"
+          description="Plan your meeting"
+          handleClick={() => setMeetingState('isScheduleMeeting')}
+        />
+      )}
       <HomeCard
         icon={Video}
         title="View Recordings"
         description="Meeting Recordings"
         handleClick={() => router.push('/recordings')}
       />
-      <HomeCard
-        icon={ClipboardCheck}
-        title="Attendance"
-        description="Track meeting attendance"
-        handleClick={() => router.push('/attendance')}
-      />
+      {isAdmin && (
+        <HomeCard
+          icon={ClipboardCheck}
+          title="Attendance"
+          description="Track meeting attendance"
+          handleClick={() => router.push('/attendance')}
+        />
+      )}
 
       {!callDetail ? (
         <MeetingModal
@@ -247,10 +270,10 @@ Rama Rama, Hare Hare`;
         >
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-center">
-              <CheckSquare className="h-16 w-16 text-green-500" />
+              <CheckSquare className="h-16 w-16" style={{ color: '#A41F13' }} />
             </div>
             
-            <p className="text-sm text-gray-600">
+            <p className="text-sm" style={{ color: '#8F7A6E' }}>
               Your meeting has been scheduled successfully!
             </p>
 
@@ -260,7 +283,8 @@ Rama Rama, Hare Hare`;
                   navigator.clipboard.writeText(meetingLink);
                   toast({ title: 'Link Copied' });
                 }}
-                className="flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-4 py-3 text-white hover:bg-blue-600 transition"
+                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition"
+                style={{ backgroundColor: '#A41F13', color: '#FAF5F1' }}
               >
                 <Copy className="h-5 w-5" />
                 Copy Meeting Link
@@ -268,7 +292,8 @@ Rama Rama, Hare Hare`;
 
               <button
                 onClick={handleShare}
-                className="flex items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-3 text-white hover:bg-green-600 transition"
+                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition"
+                style={{ backgroundColor: '#8F7A6E', color: '#FAF5F1' }}
               >
                 <Share2 className="h-5 w-5" />
                 Share Meeting
