@@ -366,7 +366,7 @@ const PollOption = ({ option, hasVoted, isVotedOption, totalVotes, showResults, 
     return (
       <div className="relative w-full h-12 rounded-lg bg-gray-200/70 overflow-hidden">
         <motion.div
-          className={cn("absolute top-0 left-0 h-full", isVotedOption ? 'bg-primary-accent' : 'bg-secondary-background')}
+          className="absolute top-0 left-0 h-full"
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}

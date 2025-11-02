@@ -30,10 +30,8 @@ const PublicNavbar = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="flex items-center gap-2 text-sm font-medium transition-colors"
+              className="flex items-center gap-2 text-sm font-medium transition-colors hover:text-[#A41F13]"
               style={{ color: '#8F7A6E' }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = '#A41F13')}
-              onMouseLeave={(e) => (e.currentTarget.style.color = '#8F7A6E')}
             >
               {link.icon}
               <span>{link.text}</span>
