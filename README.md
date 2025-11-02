@@ -323,6 +323,31 @@ Super Chat is a monetization feature allowing viewers to send highlighted, timed
 
 ---
 
+## 🎨 Design System
+
+### Color Palette
+
+KCS Meet uses a professional, spiritually-inspired color palette throughout the application:
+
+**Primary Colors:**
+- **Primary Accent**: `#A41F13` - Deep maroon/red for primary actions, highlights
+- **Light Background**: `#FAF5F1` - Warm cream for primary backgrounds
+- **Secondary Background**: `#E0DBD8` - Light beige for secondary surfaces
+
+**Text Colors:**
+- **Primary Text**: `#292F36` - Dark gray for main content
+- **Secondary Text**: `#8F7A6E` - Brown-gray for secondary content
+
+**Usage Guidelines:**
+- Use Primary Accent for call-to-action buttons, active states, and important highlights
+- Use Light and Secondary Backgrounds to create visual hierarchy
+- Maintain consistent text colors for readability
+- Avoid bright, distracting colors (blue, green, yellow, orange) to maintain a calming, professional atmosphere
+
+This unified palette ensures visual consistency across all pages and components, creating a cohesive and professional user experience suitable for spiritual and community-focused platforms.
+
+---
+
 ## 🏗 Architecture
 
 ### High-Level Architecture
