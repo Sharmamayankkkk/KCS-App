@@ -136,7 +136,7 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
     <div className="flex flex-col h-full bg-[#19232d]/95 backdrop-blur-md rounded-lg p-4">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
-          <Crown className="text-yellow-400 mr-2" size={20} />
+          <Crown className="mr-2" size={20} style={{ color: '#A41F13' }} />
           <h3 className="text-lg font-semibold text-white">Superchats</h3>
         </div>
         <div className="flex items-center space-x-2">
@@ -144,8 +144,9 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
             variant="outline"
             size="sm"
             className={`text-xs text-white rounded-full px-3 transition-all duration-200 ${
-              showPinnedOnly ? "bg-yellow-800/50 border-yellow-700/50" : "bg-transparent border-gray-700/50"
+              showPinnedOnly ? "border-gray-700/50" : "bg-transparent border-gray-700/50"
             }`}
+            style={showPinnedOnly ? { backgroundColor: 'rgba(164, 31, 19, 0.5)', borderColor: 'rgba(164, 31, 19, 0.5)' } : {}}
             onClick={() => setShowPinnedOnly(!showPinnedOnly)}
           >
             {showPinnedOnly ? "Show All" : "Pinned Only"}

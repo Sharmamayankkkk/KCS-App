@@ -113,9 +113,9 @@ const ComparePage = () => {
             <FeatureTable title={comparisonData.platform.title} features={comparisonData.platform.features} />
         </div>
 
-        <section className="mt-16 text-center bg-blue-50 p-8 rounded-lg">
-            <h2 className="text-3xl font-bold text-gray-900">Built for You, Not for Enterprise</h2>
-            <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-600">While other platforms focus on enterprise clients, KCS Meet provides a complete, affordable package designed for communities. Our features are built with one goal: to help your community connect and thrive.</p>
+        <section className="mt-16 text-center p-8 rounded-lg" style={{ backgroundColor: '#FAF5F1' }}>
+            <h2 className="text-3xl font-bold" style={{ color: '#292F36' }}>Built for You, Not for Enterprise</h2>
+            <p className="mt-4 max-w-2xl mx-auto text-lg" style={{ color: '#8F7A6E' }}>While other platforms focus on enterprise clients, KCS Meet provides a complete, affordable package designed for communities. Our features are built with one goal: to help your community connect and thrive.</p>
         </section>
     </div>
   );

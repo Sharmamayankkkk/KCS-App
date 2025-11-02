@@ -23,11 +23,11 @@ interface SuperchatMessageProps {
 }
 
 const getColorByAmount = (amount: number): string => {
-  if (amount >= 1000) return "bg-gradient-to-r from-red-500 to-red-700"
-  if (amount >= 500) return "bg-gradient-to-r from-amber-500 to-amber-700"
-  if (amount >= 200) return "bg-gradient-to-r from-emerald-500 to-emerald-700"
-  if (amount >= 100) return "bg-gradient-to-r from-blue-500 to-blue-700"
-  return "bg-gradient-to-r from-purple-500 to-purple-700"
+  if (amount >= 1000) return "bg-gradient-to-r from-[#6A1210] to-[#5A0F0D]"
+  if (amount >= 500) return "bg-gradient-to-r from-[#7A1610] to-[#6A1210]"
+  if (amount >= 200) return "bg-gradient-to-r from-[#8F1A10] to-[#7A1610]"
+  if (amount >= 100) return "bg-gradient-to-r from-[#A41F13] to-[#8F1A10]"
+  return "bg-gradient-to-r from-[#8F7A6E] to-[#7A6A5F]"
 }
 
 export const SuperchatMessage = ({ message, onPin, isAdmin = false }: SuperchatMessageProps) => {
@@ -85,7 +85,7 @@ export const SuperchatMessage = ({ message, onPin, isAdmin = false }: SuperchatM
           <div className="flex items-center mb-1">
             <span className="font-bold text-white">{message.sender}</span>
             {message.isPinned && (
-              <span className="ml-2 text-xs bg-yellow-500 text-black px-2 py-0.5 rounded-full flex items-center">
+              <span className="ml-2 text-xs text-white px-2 py-0.5 rounded-full flex items-center" style={{ backgroundColor: '#A41F13' }}>
                 <Star size={12} className="mr-1" /> Pinned
               </span>
             )}
