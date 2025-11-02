@@ -181,7 +181,7 @@ const AdminAttendancePage = () => {
   return (
     <section className="flex size-full flex-col gap-6">
       <h1 className="text-3xl font-bold" style={{ color: '#292F36' }}>Admin Attendance Management</h1>
-      {error && <div className="rounded-lg bg-red-100 p-4 text-red-800">{error}</div>}
+      {error && <div className="rounded-lg p-4" style={{ backgroundColor: 'rgba(164, 31, 19, 0.1)', color: '#A41F13' }}>{error}</div>}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <StatCard icon={<Calendar />} label="Total Records" value={allAttendance.length} />
@@ -263,7 +263,13 @@ const DisplayRow = ({ record, onEdit, onDelete, formatters }: any) => (
             <p><strong style={{ color: '#B0A8A3' }}>Duration:</strong> {formatters.formatDuration(record.duration_minutes)}</p>
         </td>
         <td className="p-3">
-            <span style={{ color: '#FFFFFF' }} className={`px-3 py-1 text-sm font-semibold rounded-full capitalize ${record.status === 'present' ? 'bg-green-500' : record.status === 'late' ? 'bg-yellow-500' : 'bg-red-500'}`}>
+            <span 
+              style={{ 
+                color: '#FFFFFF',
+                backgroundColor: record.status === 'present' ? '#8F7A6E' : record.status === 'late' ? '#A41F13' : '#7A1610'
+              }} 
+              className="px-3 py-1 text-sm font-semibold rounded-full capitalize"
+            >
                 {record.status}
             </span>
         </td>

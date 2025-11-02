@@ -30,7 +30,10 @@ const PublicNavbar = () => {
             <Link
               key={link.href}
               href={link.href}
-              className="flex items-center gap-2 text-sm font-medium text-gray-600 hover:text-blue-600 transition-colors"
+              className="flex items-center gap-2 text-sm font-medium transition-colors"
+              style={{ color: '#8F7A6E' }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = '#A41F13')}
+              onMouseLeave={(e) => (e.currentTarget.style.color = '#8F7A6E')}
             >
               {link.icon}
               <span>{link.text}</span>
@@ -39,13 +42,13 @@ const PublicNavbar = () => {
         </div>
 
         <div className="flex items-center gap-4">
-            <Link href="/sign-in" className="hidden md:block rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+            <Link href="/sign-in" className="hidden md:block rounded-md px-4 py-2 text-sm font-semibold text-white shadow-sm" style={{ backgroundColor: '#A41F13' }}>
                 Sign In
             </Link>
 
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-gray-700 hover:text-blue-600 focus:outline-none">
+                <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="focus:outline-none" style={{ color: '#8F7A6E' }}>
                     {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
                 </button>
             </div>
@@ -61,13 +64,14 @@ const PublicNavbar = () => {
                 key={link.href}
                 href={link.href}
                 onClick={() => setIsMenuOpen(false)}
-                className="flex items-center gap-3 text-base font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 p-2 rounded-md transition-colors"
+                className="flex items-center gap-3 text-base font-medium p-2 rounded-md transition-colors"
+                style={{ color: '#8F7A6E' }}
               >
                 {link.icon}
                 <span>{link.text}</span>
               </Link>
             ))}
-            <Link href="/sign-in" onClick={() => setIsMenuOpen(false)} className="w-full text-center rounded-md bg-blue-600 px-4 py-2.5 text-base font-semibold text-white shadow-sm hover:bg-blue-500">
+            <Link href="/sign-in" onClick={() => setIsMenuOpen(false)} className="w-full text-center rounded-md px-4 py-2.5 text-base font-semibold text-white shadow-sm" style={{ backgroundColor: '#A41F13' }}>
                 Sign In
             </Link>
           </div>
