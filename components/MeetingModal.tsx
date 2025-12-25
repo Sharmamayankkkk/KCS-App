@@ -33,12 +33,12 @@ const MeetingModal = ({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className="flex w-full max-w-[520px] flex-col gap-6 border border-[#E2E8F0] px-6 py-9 bg-white text-[#0F172A] shadow-lg"
+        className="flex w-full max-w-[520px] flex-col gap-6 border border-border px-6 py-9 bg-white text-primary shadow-lg"
       >
         <div className="flex flex-col gap-6">
           {Icon && (
             <div className="flex justify-center">
-              <Icon className="h-16 w-16 text-[#0F172A]" />
+              <Icon className="h-16 w-16 text-primary" />
             </div>
           )}
           <h1 className={cn("text-3xl font-bold leading-[42px]", className)}>
@@ -46,7 +46,7 @@ const MeetingModal = ({
           </h1>
           {children}
           <Button
-            className="bg-[#B91C1C] text-white hover:bg-[#991B1B] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0"
+            className="bg-accent text-white hover:bg-accent/90 focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0"
             onClick={handleClick}
           >
             {ButtonIcon && (

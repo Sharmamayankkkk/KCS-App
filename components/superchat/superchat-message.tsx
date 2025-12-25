@@ -85,7 +85,7 @@ export const SuperchatMessage = ({ message, onPin, isAdmin = false }: SuperchatM
           <div className="flex items-center mb-1">
             <span className="font-bold text-white">{message.sender}</span>
             {message.isPinned && (
-              <span className="ml-2 text-xs text-white px-2 py-0.5 rounded-full flex items-center bg-[#B91C1C]">
+              <span className="ml-2 text-xs text-white px-2 py-0.5 rounded-full flex items-center bg-accent">
                 <Star size={12} className="mr-1" /> Pinned
               </span>
             )}
