@@ -159,10 +159,16 @@ This document lists every file in the KCS App repository with identified issues,
 ### App Routes
 
 #### `app/layout.tsx`
-- **Status**: ⚠️ Needs Review
-- **Issues**: May contain old color references
-- **Fixes Required**: Check for inline styles with old colors
-- **Priority**: MEDIUM
+- **Status**: ✅ Fixed
+- **Issues Fixed**: 
+  - Old themeColor (#A41F13)
+  - Clerk colorPrimary using old color
+  - Clerk colorBackground causing white-on-white issue
+- **Changes Made**:
+  - Updated themeColor to #B91C1C
+  - Updated Clerk appearance variables to new palette
+  - Added colorText to ensure proper contrast
+- **Priority**: HIGH (was causing blank sign-in/sign-up pages)
 
 #### `app/(auth)/sign-in/[[...sigin-in]]/page.tsx`
 - **Status**: ⚠️ Needs Review
@@ -756,9 +762,9 @@ This document lists every file in the KCS App repository with identified issues,
 ## 📊 Summary Statistics
 
 ### By Status
-- ✅ OK / Fixed: 29 files
+- ✅ OK / Fixed: 30 files
 - ⏳ Pending (Confirmed Issues): 25 files
-- ⚠️ Needs Review: 32 files
+- ⚠️ Needs Review: 31 files
 - **Total Files**: 86 files
 
 ### By Priority
@@ -780,12 +786,13 @@ This document lists every file in the KCS App repository with identified issues,
 1. ✅ `tailwind.config.ts` - Color palette foundation
 2. ✅ `app/globals.css` - Global styles
 3. ✅ `style/globals.css` - Theme variables
-4. ✅ `components/HomeCard.tsx` - Main card component
-5. ✅ `components/Navbar.tsx` - Navigation
-6. ✅ `components/Loader.tsx` - Loading state
-7. ✅ `components/MeetingTypeList.tsx` - Meeting controls
-8. ✅ `components/superchat/superchat-message.tsx` - SuperChat display
-9. ✅ `app/(public)/page.tsx` - Homepage
+4. ✅ `app/layout.tsx` - Root layout and Clerk appearance (fixes blank sign-in/sign-up)
+5. ✅ `components/HomeCard.tsx` - Main card component
+6. ✅ `components/Navbar.tsx` - Navigation
+7. ✅ `components/Loader.tsx` - Loading state
+8. ✅ `components/MeetingTypeList.tsx` - Meeting controls
+9. ✅ `components/superchat/superchat-message.tsx` - SuperChat display
+10. ✅ `app/(public)/page.tsx` - Homepage
 
 ### Phase 2: High Priority Components (Next)
 1. ⏳ `components/MeetingModal.tsx`
