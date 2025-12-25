@@ -15,40 +15,38 @@ body {
 
 @layer base {
   :root {
-    --background: 26 50% 98%; /* #FAF5F1 */
-    --foreground: 224 14% 18%; /* #292F36 */
+    --background: 222 47% 98%; /* #F8FAFC */
+    --foreground: 222 47% 11%; /* #0F172A */
 
     --card: 0 0% 100%; /* #FFFFFF */
-    --card-foreground: 224 14% 18%; /* #292F36 */
+    --card-foreground: 222 47% 11%; /* #0F172A */
 
     --popover: 0 0% 100%; /* #FFFFFF */
-    --popover-foreground: 224 14% 18%; /* #292F36 */
+    --popover-foreground: 222 47% 11%; /* #0F172A */
     
-    --primary: 224 14% 18%; /* #292F36 */
-    --primary-foreground: 26 50% 98%; /* #FAF5F1 */
+    --primary: 222 47% 11%; /* #0F172A */
+    --primary-foreground: 222 47% 98%; /* #F8FAFC */
 
-    --secondary: 24 10% 86%; /* #E0DBD8 */
-    --secondary-foreground: 224 14% 18%; /* #292F36 */
+    --secondary: 215 20% 65%; /* #94A3B8 */
+    --secondary-foreground: 222 47% 11%; /* #0F172A */
 
-    --muted: 24 10% 86%; /* #E0DBD8 */
-    --muted-foreground: 26 13% 52%; /* #8F7A6E */
+    --muted: 210 40% 96%; /* #F1F5F9 */
+    --muted-foreground: 215 16% 47%; /* #64748B */
 
-    --accent: 24 10% 86%; /* #E0DBD8 */
-    --accent-foreground: 224 14% 18%; /* #292F36 */
+    --accent: 210 40% 96%; /* #F1F5F9 */
+    --accent-foreground: 222 47% 11%; /* #0F172A */
 
-    --destructive: 5 74% 35%; /* #A41F13 */
+    --destructive: 0 72% 51%; /* #B91C1C */
     --destructive-foreground: 0 0% 100%; /* #FFFFFF */
 
-    --border: 24 10% 86%; /* #E0DBD8 */
-    --input: 24 10% 86%; /* #E0DBD8 */
-    --ring: 5 74% 35%; /* #A41F13 */
+    --border: 214 32% 91%; /* #E2E8F0 */
+    --input: 214 32% 91%; /* #E2E8F0 */
+    --ring: 0 72% 51%; /* #B91C1C */
 
-    --radius: 0.75rem; /* Increased for a more modern, rounded look */
+    --radius: 0.5rem;
   }
 
   .dark {
-    /* The user requested a light theme, so the dark theme variables are unchanged for now. */
-    /* These can be updated or removed later if a dark mode is not needed. */
     --background: 222 47% 11%;
     --foreground: 210 40% 98%;
     --card: 222 47% 11%;

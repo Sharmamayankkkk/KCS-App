@@ -12,21 +12,21 @@ export const metadata: Metadata = {
 const HomePage = () => {
   return (
     <div className="w-full">
-      <section className="relative py-20 md:py-32" style={{ background: 'linear-gradient(to right, #FAF5F1, #E0DBD8)' }}>
+      <section className="relative py-20 md:py-32 bg-[#F8FAFC]">
         <div className="absolute inset-0 bg-[url(/grid.svg)] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div>
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl" style={{ color: '#292F36' }}>
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl text-[#0F172A]">
             <span className="block">India's First</span>
-            <span className="block" style={{ color: '#A41F13' }}>Spiritually Inspired Communication Platform</span>
+            <span className="block text-[#B91C1C]">Spiritually Inspired Communication Platform</span>
           </h1>
-          <p className="mt-6 max-w-2xl mx-auto text-lg sm:text-xl md:text-2xl" style={{ color: '#8F7A6E' }}>
+          <p className="mt-6 max-w-2xl mx-auto text-lg sm:text-xl md:text-2xl text-[#64748B]">
             Connect with your community, share your passion, and grow together. KCS Meet is more than a tool—it's a space for divine connections.
           </p>
           <div className="mt-10 flex justify-center gap-4">
-            <Link href="/sign-up" className="inline-flex items-center justify-center rounded-full px-8 py-3.5 text-base font-semibold text-white shadow-lg transition-transform transform hover:scale-105" style={{ backgroundColor: '#A41F13' }}>
+            <Link href="/sign-up" className="inline-flex items-center justify-center rounded-full px-8 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:shadow-lg bg-[#B91C1C] hover:bg-[#991B1B]">
               Get Started for Free
             </Link>
-            <Link href="/compare" className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3.5 text-base font-semibold shadow-lg ring-1 ring-inset transition-transform transform hover:scale-105" style={{ color: '#292F36', borderColor: '#E0DBD8' }}>
+            <Link href="/compare" className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3.5 text-base font-semibold shadow-md ring-1 ring-inset transition-all hover:shadow-lg text-[#0F172A] ring-[#E2E8F0] hover:bg-[#F8FAFC]">
               See the Comparison <ArrowRight className="ml-2 h-5 w-5" />
             </Link>
           </div>

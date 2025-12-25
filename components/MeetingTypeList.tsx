@@ -215,35 +215,27 @@ Rama Rama, Hare Hare`;
           handleClick={createMeeting}
         >
           <div className="flex flex-col gap-2.5">
-            <label className="text-base font-normal leading-[22.4px]" style={{ color: '#292F36' }}>
+            <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
               Add a Title
             </label>
             <Input
-              className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-              style={{
-                backgroundColor: 'rgba(250, 245, 241, 0.5)',
-                color: '#292F36'
-              }}
+              className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
               onChange={(e) =>
                 setValues({ ...values, title: e.target.value })
               }
             />
-            <label className="text-base font-normal leading-[22.4px]" style={{ color: '#292F36' }}>
+            <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
               Add a description
             </label>
             <Textarea
-              className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-              style={{
-                backgroundColor: 'rgba(250, 245, 241, 0.5)',
-                color: '#292F36'
-              }}
+              className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
               onChange={(e) =>
                 setValues({ ...values, description: e.target.value })
               }
             />
           </div>
           <div className="flex w-full flex-col gap-2.5">
-            <label className="text-base font-normal leading-[22.4px]" style={{ color: '#292F36' }}>
+            <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
               Select Date and Time
             </label>
             <ReactDatePicker
@@ -254,7 +246,7 @@ Rama Rama, Hare Hare`;
               timeIntervals={15}
               timeCaption="time"
               dateFormat="MMMM d, yyyy h:mm aa"
-              className="w-full rounded bg-[rgba(250,245,241,0.5)] p-2 text-[#292F36] focus:outline-none"
+              className="w-full rounded border border-[#E2E8F0] bg-[#F8FAFC] p-2 text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-[#B91C1C]"
             />
           </div>
         </MeetingModal>
@@ -270,10 +262,10 @@ Rama Rama, Hare Hare`;
         >
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-center">
-              <CheckSquare className="h-16 w-16" style={{ color: '#A41F13' }} />
+              <CheckSquare className="h-16 w-16 text-[#B91C1C]" />
             </div>
             
-            <p className="text-sm" style={{ color: '#8F7A6E' }}>
+            <p className="text-sm text-[#64748B]">
               Your meeting has been scheduled successfully!
             </p>
 
@@ -283,8 +275,7 @@ Rama Rama, Hare Hare`;
                   navigator.clipboard.writeText(meetingLink);
                   toast({ title: 'Link Copied' });
                 }}
-                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition"
-                style={{ backgroundColor: '#A41F13', color: '#FAF5F1' }}
+                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#B91C1C] text-white hover:bg-[#991B1B]"
               >
                 <Copy className="h-5 w-5" />
                 Copy Meeting Link
@@ -292,8 +283,7 @@ Rama Rama, Hare Hare`;
 
               <button
                 onClick={handleShare}
-                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition"
-                style={{ backgroundColor: '#8F7A6E', color: '#FAF5F1' }}
+                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#64748B] text-white hover:bg-[#475569]"
               >
                 <Share2 className="h-5 w-5" />
                 Share Meeting
@@ -337,27 +327,19 @@ Rama Rama, Hare Hare`;
         handleClick={createMeeting}
       >
         <div className="flex flex-col gap-2.5">
-          <label className="text-base font-normal leading-[22.4px]" style={{ color: '#292F36' }}>
+          <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
             Meeting Title
           </label>
           <Input
             placeholder="Enter meeting title"
-            className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-            style={{
-              backgroundColor: 'rgba(250, 245, 241, 0.5)',
-              color: '#292F36'
-            }}
+            className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
             onChange={(e) => setValues({ ...values, title: e.target.value })}
           />
-          <label className="text-base font-normal leading-[22.4px]" style={{ color: '#292F36' }}>
+          <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
             Add a description
           </label>
           <Textarea
-            className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-            style={{
-              backgroundColor: 'rgba(250, 245, 241, 0.5)',
-              color: '#292F36'
-            }}
+            className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
             onChange={(e) =>
               setValues({ ...values, description: e.target.value })
             }
@@ -374,11 +356,7 @@ Rama Rama, Hare Hare`;
       >
         <Input
           placeholder="Meeting link"
-          className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
-          style={{
-            backgroundColor: 'rgba(250, 245, 241, 0.5)',
-            color: '#292F36'
-          }}
+          className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
           onChange={(e) => setValues({ ...values, link: e.target.value })}
         />
       </MeetingModal>
