@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: "#A41F13",
+  themeColor: "#B91C1C",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -35,8 +35,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
               logoImageUrl: "/icons/KCS-Logo.png",
             },
             variables: {
-              colorPrimary: "#A41F13",
-              colorBackground: "#FFFFFF",
+              colorPrimary: "#B91C1C",
+              colorBackground: "#F8FAFC",
+              colorText: "#0F172A",
             },
           }}
         >

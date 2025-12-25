@@ -4,7 +4,7 @@ const Loader: React.FC = () => (
   <div
     style={{
       margin: 0,
-      background: "white",
+      background: "#F8FAFC",
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
@@ -39,7 +39,7 @@ const Loader: React.FC = () => (
           background: linear-gradient(
             120deg,
             transparent 0%,
-            rgba(255, 255, 255, 0.5) 50%,
+            rgba(255, 255, 255, 0.3) 50%,
             transparent 100%
           );
           animation: shineAnim 2s linear infinite;

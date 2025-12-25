@@ -23,11 +23,11 @@ interface SuperchatMessageProps {
 }
 
 const getColorByAmount = (amount: number): string => {
-  if (amount >= 1000) return "bg-gradient-to-r from-[#6A1210] to-[#5A0F0D]"
-  if (amount >= 500) return "bg-gradient-to-r from-[#7A1610] to-[#6A1210]"
-  if (amount >= 200) return "bg-gradient-to-r from-[#8F1A10] to-[#7A1610]"
-  if (amount >= 100) return "bg-gradient-to-r from-[#A41F13] to-[#8F1A10]"
-  return "bg-gradient-to-r from-[#8F7A6E] to-[#7A6A5F]"
+  if (amount >= 1000) return "bg-[#7F1D1D]" // Red 900
+  if (amount >= 500) return "bg-[#991B1B]" // Red 800
+  if (amount >= 200) return "bg-[#B91C1C]" // Red 700
+  if (amount >= 100) return "bg-[#DC2626]" // Red 600
+  return "bg-[#64748B]" // Slate 500
 }
 
 export const SuperchatMessage = ({ message, onPin, isAdmin = false }: SuperchatMessageProps) => {
@@ -78,14 +78,14 @@ export const SuperchatMessage = ({ message, onPin, isAdmin = false }: SuperchatM
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={cn("relative rounded-lg overflow-hidden shadow-lg mb-3 border border-gray-700", colorClass)}
+      className={cn("relative rounded-lg overflow-hidden shadow-md mb-3 border border-gray-700", colorClass)}
     >
       <div className="flex items-start p-3">
         <div className="flex-1">
           <div className="flex items-center mb-1">
             <span className="font-bold text-white">{message.sender}</span>
             {message.isPinned && (
-              <span className="ml-2 text-xs text-white px-2 py-0.5 rounded-full flex items-center" style={{ backgroundColor: '#A41F13' }}>
+              <span className="ml-2 text-xs text-white px-2 py-0.5 rounded-full flex items-center bg-accent">
                 <Star size={12} className="mr-1" /> Pinned
               </span>
             )}

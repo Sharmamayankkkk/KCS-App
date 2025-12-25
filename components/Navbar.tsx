@@ -9,8 +9,7 @@ import MobileNav from './MobileNav';
 const Navbar = () => {
   return (
     <nav
-      className="fixed z-50 w-full px-6 py-4 lg:px-10 flex items-center justify-between"
-      style={{ backgroundColor: '#292F36' }}
+      className="fixed z-50 w-full px-6 py-4 lg:px-10 flex items-center justify-between bg-[#1E293B]"
     >
       <Link href="/" className="flex items-center gap-2">
         <Image
@@ -21,8 +20,7 @@ const Navbar = () => {
           className="max-sm:size-12"
         />
         <p
-          className="text-3xl font-extrabold max-sm:hidden"
-          style={{ color: '#FAF5F1' }}
+          className="text-3xl font-extrabold max-sm:hidden text-[#F8FAFC]"
         >
           KCS
         </p>
@@ -36,7 +34,7 @@ const Navbar = () => {
 
           <SignedOut>
             <Link href="/sign-in">
-              <Button style={{ backgroundColor: '#A41F13', color: '#FAF5F1' }}>
+              <Button className="bg-[#B91C1C] text-white hover:bg-[#991B1B]">
                 Sign in
               </Button>
             </Link>

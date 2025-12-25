@@ -30,13 +30,12 @@ const NavLinks = () => {
             href={item.route}
             key={item.label}
             className={cn(
-              'flex gap-4 items-center p-4 rounded-lg justify-start',
-              { 'bg-red-500': isActive } // Placeholder, will be replaced by inline style
+              'flex gap-4 items-center p-4 rounded-lg justify-start text-[#F8FAFC] transition-colors',
+              {
+                'bg-[#B91C1C] hover:bg-[#991B1B]': isActive,
+                'hover:bg-[#334155]': !isActive,
+              }
             )}
-            style={{
-              color: '#FAF5F1',
-              backgroundColor: isActive ? '#A41F13' : 'transparent',
-            }}
           >
             <item.icon />
             <p className="text-lg font-semibold block sm:hidden lg:block">{item.label}</p>
@@ -53,13 +52,12 @@ const NavLinks = () => {
             href={item.route}
             key={item.label}
             className={cn(
-              'flex gap-4 items-center p-4 rounded-lg justify-start',
-              { 'bg-red-500': isActive } // Placeholder, will be replaced by inline style
+              'flex gap-4 items-center p-4 rounded-lg justify-start text-[#F8FAFC] transition-colors',
+              {
+                'bg-[#B91C1C] hover:bg-[#991B1B]': isActive,
+                'hover:bg-[#334155]': !isActive,
+              }
             )}
-            style={{
-              color: '#FAF5F1',
-              backgroundColor: isActive ? '#A41F13' : 'transparent',
-            }}
           >
             <item.icon />
             <p className="text-lg font-semibold block sm:hidden lg:block">{item.label}</p>

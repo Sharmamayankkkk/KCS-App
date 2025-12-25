@@ -26,17 +26,27 @@ const config: Config = {
     },
     extend: {
       colors: {
-        'primary-accent': '#A41F13',
-        'light-background': '#FAF5F1',
-        'secondary-background': '#E0DBD8',
-        'primary-text': '#292F36',
-        'secondary-text': '#8F7A6E',
+        'primary': '#1E293B',
+        'secondary': '#334155',
+        'accent': '#B91C1C',
+        'background': '#F8FAFC',
+        'surface': '#F1F5F9',
+        'border': '#E2E8F0',
+        'text-primary': '#0F172A',
+        'text-secondary': '#64748B',
+        
+        // Legacy support - mapped to new colors
+        'primary-accent': '#B91C1C',
+        'light-background': '#F8FAFC',
+        'secondary-background': '#F1F5F9',
+        'primary-text': '#0F172A',
+        'secondary-text': '#64748B',
         
         video: {
-          background: '#FAF5F1',
-          'background-secondary': '#E0DBD8',
-          accent: '#A41F13',
-          text: '#292F36',
+          background: '#F8FAFC',
+          'background-secondary': '#F1F5F9',
+          accent: '#B91C1C',
+          text: '#0F172A',
         },
       },
       spacing: {
@@ -58,14 +68,13 @@ const config: Config = {
         'video': '12px',
       },
 
-      /* ✅ Added soft shadow styles */
+      /* Professional shadow styles - no neumorphism */
       boxShadow: {
-        'soft': '5px 5px 10px #d9d5d2, -5px -5px 10px #ffffff',
-        'soft-hover': '3px 3px 8px #d9d5d2, -3px -3px 8px #ffffff',
-        'soft-inset': 'inset 2px 2px 5px #d9d5d2, inset -2px -2px 5px #ffffff',
-        'soft-destructive': '5px 5px 10px #931c11, -5px -5px 10px #b52215',
-        'soft-destructive-hover': '3px 3px 8px #931c11, -3px -3px 8px #b52215',
-        'soft-destructive-inset': 'inset 2px 2px 5px #931c11, inset -2px -2px 5px #b52215',
+        'soft': '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+        'soft-hover': '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+        'soft-inset': 'inset 0 2px 4px 0 rgb(0 0 0 / 0.05)',
+        'soft-destructive': '0 1px 3px 0 rgb(185 28 28 / 0.3)',
+        'soft-destructive-hover': '0 4px 6px -1px rgb(185 28 28 / 0.3)',
       },
 
       animation: {

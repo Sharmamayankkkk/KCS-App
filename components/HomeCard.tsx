@@ -15,33 +15,22 @@ const HomeCard = ({ className, icon: Icon, title, description, handleClick }: Ho
   return (
     <section
       className={cn(
-        'px-4 py-6 flex flex-col justify-between w-full xl:max-w-[270px] min-h-[260px] rounded-[14px] cursor-pointer',
+        'px-4 py-6 flex flex-col justify-between w-full xl:max-w-[270px] min-h-[260px] rounded-xl cursor-pointer bg-white border border-[#E2E8F0] shadow-sm hover:shadow-md transition-all',
         className
       )}
-      style={{
-        backgroundColor: 'rgba(224, 219, 216, 0.6)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
-        border: '1px solid rgba(250, 245, 241, 0.3)',
-        boxShadow: '0 8px 32px 0 rgba(41, 47, 54, 0.37)',
-      }}
       onClick={handleClick}
     >
       <div
-        className="flex-center size-12 rounded-[10px]"
-        style={{
-          backgroundColor: 'rgba(250, 245, 241, 0.5)',
-          border: '1px solid rgba(250, 245, 241, 0.3)',
-        }}
+        className="flex-center size-12 rounded-lg bg-[#F1F5F9] border border-[#E2E8F0]"
       >
-        <Icon className="h-7 w-7" style={{ color: '#A41F13' }} />
+        <Icon className="h-7 w-7 text-[#B91C1C]" />
       </div>
 
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold" style={{ color: '#292F36' }}>
+        <h1 className="text-2xl font-bold text-[#0F172A]">
           {title}
         </h1>
-        <p className="text-lg font-normal" style={{ color: '#292F36' }}>
+        <p className="text-lg font-normal text-[#64748B]">
           {description}
         </p>
       </div>
