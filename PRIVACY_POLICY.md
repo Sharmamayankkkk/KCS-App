@@ -38,8 +38,23 @@ When you make payments through Super Chat:
 - **Transaction Amount and Currency**
 - **Payment Method Type** (via Cashfree payment gateway)
 - **Transaction ID and Status**
+- **Phone Number** (Future Implementation - will be collected in v2.0)
 
 **Note:** We do not store your credit card, debit card, or bank account details. All payment information is processed and secured by Cashfree, our PCI-DSS compliant payment processor.
+
+**About Phone Number Collection (Future):**
+In a future update (v2.0), we will request your phone number when you make your first Super Chat payment. This is required by our payment processor (Cashfree) for:
+- Payment processing compliance
+- Transaction verification and security
+- Fraud prevention
+- SMS notifications (optional)
+
+Phone number collection will be:
+- **Optional**: Only required if you use Super Chat feature
+- **Secure**: Encrypted and stored securely
+- **Limited Sharing**: Only shared with Cashfree for payment processing
+- **Deletable**: Can be deleted upon request (except for completed transaction records retained for 7 years per tax law)
+- **Not Currently Implemented**: Developer phone number is currently hardcoded for testing purposes and will be replaced with user phone numbers in future version
 
 ### 2.4 Meeting Content
 

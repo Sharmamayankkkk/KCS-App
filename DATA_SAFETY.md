@@ -59,26 +59,92 @@ KCS Meet collects and processes user data to provide video conferencing services
 - **Encrypted in Transit:** YES
 - **User Can Request Deletion:** YES
 
+#### 1.4 Phone Number
+- **Collected:** NO (Currently)
+- **Future Collection:** YES (Planned for future version)
+- **Purpose (Future):**
+  - Payment processing (required by Cashfree for Super Chat)
+  - Account verification
+  - Transaction receipts and notifications
+- **Collection Method (Future):** User provides during first Super Chat transaction
+- **Data Shared (Future):** YES (with payment processor Cashfree only, required for payment compliance)
+- **Encrypted in Transit:** YES
+- **User Can Request Deletion:** YES
+- **Optional:** YES - Only collected if user chooses to use Super Chat feature
+
+**Note:** Phone number collection will be implemented in a future update and will be optional. It will only be requested when a user makes their first Super Chat donation, as required by our payment processor (Cashfree) for transaction compliance and fraud prevention. Users can still use all other app features without providing a phone number.
+
 ### 2. Financial Information
 
 #### 2.1 User Payment Info
-- **Collected:** YES (processed through Cashfree, not stored by us)
+- **Collected:** YES (Processed through Cashfree payment gateway - PCI-DSS Level 1 compliant)
+- **What We Collect:**
+  - Transaction amount
+  - Currency
+  - Payment method type (UPI/Card/Wallet - details not stored by us)
+  - Transaction timestamp
+  - Order reference ID
+- **What We DON'T Store:**
+  - Credit/Debit card numbers
+  - CVV codes
+  - UPI PINs
+  - Bank account numbers
+  - Card expiry dates
+  - Any sensitive payment credentials
 - **Purpose:**
-  - App functionality (Super Chat donations)
-- **Collection Method:** User provides during payment
-- **Data Shared:** YES (with payment processor Cashfree only)
-- **Encrypted in Transit:** YES
-- **User Can Request Deletion:** Limited (retained for 7 years for tax compliance)
+  - App functionality (Super Chat donations to support spiritual leaders)
+  - Transaction records and receipts
+  - Fraud prevention and security
+  - Legal compliance (tax records)
+- **Collection Method:** 
+  - User initiates Super Chat donation
+  - Redirected to Cashfree secure payment page
+  - Payment details entered on Cashfree platform (not our app)
+  - Only transaction metadata returned to us
+- **Data Shared:** YES (Only with Cashfree payment processor - required for payment processing)
+- **Third-Party Details:**
+  - **Payment Processor:** Cashfree Payments India Pvt Ltd
+  - **Compliance:** PCI-DSS Level 1 certified
+  - **Privacy Policy:** https://www.cashfree.com/privacy-policy
+  - **Purpose:** Secure payment processing and transaction management
+  - **Data Shared:** Transaction amount, user email, order details
+- **Encrypted in Transit:** YES (TLS 1.3 encryption)
+- **User Can Request Deletion:** Limited - Transaction records retained for 7 years for tax and legal compliance (as per Indian Income Tax Act and GST regulations)
+- **Refund Policy:** Available - see Refunds and Cancellations policy
+
+**Important:** We use Cashfree as our payment gateway. All sensitive payment information (card numbers, CVV, PINs) is processed directly by Cashfree on their secure servers. We never see, store, or have access to your payment credentials. We only receive confirmation of successful/failed transactions.
 
 #### 2.2 Purchase History
 - **Collected:** YES
+- **What We Store:**
+  - Super Chat message text (max 200 characters)
+  - Donation amount and tier selected
+  - Timestamp of transaction
+  - Sender name (display name in app)
+  - Meeting/session where Super Chat was sent
+  - Transaction status (success/pending/failed)
+  - Order reference number
 - **Purpose:**
-  - App functionality
-  - Analytics
-- **Collection Method:** Auto-recorded during transactions
-- **Data Shared:** NO
+  - App functionality (display Super Chat messages in meetings)
+  - Transaction history for users
+  - Analytics (aggregate donation trends)
+  - Legal compliance and tax records
+  - Dispute resolution
+- **Collection Method:** Auto-recorded when Super Chat transaction completes
+- **Data Shared:** NO (except aggregate statistics, no personal identifiers)
 - **Encrypted in Transit:** YES
-- **User Can Request Deletion:** Limited (retained for 7 years for tax compliance)
+- **Encrypted at Rest:** YES (sensitive transaction data)
+- **User Can Request Deletion:** Limited (retained for 7 years for tax compliance as per Indian law)
+- **User Can View:** YES - Users can view their own transaction history in app
+
+**Super Chat Tiers:**
+- ₹25 - Nitya Seva (30 seconds highlight)
+- ₹50 - Bhakti Boost (1 min 10 sec)
+- ₹100 - Gopi Glimmer (2 min 30 sec)
+- ₹250 - Vaikuntha Vibes (6 minutes)
+- ₹500 - Raja Bhakta Blessing (12 minutes)
+- ₹1000 - Parama Bhakta Offering (25 minutes)
+- ₹5000 - Goloka Mahadhaan (70 minutes)
 
 ### 3. Location
 
@@ -189,10 +255,10 @@ KCS Meet collects and processes user data to provide video conferencing services
 
 ## Data Types NOT Collected
 
-The following data types are **NOT** collected by KCS Meet:
+The following data types are **NOT** collected by KCS Meet (in current version v1.0.0):
 
 - ❌ Address
-- ❌ Phone Number
+- ❌ Phone Number (Current version - will be added in v2.0 for Super Chat payments only, optional)
 - ❌ Race and Ethnicity
 - ❌ Political or Religious Beliefs
 - ❌ Sexual Orientation
@@ -211,6 +277,8 @@ The following data types are **NOT** collected by KCS Meet:
 - ❌ Calendar Events
 - ❌ Search History
 - ❌ Other User Content
+
+**Note on Phone Number:** While not currently collected, phone number collection will be implemented in a future version (v2.0) and will be required only for users who choose to use the Super Chat payment feature. It will remain optional for all other app functionality. See section 1.4 "Phone Number" above for details.
 
 ---
 
