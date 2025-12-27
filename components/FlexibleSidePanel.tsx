@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
 import PollsPanel from './PollsPanel';
 import { useSupabase } from '@/providers/SupabaseProvider';
-import { SuperchatMessage, SuperchatMessage as SuperchatMessageType } from '@/components/superchat/superchat-message';
+import { SuperchatMessage, SuperchatMessageData as SuperchatMessageType } from '@/components/superchat/superchat-message';
 
 // Define the types for our messages right here
 interface ChatMessageData {

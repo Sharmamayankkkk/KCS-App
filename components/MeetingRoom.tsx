@@ -67,7 +67,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const call = useCall();
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
-  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
+  const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { processFrame, cleanup } = useBackgroundProcessor();
 
   useEffect(() => {

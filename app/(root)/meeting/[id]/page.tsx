@@ -21,7 +21,7 @@ const MeetingPage = () => {
 
   if (!call) {
     return (
-      <p className="text-center text-3xl font-bold text-foreground">
+      <p className="text-foreground text-center text-3xl font-bold">
         Call Not Found
       </p>
     );
@@ -30,13 +30,15 @@ const MeetingPage = () => {
   // Add check for user
   if (!user) {
     return (
-      <p className="text-center text-3xl font-bold text-foreground">
+      <p className="text-foreground text-center text-3xl font-bold">
         Please sign in to join this meeting
       </p>
     );
   }
 
-  const notAllowed = call.type === 'invited' && (!user || !call.state.members.find((m) => m.user.id === user.id));
+  const notAllowed =
+    call.type === 'invited' &&
+    (!user || !call.state.members.find((m) => m.user.id === user.id));
 
   if (notAllowed) {
     return <Alert title="You are not allowed to join this meeting" />;
@@ -49,7 +51,7 @@ const MeetingPage = () => {
           {!isSetupComplete ? (
             <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
           ) : (
-            <MeetingRoom apiKey={call.id} userToken={user.id} userData={user}/>
+            <MeetingRoom apiKey={call.id} userToken={user.id} userData={user} />
           )}
         </StreamTheme>
       </StreamCall>
