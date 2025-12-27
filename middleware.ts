@@ -1,32 +1,36 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
 import { NextResponse } from "next/server"
 
-const protectedRoute = createRouteMatcher([
-  "/home",
+const isProtectedRoute = createRouteMatcher([
+  "/home(.*)",
   "/meeting(.*)",
-  "/recording",
-  "/recordings",
-  "/personal-room",
-  "/attendance",
-  "/admin-attendance",
+  "/recording(.*)",
+  "/recordings(.*)",
+  "/personal-room(.*)",
+  "/attendance(.*)",
+  "/admin-attendance(.*)",
 ])
 
-export default clerkMiddleware(
-  (auth, req) => {
-    // If a user is logged in and they visit the landing page, redirect them to the home page.
-    if (auth().userId && req.nextUrl.pathname === "/") {
-      const homeUrl = new URL("/home", req.url)
-      return NextResponse.redirect(homeUrl)
-    }
+export default clerkMiddleware(async (auth, req) => {
+  const session = await auth()
+  const path = req.nextUrl.pathname
 
-    // Protect the routes that require authentication.
-    if (protectedRoute(req)) auth().protect()
-  },
-  {
-    // authorizedParties: ['https://meet.krishnaconsciousnesssociety.com']
-  },
-)
+  // If a user is logged in and they visit the landing page, redirect them to the home page.
+  if (session.userId && path === "/") {
+    return NextResponse.redirect(new URL("/home", req.url))
+  }
+
+  // Protect the routes that require authentication.
+  if (isProtectedRoute(req)) {
+    await auth.protect()
+  }
+})
 
 export const config = {
-  matcher: ["/((?!.+\.[\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [
+    // Skip Next.js internals and all static files, unless found in search params
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
 }
