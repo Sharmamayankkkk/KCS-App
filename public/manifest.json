@@ -1,16 +1,24 @@
 {
-  "name": "KCS Meet",
+  "name": "KCS Meet - Divine Connections",
   "short_name": "KCS Meet",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#E8EAF2",
-  "theme_color": "#2196F3",
-  "description": "Experience spiritual connection through technology with KCS Meet - a video calling platform inspired by Krishna's universal vision.",
+  "background_color": "#FAF5F1",
+  "theme_color": "#B91C1C",
+  "description": "India's first spiritually inspired video conferencing platform for spiritual communities, yoga instructors, and religious organizations.",
   "icons": [
     {
       "src": "/icons/KCS-Logo.png",
-      "sizes": "250x250",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/KCS.png",
+      "sizes": "192x192",
       "type": "image/png"
     }
-  ]
+  ],
+  "categories": ["communication", "social"],
+  "orientation": "portrait-primary"
 }
