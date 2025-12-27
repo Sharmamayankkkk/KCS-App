@@ -13,11 +13,11 @@ const isProtectedRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, req) => {
   const session = await auth()
+  const path = req.nextUrl.pathname
 
   // If a user is logged in and they visit the landing page, redirect them to the home page.
-  if (session.userId && req.nextUrl.pathname === "/") {
-    const homeUrl = new URL("/home", req.url)
-    return NextResponse.redirect(homeUrl)
+  if (session.userId && path === "/") {
+    return NextResponse.redirect(new URL("/home", req.url))
   }
 
   // Protect the routes that require authentication.
