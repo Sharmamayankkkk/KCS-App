@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { CheckCircle, Star } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-export interface SuperchatMessage {
+export interface SuperchatMessageData {
   id: string
   sender: string
   text: string
@@ -17,7 +17,7 @@ export interface SuperchatMessage {
 }
 
 interface SuperchatMessageProps {
-  message: SuperchatMessage
+  message: SuperchatMessageData
   onPin?: (id: string) => void
   isAdmin?: boolean
 }

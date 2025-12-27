@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { AnimatePresence } from "framer-motion"
 import { Crown, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { SuperchatMessage, type SuperchatMessage as SuperchatMessageType } from "./superchat-message"
+import { SuperchatMessage, type SuperchatMessageData as SuperchatMessageType } from "./superchat-message"
 import { supabase } from "@/lib/supabaseClient"
 
 interface SuperchatPanelProps {

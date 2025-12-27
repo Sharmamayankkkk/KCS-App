@@ -22,7 +22,7 @@ const Home = () => {
         minute: '2-digit',
         hour12: true, // Ensures AM/PM format
         timeZone: detectedTimeZone, // Apply user's timezone
-      })
+      }),
     );
 
     // Format date correctly using detected timezone
@@ -30,24 +30,28 @@ const Home = () => {
       new Intl.DateTimeFormat('en-US', {
         dateStyle: 'full',
         timeZone: detectedTimeZone, // Apply user's timezone
-      }).format(now)
+      }).format(now),
     );
   }, []);
 
   return (
-    <section className="flex flex-col gap-5 size-full text-white">
-      <div className="relative h-80 w-full flex items-center p-4 rounded-[20px] overflow-hidden">
+    <section className="flex size-full flex-col gap-5 text-white">
+      <div className="relative flex h-80 w-full items-center overflow-hidden rounded-[20px] p-4">
         <video
           src="/images/hero-background.mp4"
           autoPlay
           muted
           loop
-          className="absolute top-0 left-0 w-full h-full object-cover z-[-1]"
+          className="absolute left-0 top-0 z-[-1] size-full object-cover"
         />
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl text-white font-extrabold lg:text-7xl">{time || 'Loading...'}</h1>
-          <p className="text-lg  font-medium text-sky-1 lg:text-2xl">{date || 'Loading...'}</p>
-          <p className="text-sm text-white-400">
+          <h1 className="text-4xl font-extrabold text-white lg:text-7xl">
+            {time || 'Loading...'}
+          </h1>
+          <p className="text-sky-1  text-lg font-medium lg:text-2xl">
+            {date || 'Loading...'}
+          </p>
+          <p className="text-white-400 text-sm">
             Time Zone: {userTimeZone || 'Detecting...'}
           </p>
         </div>

@@ -1,10 +1,12 @@
-
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { Calendar, Clock, TrendingUp, BarChart3, BookOpen } from 'lucide-react';
-import { getUserAttendance, getUserAttendanceStats } from '@/actions/attendance.actions';
+import { Calendar, Clock, TrendingUp, BarChart3 } from 'lucide-react';
+import {
+  getUserAttendance,
+  getUserAttendanceStats,
+} from '@/actions/attendance.actions';
 import Loader from '@/components/Loader';
 
 interface AttendanceRecord {
@@ -109,10 +111,14 @@ const AttendancePage = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'present': return '#10B981'; // Green
-      case 'absent': return '#EF4444'; // Red
-      case 'late': return '#F59E0B'; // Orange
-      default: return '#6B7280'; // Gray
+      case 'present':
+        return '#10B981'; // Green
+      case 'absent':
+        return '#EF4444'; // Red
+      case 'late':
+        return '#F59E0B'; // Orange
+      default:
+        return '#6B7280'; // Gray
     }
   };
 
@@ -133,40 +139,89 @@ const AttendancePage = () => {
       </h1>
 
       {error && (
-        <div className="rounded-lg p-4" style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}>
+        <div
+          className="rounded-lg p-4"
+          style={{ backgroundColor: '#FEE2E2', color: '#991B1B' }}
+        >
           {error}
         </div>
       )}
 
       {stats && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard icon={<Calendar />} label="Total Meetings" value={stats.total_meetings || 0} />
-          <StatCard icon={<TrendingUp />} label="Attendance Rate" value={`${stats.attendance_percentage?.toFixed(1) || 0}%`} />
-          <StatCard icon={<BarChart3 />} label="Present" value={stats.present_count || 0} />
-          <StatCard icon={<Clock />} label="Total Duration" value={formatDuration(stats.total_duration_minutes)} />
+          <StatCard
+            icon={<Calendar />}
+            label="Total Meetings"
+            value={stats.total_meetings || 0}
+          />
+          <StatCard
+            icon={<TrendingUp />}
+            label="Attendance Rate"
+            value={`${stats.attendance_percentage?.toFixed(1) || 0}%`}
+          />
+          <StatCard
+            icon={<BarChart3 />}
+            label="Present"
+            value={stats.present_count || 0}
+          />
+          <StatCard
+            icon={<Clock />}
+            label="Total Duration"
+            value={formatDuration(stats.total_duration_minutes)}
+          />
         </div>
       )}
 
       {stats && stats.total_meetings > 0 && (
-        <div className="rounded-lg p-6" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
-          <h2 className="mb-4 text-xl font-semibold text-white">Attendance Overview</h2>
+        <div
+          className="rounded-lg p-6"
+          style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
+        >
+          <h2 className="mb-4 text-xl font-semibold text-white">
+            Attendance Overview
+          </h2>
           <div className="space-y-4">
-            <ProgressBar label="Present" value={stats.present_count} total={stats.total_meetings} color="#10B981" />
-            <ProgressBar label="Absent" value={stats.absent_count} total={stats.total_meetings} color="#EF4444" />
-            <ProgressBar label="Late" value={stats.late_count} total={stats.total_meetings} color="#F59E0B" />
+            <ProgressBar
+              label="Present"
+              value={stats.present_count}
+              total={stats.total_meetings}
+              color="#10B981"
+            />
+            <ProgressBar
+              label="Absent"
+              value={stats.absent_count}
+              total={stats.total_meetings}
+              color="#EF4444"
+            />
+            <ProgressBar
+              label="Late"
+              value={stats.late_count}
+              total={stats.total_meetings}
+              color="#F59E0B"
+            />
           </div>
         </div>
       )}
 
-      <div className="rounded-lg p-6" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
-        <h2 className="mb-4 text-xl text-white font-semibold">Attendance History</h2>
+      <div
+        className="rounded-lg p-6"
+        style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
+      >
+        <h2 className="mb-4 text-xl font-semibold text-white">
+          Attendance History
+        </h2>
         {attendance.length === 0 ? (
           <p className="text-center opacity-70">No attendance records found</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr style={{ borderBottom: '2px solid #374151', color: '#B0A8A3' }}>
+                <tr
+                  style={{
+                    borderBottom: '2px solid #374151',
+                    color: '#B0A8A3',
+                  }}
+                >
                   <th className="pb-3 text-left font-semibold">Meeting</th>
                   <th className="pb-3 text-left font-semibold">Date</th>
                   <th className="pb-3 text-left font-semibold">Status</th>
@@ -175,11 +230,28 @@ const AttendancePage = () => {
               </thead>
               <tbody>
                 {attendance.map((record) => (
-                  <tr key={record.id} style={{ borderBottom: '1px solid #374151' }} className="transition-colors hover:bg-opacity-5">
-                    <td className="py-3 font-medium" style={{ color: '#FFFFFF' }}>{record.meeting?.title || 'Meeting'}</td>
-                    <td className="py-3 text-gray-300">{formatDate(record.created_at)}</td>
-                    <td className="py-3"><span style={getStatusBadgeStyle(record.status)}>{record.status}</span></td>
-                    <td className="py-3 text-gray-300">{formatDuration(record.duration_minutes)}</td>
+                  <tr
+                    key={record.id}
+                    style={{ borderBottom: '1px solid #374151' }}
+                    className="transition-colors hover:bg-opacity-5"
+                  >
+                    <td
+                      className="py-3 font-medium"
+                      style={{ color: '#FFFFFF' }}
+                    >
+                      {record.meeting?.title || 'Meeting'}
+                    </td>
+                    <td className="py-3 text-gray-300">
+                      {formatDate(record.created_at)}
+                    </td>
+                    <td className="py-3">
+                      <span style={getStatusBadgeStyle(record.status)}>
+                        {record.status}
+                      </span>
+                    </td>
+                    <td className="py-3 text-gray-300">
+                      {formatDuration(record.duration_minutes)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -192,29 +264,56 @@ const AttendancePage = () => {
 };
 
 // Helper Components
-const StatCard = ({ icon, label, value }: { icon: React.ReactNode, label: string, value: string | number }) => (
-    <div className="rounded-lg p-6 flex items-center gap-4" style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}>
-        <div className="text-red-500">{icon}</div>
-        <div>
-            <p className="text-sm opacity-80">{label}</p>
-            <p className="text-2xl font-bold">{value}</p>
-        </div>
+const StatCard = ({
+  icon,
+  label,
+  value,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+}) => (
+  <div
+    className="flex items-center gap-4 rounded-lg p-6"
+    style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
+  >
+    <div className="text-red-500">{icon}</div>
+    <div>
+      <p className="text-sm opacity-80">{label}</p>
+      <p className="text-2xl font-bold">{value}</p>
     </div>
+  </div>
 );
 
-const ProgressBar = ({ label, value, total, color }: { label: string, value: number, total: number, color: string }) => (
-    <div>
-        <div className="mb-2 flex justify-between font-medium text-white">
-            <span>{label}</span>
-            <span>{value || 0}</span>
-        </div>
-        <div className="h-4 w-full overflow-hidden rounded-full" style={{ backgroundColor: '#1F2937' }}>
-            <div
-                className="h-full rounded-full transition-all duration-500"
-                style={{ width: `${((value || 0) / (total || 1)) * 100}%`, backgroundColor: color }}
-            />
-        </div>
+const ProgressBar = ({
+  label,
+  value,
+  total,
+  color,
+}: {
+  label: string;
+  value: number;
+  total: number;
+  color: string;
+}) => (
+  <div>
+    <div className="mb-2 flex justify-between font-medium text-white">
+      <span>{label}</span>
+      <span>{value || 0}</span>
     </div>
+    <div
+      className="h-4 w-full overflow-hidden rounded-full"
+      style={{ backgroundColor: '#1F2937' }}
+    >
+      <div
+        className="h-full rounded-full transition-all duration-500"
+        style={{
+          width: `${((value || 0) / (total || 1)) * 100}%`,
+          backgroundColor: color,
+        }}
+      />
+    </div>
+  </div>
 );
 
 export default AttendancePage;

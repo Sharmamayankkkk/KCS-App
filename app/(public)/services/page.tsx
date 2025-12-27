@@ -31,18 +31,33 @@ const services = [
     description: (
       <div>
         <p>
-          Support content creators by sending spiritually-themed highlighted messages during live sessions. Available Super Chat tiers:
+          Support content creators by sending spiritually-themed highlighted
+          messages during live sessions. Available Super Chat tiers:
         </p>
-        <ul className="list-disc list-inside mt-2 space-y-1">
-          <li>₹25 – <strong>Nitya Seva</strong> (30 Seconds)</li>
-          <li>₹50 – <strong>Bhakti Boost</strong> (1 Minute 10 Seconds)</li>
-          <li>₹100 – <strong>Gopi Glimmer</strong> (2 Minutes 30 Seconds)</li>
-          <li>₹250 – <strong>Vaikuntha Vibes</strong> (6 Minutes)</li>
-          <li>₹500 – <strong>Raja Bhakta Blessing</strong> (12 Minutes)</li>
-          <li>₹1000 – <strong>Parama Bhakta Offering</strong> (25 Minutes)</li>
-          <li>₹5000 – <strong>Goloka Mahadhaan</strong> (1 Hour 10 Minutes)</li>
+        <ul className="mt-2 list-inside list-disc space-y-1">
+          <li>
+            ₹25 – <strong>Nitya Seva</strong> (30 Seconds)
+          </li>
+          <li>
+            ₹50 – <strong>Bhakti Boost</strong> (1 Minute 10 Seconds)
+          </li>
+          <li>
+            ₹100 – <strong>Gopi Glimmer</strong> (2 Minutes 30 Seconds)
+          </li>
+          <li>
+            ₹250 – <strong>Vaikuntha Vibes</strong> (6 Minutes)
+          </li>
+          <li>
+            ₹500 – <strong>Raja Bhakta Blessing</strong> (12 Minutes)
+          </li>
+          <li>
+            ₹1000 – <strong>Parama Bhakta Offering</strong> (25 Minutes)
+          </li>
+          <li>
+            ₹5000 – <strong>Goloka Mahadhaan</strong> (1 Hour 10 Minutes)
+          </li>
         </ul>
-        <p className="mt-2 italic text-sm text-gray-500">
+        <p className="mt-2 text-sm italic text-gray-500">
           Note: Each Super Chat message can contain up to 200 characters.
         </p>
       </div>
@@ -52,17 +67,19 @@ const services = [
 
 const Services = () => {
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10 text-gray-800">
-      <h1 className="text-3xl sm:text-4xl font-extrabold mb-10 text-center text-gray-900">
+    <div className="mx-auto max-w-4xl px-4 py-10 text-gray-800">
+      <h1 className="mb-10 text-center text-3xl font-extrabold text-gray-900 sm:text-4xl">
         Services Offered
       </h1>
       <div className="space-y-6">
         {services.map((service, idx) => (
           <div
             key={idx}
-            className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition duration-300"
+            className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition duration-300 hover:shadow-md"
           >
-            <h2 className="text-xl font-semibold mb-2 text-gray-800">{service.title}</h2>
+            <h2 className="mb-2 text-xl font-semibold text-gray-800">
+              {service.title}
+            </h2>
             <div className="text-base text-gray-700">{service.description}</div>
           </div>
         ))}
