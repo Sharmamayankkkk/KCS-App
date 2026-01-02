@@ -4,10 +4,12 @@ import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { CheckCircle, Star } from "lucide-react"
 import { cn } from "@/lib/utils"
+import VerifiedBadge from "@/components/VerifiedBadge"
 
 export interface SuperchatMessageData {
   id: string
   sender: string
+  sender_email?: string
   text: string
   amount: number
   timestamp: string
@@ -82,8 +84,9 @@ export const SuperchatMessage = ({ message, onPin, isAdmin = false }: SuperchatM
     >
       <div className="flex items-start p-3">
         <div className="flex-1">
-          <div className="flex items-center mb-1">
+          <div className="flex items-center mb-1 gap-1.5">
             <span className="font-bold text-white">{message.sender}</span>
+            <VerifiedBadge userEmail={message.sender_email} size={14} />
             {message.isPinned && (
               <span className="ml-2 text-xs text-white px-2 py-0.5 rounded-full flex items-center bg-accent">
                 <Star size={12} className="mr-1" /> Pinned

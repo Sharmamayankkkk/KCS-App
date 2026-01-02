@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import PollsPanel from './PollsPanel';
 import { useSupabase } from '@/providers/SupabaseProvider';
 import { SuperchatMessage, SuperchatMessageData as SuperchatMessageType } from '@/components/superchat/superchat-message';
+import VerifiedBadge from './VerifiedBadge';
 
 // Define the types for our messages right here
 interface ChatMessageData {
@@ -19,6 +20,7 @@ interface ChatMessageData {
   attachment_name?: string | null;
   created_at: string;
   type: 'chat';
+  sender_email?: string;
 }
 type FeedItem = ChatMessageData | (SuperchatMessageType & { type: 'superchat', created_at: string, is_pinned: boolean });
 
@@ -28,7 +30,10 @@ const ChatMessageDisplay = ({ message, isAdmin, onPin }: { message: ChatMessageD
     {message.is_pinned && <div className="absolute top-1 right-2 flex items-center text-xs text-secondary-text"><Pin size={12} className="mr-1" /> Pinned</div>}
     {isAdmin && <button onClick={() => onPin(message.id)} className="absolute bottom-1 right-2 text-secondary-text bg-light-background/50 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" title={message.is_pinned ? 'Unpin Message' : 'Pin Message'}><Pin size={14} /></button>}
     <div className="flex flex-col">
-      <span className="font-semibold text-primary-text break-words pr-8">{message.sender}:</span>
+      <span className="font-semibold text-primary-text break-words pr-8 flex items-center gap-1.5">
+        {message.sender}
+        <VerifiedBadge userEmail={message.sender_email} size={14} />
+      </span>
       <span className="mt-1 text-primary-text break-words">{message.text}</span>
       {message.attachment_url && <a href={message.attachment_url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-2 p-2 rounded-md bg-secondary-background/50 hover:bg-secondary-background text-sm text-primary-accent"><Paperclip size={16} /><span className="truncate max-w-[200px]">{message.attachment_name || 'View Attachment'}</span></a>}
     </div>

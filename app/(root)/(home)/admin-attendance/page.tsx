@@ -26,6 +26,7 @@ import { Button } from '@/components/ui/button';
 import { exportToCSV, exportToXLSX } from '@/lib/exportAttendance';
 import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import VerifiedBadge from '@/components/VerifiedBadge';
 
 interface AttendanceStats {
   user_id: string;
@@ -432,8 +433,9 @@ const StatCard = ({
 const DisplayRow = ({ record, onEdit, onDelete, formatters }: any) => (
   <>
     <td className="p-3">
-      <p className="font-semibold" style={{ color: '#FAF5F1' }}>
+      <p className="font-semibold flex items-center gap-1.5" style={{ color: '#FAF5F1' }}>
         {record.username || 'Unknown User'}
+        <VerifiedBadge userEmail={record.users?.email} size={14} />
       </p>
       {record.users?.email && (
         <p className="text-sm" style={{ color: '#B0A8A3' }}>
