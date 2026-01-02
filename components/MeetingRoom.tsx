@@ -57,7 +57,7 @@ interface MeetingRoomProps {
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
   const { user } = useUser();
-  const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
+  const [layout, setLayout] = useState<CallLayoutType>('grid');
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const [showSendSuperchat, setShowSendSuperchat] = useState(false);
   const [showControls, setShowControls] = useState(true);
@@ -175,10 +175,24 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const CallLayout = useMemo(() => {
     const layouts = {
       grid: <CustomGridLayout />,
-      'speaker-left': <SpeakerLayout participantsBarPosition="left" />,
-      'speaker-right': <SpeakerLayout participantsBarPosition="right" />,
+      'speaker-left': (
+        <div className="hidden md:block w-full h-full">
+          <SpeakerLayout participantsBarPosition="left" />
+        </div>
+      ),
+      'speaker-right': (
+        <div className="hidden md:block w-full h-full">
+          <SpeakerLayout participantsBarPosition="right" />
+        </div>
+      ),
     };
-    return layouts[layout] || layouts['speaker-left'];
+    
+    // On mobile, always use grid layout for speaker modes
+    if (typeof window !== 'undefined' && window.innerWidth < 768 && (layout === 'speaker-left' || layout === 'speaker-right')) {
+      return <CustomGridLayout />;
+    }
+    
+    return layouts[layout] || layouts['grid'];
   }, [layout]);
 
   if (callingState !== CallingState.JOINED) return <Loader />;
@@ -188,7 +202,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       <StreamCall call={call}>
         <section className="relative w-full h-full flex flex-col bg-background">
           <div className="relative flex items-center justify-center size-full">
-            <div className={cn('flex transition-all duration-300 ease-in-out size-full', { 'max-w-[calc(100%-350px)]': isSidePanelOpen })}>
+            <div className={cn('flex transition-all duration-300 ease-in-out size-full', { 'md:max-w-[calc(100%-350px)]': isSidePanelOpen })}>
               {CallLayout}
             </div>
             {isSidePanelOpen && call.id && userData.id && (
