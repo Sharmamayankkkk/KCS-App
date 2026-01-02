@@ -16,7 +16,7 @@ import { isUserAdmin } from '@/lib/utils';
 const MeetingTypeList = () => {
   const router = useRouter();
   const [meetingState, setMeetingState] = useState<
-    'isScheduleMeeting' | 'isJoiningMeeting' | 'isInstantMeeting' | undefined
+    'isScheduleMeeting' | 'isJoiningMeeting' | 'isInstantMeeting' | 'isInstantMeetingCreated' | undefined
   >(undefined);
   const { user } = useUser();
   const client = useStreamVideoClient();
@@ -99,7 +99,8 @@ const MeetingTypeList = () => {
       }
       
       if (meetingState === 'isInstantMeeting') {
-        router.push(`/meeting/${call.id}`);
+        // Show invite modal instead of navigating immediately
+        setMeetingState('isInstantMeetingCreated');
       }
       
       toast({
@@ -344,6 +345,84 @@ Rama Rama, Hare Hare`;
               setValues({ ...values, description: e.target.value })
             }
           />
+        </div>
+      </MeetingModal>
+      
+      {/* Instant Meeting Created - Show Invite Modal */}
+      <MeetingModal
+        isOpen={meetingState === 'isInstantMeetingCreated'}
+        onClose={() => {
+          setMeetingState(undefined);
+          setCallDetail(undefined);
+        }}
+        title="Instant Meeting Created"
+        className="text-center"
+      >
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-center">
+            <CheckSquare className="h-16 w-16 text-[#B91C1C]" />
+          </div>
+          
+          <p className="text-sm text-[#64748B]">
+            Your instant meeting is ready! Share the link or join now.
+          </p>
+
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={() => {
+                router.push(`/meeting/${callDetail?.id}`);
+              }}
+              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#B91C1C] text-white hover:bg-[#991B1B]"
+            >
+              <Video className="h-5 w-5" />
+              Join Meeting Now
+            </button>
+
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(meetingLink);
+                toast({ title: 'Link Copied' });
+              }}
+              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#64748B] text-white hover:bg-[#475569]"
+            >
+              <Copy className="h-5 w-5" />
+              Copy Meeting Link
+            </button>
+
+            <button
+              onClick={handleShare}
+              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#64748B] text-white hover:bg-[#475569]"
+            >
+              <Share2 className="h-5 w-5" />
+              Share Meeting
+            </button>
+
+            <div className="grid grid-cols-3 gap-2">
+              <button
+                onClick={shareToWhatsApp}
+                className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#25D366] px-3 py-2 text-white hover:bg-[#20BA5A] transition"
+              >
+                <MessageCircle className="h-5 w-5" />
+                <span className="text-xs">WhatsApp</span>
+              </button>
+              
+              <button
+                onClick={shareToTelegram}
+                className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#0088cc] px-3 py-2 text-white hover:bg-[#0077b5] transition"
+              >
+                <Send className="h-5 w-5" />
+                <span className="text-xs">Telegram</span>
+              </button>
+              
+              <button
+                onClick={shareToFacebook}
+                className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#1877F2] px-3 py-2 text-white hover:bg-[#166FE5] transition"
+              >
+                <Facebook className="h-5 w-5" />
+                <span className="text-xs">Facebook</span>
+              </button>
+            </div>
+          </div>
         </div>
       </MeetingModal>
       
