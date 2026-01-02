@@ -161,7 +161,14 @@ export const FlexibleSidePanel = ({ callId, userId, isAdmin, senderName, onClose
             </Button>
           ))}
         </div>
-        <button className="p-2 transition rounded-full hover:bg-secondary-background" onClick={onClose}><X className="text-primary-text size-5" /></button>
+        <button 
+          className="p-2 transition rounded-full hover:bg-red-500/20 bg-secondary-background/50 border border-secondary-background" 
+          onClick={onClose}
+          title="Close panel"
+          aria-label="Close panel"
+        >
+          <X className="text-primary-text size-5" />
+        </button>
       </div>
 
       <div className="flex-1 overflow-hidden flex flex-col">

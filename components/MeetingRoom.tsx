@@ -57,7 +57,7 @@ interface MeetingRoomProps {
 const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const router = useRouter();
   const { user } = useUser();
-  const [layout, setLayout] = useState<CallLayoutType>('speaker-left');
+  const [layout, setLayout] = useState<CallLayoutType>('grid');
   const [isSidePanelOpen, setIsSidePanelOpen] = useState(false);
   const [showSendSuperchat, setShowSendSuperchat] = useState(false);
   const [showControls, setShowControls] = useState(true);
