@@ -172,14 +172,14 @@ export const FlexibleSidePanel = ({ callId, userId, isAdmin, senderName, onClose
       <div className="flex justify-between items-center mb-4 flex-shrink-0">
         <div className="flex items-center gap-2 p-1 rounded-lg bg-secondary-background/50">
           {tabs.map((tab) => (
-            <Button key={tab.name} variant="ghost" size="sm" onClick={() => setActiveTab(tab.name as PanelTab)} className={cn('flex items-center gap-1.5 px-3 py-1 text-xs h-auto', activeTab === tab.name ? 'bg-background shadow-md rounded-md' : 'text-secondary-text')}>
+            <Button key={tab.name} variant="ghost" size="sm" onClick={() => setActiveTab(tab.name as PanelTab)} className={cn('flex items-center gap-1.5 px-2 sm:px-3 py-1 text-xs h-auto', activeTab === tab.name ? 'bg-background shadow-md rounded-md' : 'text-secondary-text')}>
               <tab.icon size={14} />
-              {tab.label}
+              <span className="hidden sm:inline">{tab.label}</span>
             </Button>
           ))}
         </div>
         <button 
-          className="p-2 transition rounded-full hover:bg-red-500/20 bg-secondary-background/50 border border-secondary-background" 
+          className="p-2 transition rounded-full hover:bg-red-500/20 bg-secondary-background/50 border border-secondary-background flex-shrink-0 touch-manipulation" 
           onClick={onClose}
           title="Close panel"
           aria-label="Close panel"

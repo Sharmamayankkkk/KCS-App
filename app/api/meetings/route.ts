@@ -47,3 +47,36 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    // Get all upcoming meetings (meetings that haven't started yet or started within the last 24 hours)
+    const now = new Date();
+    const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+    
+    const { data, error } = await supabase
+      .from('meetings')
+      .select('*')
+      .gte('start_time', twentyFourHoursAgo.toISOString())
+      .order('start_time', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching meetings:', error);
+      return NextResponse.json(
+        { error: 'Failed to fetch meetings' },
+        { status: 500 },
+      );
+    }
+
+    return NextResponse.json(
+      { meetings: data || [] },
+      { status: 200 },
+    );
+  } catch (e) {
+    console.error('Error in GET /api/meetings:', e);
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 },
+    );
+  }
+}

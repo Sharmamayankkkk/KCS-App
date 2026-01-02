@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import MeetingTypeList from '@/components/MeetingTypeList';
+import ScheduledMeetings from '@/components/ScheduledMeetings';
 
 const Home = () => {
   const [userTimeZone, setUserTimeZone] = useState<string | null>(null);
@@ -58,6 +59,8 @@ const Home = () => {
       </div>
 
       <MeetingTypeList />
+      
+      <ScheduledMeetings />
     </section>
   );
 };
