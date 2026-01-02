@@ -52,9 +52,11 @@ export const FlexibleSidePanel = ({ callId, userId, isAdmin, senderName, onClose
   const [messageText, setMessageText] = useState('');
   const [combinedFeed, setCombinedFeed] = useState<FeedItem[]>([]);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
 
   const calculateDuration = (amount: number): number => {
     if (amount >= 1000) return 300;
@@ -96,9 +98,22 @@ export const FlexibleSidePanel = ({ callId, userId, isAdmin, senderName, onClose
     fetchAndListen();
   }, [callId, supabase]);
 
+  // Handle scroll detection to determine if we should auto-scroll
+  const handleScroll = () => {
+    if (chatContainerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      // Consider user at bottom if within 100px of the bottom
+      const isAtBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShouldAutoScroll(isAtBottom);
+    }
+  };
+
   useEffect(() => {
-    if (chatEndRef.current) chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  }, [combinedFeed]);
+    // Only auto-scroll if user is at or near the bottom
+    if (shouldAutoScroll && chatEndRef.current) {
+      chatEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [combinedFeed, shouldAutoScroll]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -129,6 +144,8 @@ export const FlexibleSidePanel = ({ callId, userId, isAdmin, senderName, onClose
         setCombinedFeed((prev) => [...prev, { ...data[0], type: 'chat' }]);
         const channel = supabase.channel(`call:${callId}`);
         await channel.send({ type: 'broadcast', event: 'chat', payload: { newMessage: data[0] } });
+        // When user sends a message, enable auto-scroll
+        setShouldAutoScroll(true);
       }
     }
   };
@@ -175,7 +192,7 @@ export const FlexibleSidePanel = ({ callId, userId, isAdmin, senderName, onClose
         {activeTab === 'chat' && (
           <div className="flex-1 flex flex-col min-h-0">
             {pinnedMessage && <div className="mb-2 p-2 rounded-lg bg-secondary-background/50 border border-secondary-background flex-shrink-0"><div className="flex items-center text-xs text-secondary-text mb-1"><Pin size={12} className="mr-1.5" /> PINNED MESSAGE</div><p className="text-sm text-primary-text truncate"><strong>{pinnedMessage.sender}:</strong> {pinnedMessage.text}</p></div>}
-            <div className="flex-1 space-y-3 overflow-y-auto custom-scrollbar-hidden pr-2">
+            <div ref={chatContainerRef} onScroll={handleScroll} className="flex-1 space-y-3 overflow-y-auto custom-scrollbar-hidden pr-2">
               {combinedFeed.map((item) => (item.type === 'superchat' ? <SuperchatMessage key={item.id} message={item as SuperchatMessageType} isAdmin={isAdmin} /> : <ChatMessageDisplay key={item.id} message={item} isAdmin={isAdmin} onPin={handlePinMessage} />))}
               <div ref={chatEndRef} />
             </div>
