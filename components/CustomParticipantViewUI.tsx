@@ -4,8 +4,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { useParticipantViewContext, hasAudio, hasVideo } from '@stream-io/video-react-sdk';
 import { AnimatePresence, motion } from 'framer-motion';
 import { isUserAdmin } from '@/lib/utils';
-import Image from 'next/image';
 import { Mic, MicOff, Video as VideoIcon, VideoOff } from 'lucide-react';
+import VerifiedBadge from './VerifiedBadge';
 
 interface CustomReactionState {
   id: string;
@@ -82,21 +82,13 @@ export const CustomParticipantViewUI = () => {
           textOverflow: 'ellipsis',
           whiteSpace: 'nowrap',
           flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+          gap: '4px',
         }}>
           {participant.name || participant.userId}
+          <VerifiedBadge userId={participant.userId} size={14} />
         </span>
-        
-        {/* Verified badge for admins */}
-        {isAdmin && (
-          <Image
-            src="/images/verified.png"
-            alt="Verified Admin"
-            width={16}
-            height={16}
-            style={{ flexShrink: 0 }}
-            title="Verified Admin"
-          />
-        )}
         
         {/* Audio muted indicator */}
         {!hasAudioTrack && (

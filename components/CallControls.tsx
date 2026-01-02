@@ -18,7 +18,7 @@ import {
   DropdownMenuSubContent,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Settings, LayoutList, Image as ImageIcon, Smile, Share, Circle } from 'lucide-react';
+import { Settings, LayoutList, Image as ImageIcon, Smile, Share, Circle, Maximize, Minimize, PictureInPicture2 } from 'lucide-react';
 import Image from 'next/image';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
@@ -50,6 +50,23 @@ export const CallControls: React.FC<CallControlsProps> = ({
   const { screenShare, isMute: isScreenSharing } = useScreenShareState();
   const isSomeoneScreenSharing = useHasOngoingScreenShare();
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isPipSupported, setIsPipSupported] = useState(false);
+
+  useEffect(() => {
+    // Check if Picture-in-Picture is supported
+    setIsPipSupported('pictureInPictureEnabled' in document);
+
+    // Listen for fullscreen changes
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
 
   useEffect(() => {
     if (!call) return;
@@ -100,6 +117,32 @@ export const CallControls: React.FC<CallControlsProps> = ({
     }
   }, [call]);
 
+  const toggleFullscreen = useCallback(async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await document.documentElement.requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (e) {
+      console.error('Failed to toggle fullscreen', e);
+    }
+  }, []);
+
+  const enterPictureInPicture = useCallback(async () => {
+    try {
+      // Find the first video element in the document
+      const videoElement = document.querySelector('video');
+      if (videoElement && 'requestPictureInPicture' in videoElement) {
+        await (videoElement as any).requestPictureInPicture();
+      } else {
+        console.warn('Picture-in-Picture not supported on this video element');
+      }
+    } catch (e) {
+      console.error('Failed to enter Picture-in-Picture', e);
+    }
+  }, []);
+
   return (
     <div className="flex items-center gap-2">
       <SpeakingWhileMutedNotification>
@@ -113,22 +156,23 @@ export const CallControls: React.FC<CallControlsProps> = ({
             <Settings />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="top" align="center" className="w-56">
+        <DropdownMenuContent side="top" align="center" className="w-56 z-[200]">
           <DropdownMenuItem onClick={() => setShowBackgroundSelector?.(true)}>
             <ImageIcon className="mr-2 size-4" />
             <span>Change Background</span>
           </DropdownMenuItem>
           
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger className="cursor-pointer">
               <LayoutList className="mr-2 size-4" />
               <span>Change Layout</span>
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
+            <DropdownMenuSubContent className="z-[210]">
               {LAYOUT_OPTIONS.map((option) => (
                 <DropdownMenuItem 
                   key={option.name} 
                   onClick={() => setLayout?.(option.value as CallLayoutType)}
+                  className="cursor-pointer"
                 >
                   <option.icon className="mr-2 size-4" />
                   {option.name}
@@ -142,24 +186,25 @@ export const CallControls: React.FC<CallControlsProps> = ({
           <DropdownMenuItem 
             onClick={toggleRecording} 
             disabled={isAwaitingResponse || !call}
+            className="cursor-pointer"
           >
             <Circle className="mr-2 size-4" fill={isCallRecordingInProgress ? "red" : "currentColor"} />
             <span>{isCallRecordingInProgress ? 'Stop Recording' : 'Record Call'}</span>
           </DropdownMenuItem>
 
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger className="cursor-pointer">
               <Smile className="mr-2 size-4" />
               <span>React</span>
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent>
-               <DropdownMenuItem onClick={() => sendReaction({ type: 'raised-hand', emoji_code: ':raise-hand:' })}>
+            <DropdownMenuSubContent className="z-[210]">
+               <DropdownMenuItem onClick={() => sendReaction({ type: 'raised-hand', emoji_code: ':raise-hand:' })} className="cursor-pointer">
                 ✋ Raise Hand
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => sendReaction({ type: 'like', emoji_code: ':like:' })}>
+              <DropdownMenuItem onClick={() => sendReaction({ type: 'like', emoji_code: ':like:' })} className="cursor-pointer">
                 👍 Like
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => sendReaction({ type: 'fireworks', emoji_code: ':fireworks:' })}>
+              <DropdownMenuItem onClick={() => sendReaction({ type: 'fireworks', emoji_code: ':fireworks:' })} className="cursor-pointer">
                 🎉 Fireworks
               </DropdownMenuItem>
               <DropdownMenuItem 
@@ -167,6 +212,7 @@ export const CallControls: React.FC<CallControlsProps> = ({
                   const imageUrl = `${window.location.origin}/icons/KCS-Logo.png`;
                   sendReaction({ type: 'custom', custom: { 'image_url': imageUrl } });
                 }}
+                className="cursor-pointer"
               >
                 <Image src="https://meet.krishnaconsciousnesssociety.com/icons/KCS.png" alt="KCS Logo" width={20} height={20} className="mr-2" />
                 <span>KCS Reaction</span>
@@ -177,10 +223,31 @@ export const CallControls: React.FC<CallControlsProps> = ({
           <DropdownMenuItem 
             onClick={toggleScreenShare}
             disabled={!isScreenSharing && isSomeoneScreenSharing}
+            className="cursor-pointer"
           >
             <Share className="mr-2 size-4" />
             <span>{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</span>
           </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem 
+            onClick={toggleFullscreen}
+            className="cursor-pointer"
+          >
+            {isFullscreen ? <Minimize className="mr-2 size-4" /> : <Maximize className="mr-2 size-4" />}
+            <span>{isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}</span>
+          </DropdownMenuItem>
+
+          {isPipSupported && (
+            <DropdownMenuItem 
+              onClick={enterPictureInPicture}
+              className="cursor-pointer"
+            >
+              <PictureInPicture2 className="mr-2 size-4" />
+              <span>Picture-in-Picture</span>
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
 

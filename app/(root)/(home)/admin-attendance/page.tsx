@@ -11,6 +11,8 @@ import {
   Save,
   XCircle,
   BookOpen,
+  Download,
+  FileSpreadsheet,
 } from 'lucide-react';
 import {
   getAllUsersAttendanceStats,
@@ -21,6 +23,10 @@ import {
 } from '@/actions/attendance.actions';
 import Loader from '@/components/Loader';
 import { Button } from '@/components/ui/button';
+import { exportToCSV, exportToXLSX } from '@/lib/exportAttendance';
+import ReactDatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+import VerifiedBadge from '@/components/VerifiedBadge';
 
 interface AttendanceStats {
   user_id: string;
@@ -69,6 +75,7 @@ const AdminAttendancePage = () => {
     'present',
   );
   const [editNotes, setEditNotes] = useState('');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   useEffect(() => {
     const checkAdminAndFetchData = async () => {
@@ -148,7 +155,7 @@ const AdminAttendancePage = () => {
 
   const filteredAttendance = useMemo(() => {
     const lowerCaseSearch = searchTerm.toLowerCase();
-    return allAttendance.filter((record) => {
+    let filtered = allAttendance.filter((record) => {
       return (
         record.username?.toLowerCase().includes(lowerCaseSearch) ||
         record.users?.email?.toLowerCase().includes(lowerCaseSearch) || // Email might not be available
@@ -157,7 +164,18 @@ const AdminAttendancePage = () => {
         record.status.toLowerCase().includes(lowerCaseSearch)
       );
     });
-  }, [allAttendance, searchTerm]);
+
+    // Filter by selected date if applicable
+    if (selectedDate) {
+      const selectedDateStr = selectedDate.toDateString();
+      filtered = filtered.filter((record) => {
+        const recordDate = new Date(record.created_at).toDateString();
+        return recordDate === selectedDateStr;
+      });
+    }
+
+    return filtered;
+  }, [allAttendance, searchTerm, selectedDate]);
 
   const groupedAttendance = useMemo(() => {
     const groups: { [key: string]: AttendanceRecord[] } = {};
@@ -183,6 +201,20 @@ const AdminAttendancePage = () => {
     });
     return groups;
   }, [filteredAttendance]);
+
+  const handleExportCSV = () => {
+    const filename = selectedDate
+      ? `attendance_${selectedDate.toISOString().split('T')[0]}.csv`
+      : `attendance_all.csv`;
+    exportToCSV(filteredAttendance, filename);
+  };
+
+  const handleExportXLSX = () => {
+    const filename = selectedDate
+      ? `attendance_${selectedDate.toISOString().split('T')[0]}.xlsx`
+      : `attendance_all.xlsx`;
+    exportToXLSX(filteredAttendance, filename);
+  };
 
   // Formatting helpers
   const formatDate = (ds?: string) =>
@@ -249,18 +281,67 @@ const AdminAttendancePage = () => {
         className="rounded-lg p-6"
         style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
       >
-        <div
-          className="mb-4 flex items-center gap-2 rounded-lg p-4"
-          style={{ backgroundColor: '#1F2937' }}
-        >
-          <Search className="size-5 opacity-70" />
-          <input
-            type="text"
-            placeholder="Search by user, email, meeting, or status..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 bg-transparent outline-none placeholder:opacity-50"
-          />
+        <div className="mb-4 flex flex-col sm:flex-row gap-3">
+          <div
+            className="flex items-center gap-2 rounded-lg p-4 flex-1"
+            style={{ backgroundColor: '#1F2937' }}
+          >
+            <Search className="size-5 opacity-70" />
+            <input
+              type="text"
+              placeholder="Search by user, email, meeting, or status..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 bg-transparent outline-none placeholder:opacity-50"
+            />
+          </div>
+          
+          <div
+            className="flex items-center gap-2 rounded-lg p-2"
+            style={{ backgroundColor: '#1F2937' }}
+          >
+            <Calendar className="size-5 opacity-70 ml-2" />
+            <ReactDatePicker
+              selected={selectedDate}
+              onChange={(date) => setSelectedDate(date)}
+              placeholderText="Filter by date"
+              dateFormat="MMM d, yyyy"
+              className="bg-transparent outline-none cursor-pointer"
+              isClearable
+            />
+          </div>
+        </div>
+
+        <div className="mb-4 flex flex-wrap gap-2">
+          <Button
+            onClick={handleExportCSV}
+            disabled={filteredAttendance.length === 0}
+            className="bg-green-600 hover:bg-green-700 text-white"
+            size="sm"
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Export CSV
+          </Button>
+          <Button
+            onClick={handleExportXLSX}
+            disabled={filteredAttendance.length === 0}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+            size="sm"
+          >
+            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            Export XLSX
+          </Button>
+          {selectedDate && (
+            <span className="flex items-center gap-2 px-3 py-2 rounded bg-blue-600 text-white text-sm">
+              Showing: {selectedDate.toLocaleDateString('en-US')}
+              <button
+                onClick={() => setSelectedDate(null)}
+                className="hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </span>
+          )}
         </div>
 
         <div className="overflow-x-auto">
@@ -275,7 +356,7 @@ const AdminAttendancePage = () => {
                   className="mb-4 text-xl font-semibold"
                   style={{ color: '#FAF5F1' }}
                 >
-                  {date}
+                  {date} ({records.length} records)
                 </h3>
                 <table className="w-full text-left">
                   <thead className="border-b border-gray-600">
@@ -352,8 +433,9 @@ const StatCard = ({
 const DisplayRow = ({ record, onEdit, onDelete, formatters }: any) => (
   <>
     <td className="p-3">
-      <p className="font-semibold" style={{ color: '#FAF5F1' }}>
+      <p className="font-semibold flex items-center gap-1.5" style={{ color: '#FAF5F1' }}>
         {record.username || 'Unknown User'}
+        <VerifiedBadge userEmail={record.users?.email} size={14} />
       </p>
       {record.users?.email && (
         <p className="text-sm" style={{ color: '#B0A8A3' }}>
