@@ -5,6 +5,7 @@ import { useParticipantViewContext, hasAudio, hasVideo } from '@stream-io/video-
 import { AnimatePresence, motion } from 'framer-motion';
 import { isUserAdmin } from '@/lib/utils';
 import Image from 'next/image';
+import { Mic, MicOff, Video as VideoIcon, VideoOff } from 'lucide-react';
 
 interface CustomReactionState {
   id: string;
@@ -99,15 +100,15 @@ export const CustomParticipantViewUI = () => {
         
         {/* Audio muted indicator */}
         {!hasAudioTrack && (
-          <span style={{ color: '#ef4444', fontSize: '16px' }} title="Microphone muted">
-            🔇
+          <span title="Microphone muted">
+            <MicOff size={16} className="text-red-500" />
           </span>
         )}
         
         {/* Video muted indicator */}
         {!hasVideoTrack && (
-          <span style={{ color: '#ef4444', fontSize: '16px' }} title="Camera off">
-            📹
+          <span title="Camera off">
+            <VideoOff size={16} className="text-red-500" />
           </span>
         )}
       </div>
