@@ -110,8 +110,11 @@ const MeetingTypeList = () => {
       });
     } catch (error) {
       console.error(error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: 'Failed to create Meeting',
+        description: errorMessage,
+        variant: 'destructive',
       });
     }
   };
