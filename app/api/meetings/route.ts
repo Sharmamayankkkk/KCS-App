@@ -2,6 +2,13 @@
 import { supabase } from '@/lib/supabaseClient';
 import { NextResponse } from 'next/server';
 
+interface MeetingUpdateData {
+  is_active?: boolean;
+  is_private?: boolean;
+  end_time?: string;
+  updated_at: string;
+}
+
 export async function POST(request: Request) {
   try {
     const { call_id, title, description, start_time, is_private } = await request.json();
@@ -96,12 +103,7 @@ export async function PATCH(request: Request) {
     }
 
     // Build update object with only provided fields
-    const updateData: {
-      is_active?: boolean;
-      is_private?: boolean;
-      end_time?: string;
-      updated_at: string;
-    } = {
+    const updateData: MeetingUpdateData = {
       updated_at: new Date().toISOString(),
     };
     
