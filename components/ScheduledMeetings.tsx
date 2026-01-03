@@ -7,6 +7,7 @@ import { Calendar, Clock, Users, Video, Eye, EyeOff, Lock, Globe } from 'lucide-
 import { Button } from './ui/button';
 import { isUserAdmin } from '@/lib/utils';
 import { useToast } from './ui/use-toast';
+import PrivacyBadge from './PrivacyBadge';
 
 interface Meeting {
   id: number;
@@ -32,7 +33,7 @@ const ScheduledMeetings = () => {
   const isAdmin = useMemo(() => {
     const userEmail = user?.emailAddresses?.[0]?.emailAddress || '';
     return isUserAdmin(userEmail);
-  }, [user]);
+  }, [user?.emailAddresses]);
 
   useEffect(() => {
     const fetchMeetings = async () => {
@@ -252,18 +253,7 @@ const ScheduledMeetings = () => {
                   <h3 className="font-semibold text-[#0F172A] truncate">
                     {meeting.title}
                   </h3>
-                  {meeting.is_private && (
-                    <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-medium flex items-center gap-1">
-                      <Lock className="h-3 w-3" />
-                      Private
-                    </span>
-                  )}
-                  {!meeting.is_private && (
-                    <span className="px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 text-xs font-medium flex items-center gap-1">
-                      <Globe className="h-3 w-3" />
-                      Public
-                    </span>
-                  )}
+                  <PrivacyBadge isPrivate={meeting.is_private} />
                 </div>
                 {meeting.description && (
                   <p className="text-sm text-[#64748B] truncate">

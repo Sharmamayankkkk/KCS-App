@@ -96,11 +96,18 @@ export async function PATCH(request: Request) {
     }
 
     // Build update object with only provided fields
-    const updateData: any = {};
+    const updateData: {
+      is_active?: boolean;
+      is_private?: boolean;
+      end_time?: string;
+      updated_at: string;
+    } = {
+      updated_at: new Date().toISOString(),
+    };
+    
     if (typeof is_active !== 'undefined') updateData.is_active = is_active;
     if (typeof is_private !== 'undefined') updateData.is_private = is_private;
     if (end_time) updateData.end_time = end_time;
-    updateData.updated_at = new Date().toISOString();
 
     const { data, error } = await supabase
       .from('meetings')
