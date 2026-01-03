@@ -17,6 +17,7 @@ const ThemeToggle = () => {
       <button
         className="flex-center size-10 rounded-lg bg-surface border border-border transition-all"
         disabled
+        aria-label="Loading theme toggle"
       >
         <div className="h-5 w-5" />
       </button>
