@@ -47,7 +47,7 @@ BEGIN
 END $$;
 
 -- ============================================
--- Step 2: Add missing columns if table already exists
+-- Step 3: Add Missing Columns
 -- ============================================
 -- These commands are safe to run even if columns already exist
 ALTER TABLE public.meetings 

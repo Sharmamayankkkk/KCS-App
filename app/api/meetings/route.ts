@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         { 
           error: 'Failed to save meeting metadata', 
           details: error.message,
-          hint: 'Check if all required database columns exist. Run the complete_meetings_setup.sql migration if needed.'
+          hint: 'Check if all required database columns exist. Run the meetings setup migration from the migrations folder if needed.'
         },
         { status: 500 },
       );
@@ -80,7 +80,7 @@ export async function GET() {
         { 
           error: 'Failed to fetch meetings',
           details: error.message,
-          hint: 'Check if the meetings table exists and has required columns. Run complete_meetings_setup.sql if needed.'
+          hint: 'Check if the meetings table exists and has required columns. Run the meetings setup migration from the migrations folder if needed.'
         },
         { status: 500 },
       );

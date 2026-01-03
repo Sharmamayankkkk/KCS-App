@@ -226,6 +226,8 @@ END $$;
 -- ============================================
 
 -- Create a view for upcoming meetings (used by the application)
+-- Note: The 2-hour window for 'live' status allows participants to access
+-- meetings shortly after the scheduled start time for latecomers
 CREATE OR REPLACE VIEW public.upcoming_meetings AS
 SELECT 
   id,
