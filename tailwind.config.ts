@@ -26,27 +26,27 @@ const config: Config = {
     },
     extend: {
       colors: {
-        'primary': '#1E293B',
-        'secondary': '#334155',
-        'accent': '#B91C1C',
-        'background': '#F8FAFC',
-        'surface': '#F1F5F9',
-        'border': '#E2E8F0',
-        'text-primary': '#0F172A',
-        'text-secondary': '#64748B',
+        'primary': 'var(--primary)',
+        'secondary': 'var(--secondary)',
+        'accent': 'var(--accent)',
+        'background': 'var(--background)',
+        'surface': 'var(--surface)',
+        'border': 'var(--border)',
+        'text-primary': 'var(--text-primary)',
+        'text-secondary': 'var(--text-secondary)',
         
-        // Legacy support - mapped to new colors
-        'primary-accent': '#B91C1C',
-        'light-background': '#F8FAFC',
-        'secondary-background': '#F1F5F9',
-        'primary-text': '#0F172A',
-        'secondary-text': '#64748B',
+        // Legacy support - mapped to CSS variables
+        'primary-accent': 'var(--primary-accent)',
+        'light-background': 'var(--light-background)',
+        'secondary-background': 'var(--secondary-background)',
+        'primary-text': 'var(--primary-text)',
+        'secondary-text': 'var(--secondary-text)',
         
         video: {
-          background: '#F8FAFC',
-          'background-secondary': '#F1F5F9',
-          accent: '#B91C1C',
-          text: '#0F172A',
+          background: 'var(--background)',
+          'background-secondary': 'var(--surface)',
+          accent: 'var(--accent)',
+          text: 'var(--text-primary)',
         },
       },
       spacing: {

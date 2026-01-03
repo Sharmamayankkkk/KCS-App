@@ -30,10 +30,10 @@ const NavLinks = () => {
             href={item.route}
             key={item.label}
             className={cn(
-              'flex gap-4 items-center p-4 rounded-lg justify-start text-[#F8FAFC] transition-colors',
+              'flex gap-4 items-center p-4 rounded-lg justify-start text-background transition-colors',
               {
-                'bg-[#B91C1C] hover:bg-[#991B1B]': isActive,
-                'hover:bg-[#334155]': !isActive,
+                'bg-accent hover:bg-accent/90': isActive,
+                'hover:bg-secondary': !isActive,
               }
             )}
           >
@@ -52,10 +52,10 @@ const NavLinks = () => {
             href={item.route}
             key={item.label}
             className={cn(
-              'flex gap-4 items-center p-4 rounded-lg justify-start text-[#F8FAFC] transition-colors',
+              'flex gap-4 items-center p-4 rounded-lg justify-start text-background transition-colors',
               {
-                'bg-[#B91C1C] hover:bg-[#991B1B]': isActive,
-                'hover:bg-[#334155]': !isActive,
+                'bg-accent hover:bg-accent/90': isActive,
+                'hover:bg-secondary': !isActive,
               }
             )}
           >
