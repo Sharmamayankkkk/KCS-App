@@ -39,7 +39,11 @@ export async function POST(request: Request) {
     if (error) {
       console.error('Error saving meeting metadata:', error);
       return NextResponse.json(
-        { error: 'Failed to save meeting metadata' },
+        { 
+          error: 'Failed to save meeting metadata', 
+          details: error.message,
+          hint: 'Check if all required database columns exist. Run the complete_meetings_setup.sql migration if needed.'
+        },
         { status: 500 },
       );
     }
@@ -73,7 +77,11 @@ export async function GET() {
     if (error) {
       console.error('Error fetching meetings:', error);
       return NextResponse.json(
-        { error: 'Failed to fetch meetings' },
+        { 
+          error: 'Failed to fetch meetings',
+          details: error.message,
+          hint: 'Check if the meetings table exists and has required columns. Run complete_meetings_setup.sql if needed.'
+        },
         { status: 500 },
       );
     }
@@ -120,7 +128,10 @@ export async function PATCH(request: Request) {
     if (error) {
       console.error('Error updating meeting:', error);
       return NextResponse.json(
-        { error: 'Failed to update meeting' },
+        { 
+          error: 'Failed to update meeting',
+          details: error.message 
+        },
         { status: 500 },
       );
     }
