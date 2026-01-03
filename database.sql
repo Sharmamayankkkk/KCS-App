@@ -52,6 +52,9 @@ CREATE TABLE public.meetings (
   start_time timestamp with time zone NOT NULL,
   created_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
   updated_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+  is_active boolean DEFAULT true,
+  is_private boolean DEFAULT false,
+  end_time timestamp with time zone,
   CONSTRAINT meetings_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.participants (

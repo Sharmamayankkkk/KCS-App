@@ -1,12 +1,21 @@
 'use client';
 
-import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import MobileNav from './MobileNav';
+import { useMemo } from 'react';
+import { isUserAdmin } from '@/lib/utils';
+import VerifiedBadge from './VerifiedBadge';
 
 const Navbar = () => {
+  const { user } = useUser();
+  
+  const userEmail = useMemo(() => {
+    return user?.emailAddresses?.[0]?.emailAddress || '';
+  }, [user]);
+
   return (
     <nav
       className="fixed z-50 w-full px-6 py-4 lg:px-10 flex items-center justify-between bg-[#1E293B]"
@@ -29,7 +38,10 @@ const Navbar = () => {
       <div className="flex items-center gap-6">
         <div className="hidden sm:flex items-center gap-4">
           <SignedIn>
-            <UserButton afterSignOutUrl="/sign-in" />
+            <div className="flex items-center gap-2">
+              <UserButton afterSignOutUrl="/sign-in" />
+              <VerifiedBadge userEmail={userEmail} size={18} />
+            </div>
           </SignedIn>
 
           <SignedOut>

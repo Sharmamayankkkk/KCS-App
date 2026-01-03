@@ -11,12 +11,18 @@ import Link from 'next/link';
 import NavLinks from './NavLinks';
 import SocialLinks from './SocialLinks';
 import LegalLinks from './LegalLinks';
-import { SignedIn, UserButton } from '@clerk/nextjs';
+import { SignedIn, UserButton, useUser } from '@clerk/nextjs';
 import { Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import VerifiedBadge from './VerifiedBadge';
 
 const MobileNav = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useUser();
+  
+  const userEmail = useMemo(() => {
+    return user?.emailAddresses?.[0]?.emailAddress || '';
+  }, [user]);
 
   return (
     <section className="w-full max-w-[264px]">
@@ -45,8 +51,9 @@ const MobileNav = () => {
           <div className="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto pt-8">
             <div className="flex flex-col gap-6">
               <SignedIn>
-                <div className="flex justify-center">
+                <div className="flex justify-center items-center gap-2">
                   <UserButton afterSignOutUrl="/sign-in" />
+                  <VerifiedBadge userEmail={userEmail} size={18} />
                 </div>
               </SignedIn>
               <NavLinks />
