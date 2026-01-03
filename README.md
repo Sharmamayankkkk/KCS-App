@@ -32,6 +32,7 @@
 - [Database Schema](#-database-schema)
 - [API Documentation](#-api-documentation)
 - [Deployment](#-deployment)
+- [Troubleshooting](#-troubleshooting)
 - [Contributing](#-contributing)
 - [License](#-license)
 - [Contact](#-contact)
@@ -459,7 +460,10 @@ components/
    
    - Create a Supabase project at [supabase.com](https://supabase.com)
    - Run the SQL from `database.sql` in the Supabase SQL editor
+   - **IMPORTANT**: Run `migrations/complete_meetings_setup.sql` to ensure scheduled meetings work correctly
    - Enable real-time for required tables
+   
+   > ⚠️ **Scheduled Meetings Fix**: If you experience issues with meetings not being saved or displayed, see [SCHEDULED_MEETINGS_FIX.md](./SCHEDULED_MEETINGS_FIX.md) for a quick 5-minute solution.
 
 5. **Run the development server**
    ```bash
@@ -795,6 +799,48 @@ We welcome contributions to improve KCS Meet! Here's how you can help:
 ## 📜 License
 
 This project is distributed under the MIT License. See `LICENSE` file for more information.
+
+---
+
+## 🔧 Troubleshooting
+
+### Scheduled Meetings Not Working
+
+**Problem**: Meetings not appearing on home screen, "Failed to save meeting metadata" error, or database errors.
+
+**Quick Fix** (5 minutes):
+1. Open your Supabase Dashboard → SQL Editor
+2. Run the entire contents of `migrations/complete_meetings_setup.sql`
+3. Restart your application
+
+**Detailed Guide**: See [SCHEDULED_MEETINGS_FIX.md](./SCHEDULED_MEETINGS_FIX.md) for comprehensive troubleshooting steps.
+
+**Common Issues**:
+- Missing database columns (`is_active`, `is_private`, `end_time`)
+- Missing sequences (`meetings_id_seq`)
+- Row Level Security (RLS) blocking operations
+- Incorrect environment variables
+
+**Additional Resources**:
+- [Migration Guide](./migrations/README.md) - Detailed migration documentation
+- [Database Setup](./migrations/complete_meetings_setup.sql) - Complete setup script
+
+### Other Common Issues
+
+**Build Failures**:
+- Ensure all environment variables are set correctly in `.env.local`
+- Run `npm install` to ensure all dependencies are installed
+- Clear `.next` cache: `rm -rf .next && npm run dev`
+
+**Authentication Issues**:
+- Verify Clerk keys are correct
+- Check that redirect URLs match your deployment
+- Ensure admin emails are correctly listed in `NEXT_PUBLIC_ADMIN_EMAILS`
+
+**Video/Audio Issues**:
+- Grant browser permissions for camera/microphone
+- Check Stream.io credentials and API keys
+- Test on a different browser or device
 
 ---
 
