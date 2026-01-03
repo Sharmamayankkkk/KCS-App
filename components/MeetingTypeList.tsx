@@ -25,6 +25,7 @@ const MeetingTypeList = () => {
     description: '',
     link: '',
     title: '',
+    isPrivate: false,
   });
   const [callDetail, setCallDetail] = useState<Call>();
   const { toast } = useToast();
@@ -90,6 +91,7 @@ const MeetingTypeList = () => {
           title: values.title,
           description: values.description,
           start_time: startsAt,
+          is_private: values.isPrivate,
         }),
       });
 
@@ -250,6 +252,18 @@ Rama Rama, Hare Hare`;
               className="w-full rounded border border-[#E2E8F0] bg-[#F8FAFC] p-2 text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-[#B91C1C]"
             />
           </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="isPrivate"
+              checked={values.isPrivate}
+              onChange={(e) => setValues({ ...values, isPrivate: e.target.checked })}
+              className="h-4 w-4 rounded border-[#E2E8F0] text-[#B91C1C] focus:ring-[#B91C1C]"
+            />
+            <label htmlFor="isPrivate" className="text-base font-normal leading-[22.4px] text-[#0F172A] cursor-pointer">
+              Make this meeting private (invite-only)
+            </label>
+          </div>
         </MeetingModal>
       ) : (
         <MeetingModal
@@ -345,6 +359,18 @@ Rama Rama, Hare Hare`;
               setValues({ ...values, description: e.target.value })
             }
           />
+          <div className="flex items-center gap-3 mt-2">
+            <input
+              type="checkbox"
+              id="isPrivateInstant"
+              checked={values.isPrivate}
+              onChange={(e) => setValues({ ...values, isPrivate: e.target.checked })}
+              className="h-4 w-4 rounded border-[#E2E8F0] text-[#B91C1C] focus:ring-[#B91C1C]"
+            />
+            <label htmlFor="isPrivateInstant" className="text-base font-normal leading-[22.4px] text-[#0F172A] cursor-pointer">
+              Make this meeting private (invite-only)
+            </label>
+          </div>
         </div>
       </MeetingModal>
       
