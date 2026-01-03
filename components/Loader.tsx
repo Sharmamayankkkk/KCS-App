@@ -1,32 +1,12 @@
 import React from "react";
 
 const Loader: React.FC = () => (
-  <div
-    style={{
-      margin: 0,
-      background: "#F8FAFC",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "100vh",
-      width: "100vw",
-    }}
-  >
-    <div className="loader-container" style={{
-      position: "relative",
-      width: 300,
-      overflow: "hidden",
-      maxWidth: "80vw",
-    }}>
+  <div className="m-0 bg-background flex justify-center items-center h-screen w-screen">
+    <div className="loader-container relative w-[300px] overflow-hidden max-w-[80vw]">
       <img
         src="/icons/KCS-Logo.png"
         alt="KCS Logo"
-        className="loader-img"
-        style={{
-          width: "100%",
-          height: "auto",
-          display: "block",
-        }}
+        className="loader-img w-full h-auto block"
       />
       <div className="shine" />
       <style jsx>{`
