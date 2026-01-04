@@ -241,6 +241,41 @@
   @apply flex justify-between items-center;
 }
 
+/* Theme Toggle Animations */
+@keyframes spin-in-180 {
+  from {
+    transform: rotate(-180deg);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes zoom-in-75 {
+  from {
+    transform: scale(0.75);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-in {
+  animation-fill-mode: both;
+}
+
+.spin-in-180 {
+  animation-name: spin-in-180;
+}
+
+.zoom-in-75 {
+  animation-name: zoom-in-75;
+}
+
 /* Glassmorphism Effects */
 .glassmorphism {
   background: rgba(255, 255, 255, 0.5);

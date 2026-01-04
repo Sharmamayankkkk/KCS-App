@@ -67,28 +67,28 @@ const services = [
 
 const Services = () => {
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10 text-gray-800">
-      <h1 className="mb-10 text-center text-3xl font-extrabold text-gray-900 sm:text-4xl">
+    <div className="mx-auto max-w-4xl px-4 py-10 text-text-primary">
+      <h1 className="mb-10 text-center text-3xl font-extrabold text-text-primary sm:text-4xl">
         Services Offered
       </h1>
       <div className="space-y-6">
         {services.map((service, idx) => (
           <div
             key={idx}
-            className="rounded-lg border border-gray-200 bg-white p-6 shadow-sm transition duration-300 hover:shadow-md"
+            className="rounded-lg border border-border bg-surface p-6 shadow-sm transition duration-300 hover:shadow-md"
           >
-            <h2 className="mb-2 text-xl font-semibold text-gray-800">
+            <h2 className="mb-2 text-xl font-semibold text-text-primary">
               {service.title}
             </h2>
-            <div className="text-base text-gray-700">{service.description}</div>
+            <div className="text-base text-text-secondary">{service.description}</div>
           </div>
         ))}
       </div>
-      <div className="mt-10 text-center text-sm text-gray-600">
+      <div className="mt-10 text-center text-sm text-text-secondary">
         For more information or assistance, please contact us at{' '}
         <a
           href="mailto:divineconnectionkcs@gmail.com"
-          className="text-blue-600 underline hover:text-blue-800"
+          className="text-accent underline hover:text-accent/80"
         >
           divineconnectionkcs@gmail.com
         </a>

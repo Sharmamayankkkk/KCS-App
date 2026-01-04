@@ -197,7 +197,7 @@ const ScheduledMeetings = () => {
 
   if (loading) {
     return (
-      <div className="w-full rounded-lg border border-[#E2E8F0] bg-white p-6">
+      <div className="w-full rounded-lg border border-border bg-surface p-6">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="h-5 w-5 text-[#B91C1C]" />
           <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
@@ -209,7 +209,7 @@ const ScheduledMeetings = () => {
 
   if (error) {
     return (
-      <div className="w-full rounded-lg border border-[#E2E8F0] bg-white p-6">
+      <div className="w-full rounded-lg border border-border bg-surface p-6">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="h-5 w-5 text-[#B91C1C]" />
           <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
@@ -221,7 +221,7 @@ const ScheduledMeetings = () => {
 
   if (meetings.length === 0) {
     return (
-      <div className="w-full rounded-lg border border-[#E2E8F0] bg-white p-6">
+      <div className="w-full rounded-lg border border-border bg-surface p-6">
         <div className="flex items-center gap-2 mb-4">
           <Calendar className="h-5 w-5 text-[#B91C1C]" />
           <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
@@ -232,7 +232,7 @@ const ScheduledMeetings = () => {
   }
 
   return (
-    <div className="w-full rounded-lg border border-[#E2E8F0] bg-white p-6">
+    <div className="w-full rounded-lg border border-border bg-surface p-6">
       <div className="flex items-center gap-2 mb-4">
         <Calendar className="h-5 w-5 text-[#B91C1C]" />
         <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
@@ -246,7 +246,7 @@ const ScheduledMeetings = () => {
           return (
             <div
               key={meeting.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-[#E2E8F0] hover:border-[#B91C1C] hover:shadow-md transition-all"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-border hover:border-accent hover:shadow-md transition-all"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">

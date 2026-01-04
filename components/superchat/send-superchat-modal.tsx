@@ -403,7 +403,7 @@ export const SendSuperchatModal = ({
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300 ${
-        isVisible ? "bg-black/50 backdrop-blur-sm" : "bg-black/0"
+        isVisible ? "bg-pure-black/50 backdrop-blur-sm" : "bg-pure-black/0"
       }`}
     >
       <div
@@ -411,30 +411,26 @@ export const SendSuperchatModal = ({
           isVisible ? "scale-100 opacity-100 translate-y-0" : "scale-95 opacity-0 translate-y-4"
         }`}
       >
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100 max-h-[90vh] overflow-y-auto">
+        <div className="bg-surface rounded-2xl shadow-2xl overflow-hidden border border-border max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="px-4 py-4 sm:py-2 sm:px-6 border-b border-gray-100" style={{ background: 'linear-gradient(to right, #FAF5F1, #E0DBD8)' }}>
+          <div className="px-4 py-4 sm:py-2 sm:px-6 border-b border-border bg-gradient-to-r from-background to-surface">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(to bottom right, #A41F13, #8F1A10)' }}>
-                                  <Send size={20} className="text-white" />
-                                                </div>
-                {/* <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
-                  <Loader2 size={20} className="text-white" />
-                </div> */}
+                <div className="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-accent to-accent/80">
+                  <Send size={20} className="text-pure-white" />
+                </div>
                 <div>
-                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold" style={{ color: '#292F36' }}>
+                  <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-text-primary">
                     Send Superchat
                   </h3>
-                  <p className="text-xs sm:text-sm md:text-base mt-1" style={{ color: '#8F7A6E' }}>
+                  <p className="text-xs sm:text-sm md:text-base mt-1 text-text-secondary">
                     Support with a highlighted message
                   </p>
                 </div>
               </div>
               <button
                 onClick={handleClose}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                style={{ color: '#8F7A6E' }}
+                className="p-2 hover:bg-background rounded-full transition-colors text-text-secondary"
                 disabled={loading}
               >
                 <X size={20} />
@@ -445,11 +441,11 @@ export const SendSuperchatModal = ({
           <div className="px-4 py-6 sm:px-6 space-y-6">
             {!scriptLoaded && (
               <div className="py-8 text-center">
-                <div className="w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ backgroundColor: '#FAF5F1' }}>
-                  <Loader2 size={24} className="animate-spin" style={{ color: '#A41F13' }} />
+                <div className="w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center bg-background">
+                  <Loader2 size={24} className="animate-spin text-accent" />
                 </div>
-                <p className="font-medium" style={{ color: '#8F7A6E' }}>Loading payment gateway...</p>
-                <p className="text-gray-400 text-sm mt-1">Please wait a moment</p>
+                <p className="font-medium text-text-secondary">Loading payment gateway...</p>
+                <p className="text-text-secondary/60 text-sm mt-1">Please wait a moment</p>
               </div>
             )}
 
@@ -457,7 +453,7 @@ export const SendSuperchatModal = ({
               <>
                 {/* Message Input */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="block text-sm font-semibold text-text-primary">
                     Your Message
                   </label>
                   <div className="relative">
@@ -468,9 +464,9 @@ export const SendSuperchatModal = ({
                       maxLength={200}
                       disabled={loading}
                       placeholder="Write a message to highlight..."
-                      className="w-full p-3 text-gray-900 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors placeholder-gray-400 resize-none"
+                      className="w-full p-3 text-text-primary bg-background rounded-xl border border-border focus:ring-2 focus:ring-accent focus:border-accent transition-colors placeholder-text-secondary/60 resize-none"
                     />
-                    <div className="absolute bottom-2 right-3 text-xs text-gray-400 bg-white px-1">
+                    <div className="absolute bottom-2 right-3 text-xs text-text-secondary bg-surface px-1 rounded">
                       {message.length}/200
                     </div>
                   </div>
@@ -478,7 +474,7 @@ export const SendSuperchatModal = ({
 
                 {/* Amount Selection */}
                 <div className="space-y-4">
-                  <label className="block text-sm font-semibold text-gray-700">
+                  <label className="block text-sm font-semibold text-text-primary">
                     Choose Amount
                   </label>
 
@@ -521,8 +517,8 @@ export const SendSuperchatModal = ({
                           </div>
 
                           {isSelected && (
-                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white shadow-lg">
-                              <Check size={12} className="text-white" />
+                            <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-surface shadow-lg">
+                              <Check size={12} className="text-pure-white" />
                             </div>
                           )}
                         </button>
@@ -530,12 +526,12 @@ export const SendSuperchatModal = ({
                     })}
                   </div>
 
-                  <div className="flex flex-row items-center justify-between p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 text-sm shadow-inner">
+                  <div className="flex flex-row items-center justify-between p-4 rounded-xl bg-gradient-to-r from-background to-surface border border-border text-sm shadow-inner">
                     <div className="flex items-center space-x-2">
-                      <Award size={16} className="text-gray-600" />
-                      <span className="text-gray-600 font-medium">Highlight Duration:</span>
+                      <Award size={16} className="text-text-secondary" />
+                      <span className="text-text-secondary font-medium">Highlight Duration:</span>
                     </div>
-                    <span className="text-gray-900 font-bold bg-white px-2 py-1 rounded-lg shadow-sm">
+                    <span className="text-text-primary font-bold bg-surface px-2 py-1 rounded-lg shadow-sm">
                       {selectedTier.duration}
                     </span>
                   </div>
@@ -543,9 +539,9 @@ export const SendSuperchatModal = ({
 
                 {/* Error Message */}
                 {error && (
-                  <div className="flex items-start space-x-3 p-4 bg-red-50 border border-red-200 rounded-xl">
+                  <div className="flex items-start space-x-3 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-xl">
                     <AlertCircle size={18} className="text-red-500 mt-0.5 flex-shrink-0" />
-                    <span className="text-red-700 text-sm">{error}</span>
+                    <span className="text-red-700 dark:text-red-400 text-sm">{error}</span>
                   </div>
                 )}
 
@@ -555,7 +551,7 @@ export const SendSuperchatModal = ({
                     variant="outline"
                     onClick={handleClose}
                     disabled={loading}
-                    className="flex-1 border-gray-300 text-gray-700 hover:bg-gray-50"
+                    className="flex-1 border-border text-text-primary hover:bg-background"
                   >
                     Cancel
                   </Button>
@@ -565,7 +561,7 @@ export const SendSuperchatModal = ({
                     className={`flex-1 ${getColorClasses(
                       selectedTier.color,
                       true
-                    ).bg} hover:opacity-90 text-white font-semibold shadow-lg`}
+                    ).bg} hover:opacity-90 text-pure-white font-semibold shadow-lg`}
                   >
                     {loading ? (
                       <>
@@ -582,12 +578,12 @@ export const SendSuperchatModal = ({
                 </div>
 
                 {/* Terms */}
-                <div className="pt-4 border-t border-gray-100 space-y-2">
-                  <p className="text-xs text-gray-500">
+                <div className="pt-4 border-t border-border space-y-2">
+                  <p className="text-xs text-text-secondary">
                     By proceeding, you agree to our{" "}
                     <Link
                       href="/terms-and-conditions"
-                      className="text-blue-500 hover:text-blue-600 underline"
+                      className="text-accent hover:text-accent/80 underline"
                     >
                       Terms & Conditions
                     </Link>
@@ -595,19 +591,19 @@ export const SendSuperchatModal = ({
                   <div className="flex flex-wrap gap-3 text-xs">
                     <Link
                       href="/refunds-and-cancellations"
-                      className="text-blue-500 hover:text-blue-600 underline"
+                      className="text-accent hover:text-accent/80 underline"
                     >
                       Refunds & Cancellations
                     </Link>
                     <Link
                       href="/contact-us"
-                      className="text-blue-500 hover:text-blue-600 underline"
+                      className="text-accent hover:text-accent/80 underline"
                     >
                       Contact Us
                     </Link>
                     <Link
                       href="/services"
-                      className="text-blue-500 hover:text-blue-600 underline"
+                      className="text-accent hover:text-accent/80 underline"
                     >
                       Services
                     </Link>
@@ -618,40 +614,40 @@ export const SendSuperchatModal = ({
 
             {paymentStatus === "processing" && (
               <div className="py-8 text-center space-y-4">
-                <div className="w-16 h-16 mx-auto rounded-full bg-blue-100 flex items-center justify-center">
-                  <Loader2 size={32} className="animate-spin text-blue-600" />
+                <div className="w-16 h-16 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
+                  <Loader2 size={32} className="animate-spin text-accent" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-gray-900 mb-2">
+                  <h4 className="text-lg font-bold text-text-primary mb-2">
                     Processing Payment
                   </h4>
-                  <p className="text-gray-600">Please complete the payment process</p>
+                  <p className="text-text-secondary">Please complete the payment process</p>
                 </div>
 
                 <div
                   id="cashfree-dropin-container"
-                  className="mt-6 p-4 rounded-xl border border-gray-200 bg-gray-50 min-h-[300px] flex items-center justify-center"
+                  className="mt-6 p-4 rounded-xl border border-border bg-background min-h-[300px] flex items-center justify-center"
                 >
-                  <p className="text-gray-500">Loading payment options...</p>
+                  <p className="text-text-secondary">Loading payment options...</p>
                 </div>
 
-                <p className="text-xs text-gray-500">🔒 Secure payment • Don't close this window</p>
+                <p className="text-xs text-text-secondary">🔒 Secure payment • Don't close this window</p>
               </div>
             )}
 
             {paymentStatus === "success" && (
               <div className="py-8 text-center space-y-4">
                 <div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg">
-                  <Check size={36} className="text-white" />
+                  <Check size={36} className="text-pure-white" />
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-2">
+                  <h4 className="text-xl font-bold text-text-primary mb-2">
                     Superchat Sent! 🎉
                   </h4>
-                  <p className="text-gray-600 mb-1">
+                  <p className="text-text-secondary mb-1">
                     Your message will be highlighted for {selectedTier.duration}
                   </p>
-                  <p className="text-gray-500 text-sm">Thank you for your support!</p>
+                  <p className="text-text-secondary/80 text-sm">Thank you for your support!</p>
                 </div>
               </div>
             )}
@@ -659,16 +655,16 @@ export const SendSuperchatModal = ({
             {paymentStatus === "failed" && (
               <div className="py-8 text-center space-y-4">
                 <div className="w-20 h-20 mx-auto bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center shadow-lg">
-                  <X size={36} className="text-white" />
+                  <X size={36} className="text-pure-white" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-bold text-gray-900 mb-2">Payment Failed</h4>
-                  <p className="text-gray-600 mb-4">
+                  <h4 className="text-lg font-bold text-text-primary mb-2">Payment Failed</h4>
+                  <p className="text-text-secondary mb-4">
                     {error || "There was an error processing your payment."}
                   </p>
                   <Button
                     onClick={() => setPaymentStatus("pending")}
-                    className="bg-blue-500 hover:bg-blue-600 text-white"
+                    className="bg-accent hover:bg-accent/90 text-pure-white"
                   >
                     Try Again
                   </Button>
