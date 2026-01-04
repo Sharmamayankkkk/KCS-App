@@ -41,7 +41,7 @@ const ThemeToggle = () => {
         {isDark ? (
           <Sun className="h-5 w-5 text-amber-400 animate-in spin-in-180 zoom-in-75 duration-500 group-hover:text-amber-300 transition-colors" />
         ) : (
-          <Moon className="h-5 w-5 text-indigo-600 dark:text-indigo-400 animate-in spin-in-180 zoom-in-75 duration-500 group-hover:text-indigo-500 transition-colors" />
+          <Moon className="h-5 w-5 text-indigo-600 animate-in spin-in-180 zoom-in-75 duration-500 group-hover:text-indigo-500 transition-colors" />
         )}
       </div>
       
