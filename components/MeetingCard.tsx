@@ -31,18 +31,10 @@ const MeetingCard = ({
 
   return (
     <section
-      className="flex min-h-[258px] w-full flex-col justify-between rounded-[14px] px-5 py-8 xl:max-w-[568px]"
-      style={{
-        backgroundColor: 'rgba(224, 219, 216, 0.6)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(10px)',
-        border: '1px solid rgba(250, 245, 241, 0.3)',
-        boxShadow: '0 8px 32px 0 rgba(41, 47, 54, 0.37)',
-        color: '#292F36',
-      }}
+      className="flex min-h-[258px] w-full flex-col justify-between rounded-[14px] px-5 py-8 xl:max-w-[568px] bg-surface/80 backdrop-blur-lg border border-border shadow-soft text-text-primary"
     >
       <article className="flex flex-col gap-5">
-        <Icon className="h-7 w-7" style={{ color: '#A41F13' }} />
+        <Icon className="h-7 w-7 text-accent" />
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold">{title}</h1>
@@ -55,8 +47,7 @@ const MeetingCard = ({
           <div className="flex gap-2">
             <Button
               onClick={handleClick}
-              className="rounded px-6"
-              style={{ backgroundColor: '#A41F13', color: '#FAF5F1' }}
+              className="rounded px-6 bg-accent text-background hover:bg-accent/90"
             >
               {ButtonIcon1 && (
                 <ButtonIcon1 className="h-5 w-5 mr-2" />
@@ -70,12 +61,7 @@ const MeetingCard = ({
                   title: "Link Copied",
                 });
               }}
-              className="px-6"
-              style={{
-                backgroundColor: 'rgba(41, 47, 54, 0.6)',
-                color: '#FAF5F1',
-                border: '1px solid rgba(250, 245, 241, 0.3)',
-              }}
+              className="px-6 bg-surface border border-border text-text-primary hover:bg-background"
             >
               <Copy className="h-5 w-5 mr-2" />
               &nbsp; Copy Link

@@ -8,6 +8,7 @@ import MobileNav from './MobileNav';
 import { useMemo } from 'react';
 import { isUserAdmin } from '@/lib/utils';
 import VerifiedBadge from './VerifiedBadge';
+import ThemeToggle from './ThemeToggle';
 
 const Navbar = () => {
   const { user } = useUser();
@@ -18,7 +19,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className="fixed z-50 w-full px-6 py-4 lg:px-10 flex items-center justify-between bg-[#1E293B]"
+      className="fixed z-50 w-full px-6 py-4 lg:px-10 flex items-center justify-between bg-primary"
     >
       <Link href="/" className="flex items-center gap-2">
         <Image
@@ -29,7 +30,7 @@ const Navbar = () => {
           className="max-sm:size-12"
         />
         <p
-          className="text-3xl font-extrabold max-sm:hidden text-[#F8FAFC]"
+          className="text-3xl font-extrabold max-sm:hidden text-background"
         >
           KCS
         </p>
@@ -37,6 +38,7 @@ const Navbar = () => {
 
       <div className="flex items-center gap-6">
         <div className="hidden sm:flex items-center gap-4">
+          <ThemeToggle />
           <SignedIn>
             <div className="flex items-center gap-2">
               <UserButton afterSignOutUrl="/sign-in" />
@@ -46,7 +48,7 @@ const Navbar = () => {
 
           <SignedOut>
             <Link href="/sign-in">
-              <Button className="bg-[#B91C1C] text-white hover:bg-[#991B1B]">
+              <Button className="bg-accent text-background hover:bg-accent/90">
                 Sign in
               </Button>
             </Link>

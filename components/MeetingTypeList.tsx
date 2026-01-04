@@ -221,27 +221,27 @@ Rama Rama, Hare Hare`;
           handleClick={createMeeting}
         >
           <div className="flex flex-col gap-2.5">
-            <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
+            <label className="text-base font-normal leading-[22.4px] text-text-primary">
               Add a Title
             </label>
             <Input
-              className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
+              className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
               onChange={(e) =>
                 setValues({ ...values, title: e.target.value })
               }
             />
-            <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
+            <label className="text-base font-normal leading-[22.4px] text-text-primary">
               Add a description
             </label>
             <Textarea
-              className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
+              className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
               onChange={(e) =>
                 setValues({ ...values, description: e.target.value })
               }
             />
           </div>
           <div className="flex w-full flex-col gap-2.5">
-            <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
+            <label className="text-base font-normal leading-[22.4px] text-text-primary">
               Select Date and Time
             </label>
             <ReactDatePicker
@@ -252,7 +252,7 @@ Rama Rama, Hare Hare`;
               timeIntervals={15}
               timeCaption="time"
               dateFormat="MMMM d, yyyy h:mm aa"
-              className="w-full rounded border border-[#E2E8F0] bg-[#F8FAFC] p-2 text-[#0F172A] focus:outline-none focus:ring-1 focus:ring-[#B91C1C]"
+              className="w-full rounded border border-border bg-background p-2 text-text-primary focus:outline-none focus:ring-1 focus:ring-accent"
             />
           </div>
           <div className="flex items-center gap-3">
@@ -261,9 +261,9 @@ Rama Rama, Hare Hare`;
               id="isPrivate"
               checked={values.isPrivate}
               onChange={(e) => setValues({ ...values, isPrivate: e.target.checked })}
-              className="h-4 w-4 rounded border-[#E2E8F0] text-[#B91C1C] focus:ring-[#B91C1C]"
+              className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
             />
-            <label htmlFor="isPrivate" className="text-base font-normal leading-[22.4px] text-[#0F172A] cursor-pointer">
+            <label htmlFor="isPrivate" className="text-base font-normal leading-[22.4px] text-text-primary cursor-pointer">
               Make this meeting private (invite-only)
             </label>
           </div>
@@ -280,10 +280,10 @@ Rama Rama, Hare Hare`;
         >
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-center">
-              <CheckSquare className="h-16 w-16 text-[#B91C1C]" />
+              <CheckSquare className="h-16 w-16 text-accent" />
             </div>
             
-            <p className="text-sm text-[#64748B]">
+            <p className="text-sm text-text-secondary">
               Your meeting has been scheduled successfully!
             </p>
 
@@ -293,7 +293,7 @@ Rama Rama, Hare Hare`;
                   navigator.clipboard.writeText(meetingLink);
                   toast({ title: 'Link Copied' });
                 }}
-                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#B91C1C] text-white hover:bg-[#991B1B]"
+                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-accent text-background hover:bg-accent/90"
               >
                 <Copy className="h-5 w-5" />
                 Copy Meeting Link
@@ -301,7 +301,7 @@ Rama Rama, Hare Hare`;
 
               <button
                 onClick={handleShare}
-                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#64748B] text-white hover:bg-[#475569]"
+                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-text-secondary text-background hover:bg-text-secondary/90"
               >
                 <Share2 className="h-5 w-5" />
                 Share Meeting
@@ -345,19 +345,19 @@ Rama Rama, Hare Hare`;
         handleClick={createMeeting}
       >
         <div className="flex flex-col gap-2.5">
-          <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
+          <label className="text-base font-normal leading-[22.4px] text-text-primary">
             Meeting Title
           </label>
           <Input
             placeholder="Enter meeting title"
-            className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
+            className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
             onChange={(e) => setValues({ ...values, title: e.target.value })}
           />
-          <label className="text-base font-normal leading-[22.4px] text-[#0F172A]">
+          <label className="text-base font-normal leading-[22.4px] text-text-primary">
             Add a description
           </label>
           <Textarea
-            className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
+            className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
             onChange={(e) =>
               setValues({ ...values, description: e.target.value })
             }
@@ -368,9 +368,9 @@ Rama Rama, Hare Hare`;
               id="isPrivateInstant"
               checked={values.isPrivate}
               onChange={(e) => setValues({ ...values, isPrivate: e.target.checked })}
-              className="h-4 w-4 rounded border-[#E2E8F0] text-[#B91C1C] focus:ring-[#B91C1C]"
+              className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
             />
-            <label htmlFor="isPrivateInstant" className="text-base font-normal leading-[22.4px] text-[#0F172A] cursor-pointer">
+            <label htmlFor="isPrivateInstant" className="text-base font-normal leading-[22.4px] text-text-primary cursor-pointer">
               Make this meeting private (invite-only)
             </label>
           </div>
@@ -389,10 +389,10 @@ Rama Rama, Hare Hare`;
       >
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-center">
-            <CheckSquare className="h-16 w-16 text-[#B91C1C]" />
+            <CheckSquare className="h-16 w-16 text-accent" />
           </div>
           
-          <p className="text-sm text-[#64748B]">
+          <p className="text-sm text-text-secondary">
             Your instant meeting is ready! Share the link or join now.
           </p>
 
@@ -401,7 +401,7 @@ Rama Rama, Hare Hare`;
               onClick={() => {
                 router.push(`/meeting/${callDetail?.id}`);
               }}
-              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#B91C1C] text-white hover:bg-[#991B1B]"
+              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-accent text-background hover:bg-accent/90"
             >
               <Video className="h-5 w-5" />
               Join Meeting Now
@@ -412,7 +412,7 @@ Rama Rama, Hare Hare`;
                 navigator.clipboard.writeText(meetingLink);
                 toast({ title: 'Link Copied' });
               }}
-              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#64748B] text-white hover:bg-[#475569]"
+              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-text-secondary text-background hover:bg-text-secondary/90"
             >
               <Copy className="h-5 w-5" />
               Copy Meeting Link
@@ -420,7 +420,7 @@ Rama Rama, Hare Hare`;
 
             <button
               onClick={handleShare}
-              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-[#64748B] text-white hover:bg-[#475569]"
+              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-text-secondary text-background hover:bg-text-secondary/90"
             >
               <Share2 className="h-5 w-5" />
               Share Meeting
@@ -464,7 +464,7 @@ Rama Rama, Hare Hare`;
       >
         <Input
           placeholder="Meeting link"
-          className="border border-[#E2E8F0] focus-visible:ring-1 focus-visible:ring-[#B91C1C] focus-visible:ring-offset-0 bg-[#F8FAFC] text-[#0F172A]"
+          className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
           onChange={(e) => setValues({ ...values, link: e.target.value })}
         />
       </MeetingModal>

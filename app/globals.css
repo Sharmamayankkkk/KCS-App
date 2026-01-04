@@ -50,6 +50,27 @@
   --secondary-text: #64748B;
 }
 
+/* Dark mode theme variables */
+.dark {
+  --primary: #E2E8F0;
+  --secondary: #CBD5E1;
+  --accent: #DC2626;
+  --background: #0F172A;
+  --surface: #1E293B;
+  --border: #334155;
+  --text-primary: #F8FAFC;
+  --text-secondary: #94A3B8;
+  --pure-white: #FFFFFF;
+  --pure-black: #000000;
+  
+  /* Legacy variable support for gradual migration */
+  --primary-accent: #DC2626;
+  --light-background: #0F172A;
+  --secondary-background: #1E293B;
+  --primary-text: #F8FAFC;
+  --secondary-text: #94A3B8;
+}
+
 /* ============================================= */
 /* STREAM SDK THEME & OVERRIDES                  */
 /* ============================================= */
@@ -67,14 +88,14 @@
   
   --str-video__call-controls-border-radius: 0.75rem;
   --str-video__call-controls-box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --str-video__call-controls-background-color: var(--pure-white);
+  --str-video__call-controls-background-color: var(--surface);
 
   --str-video__participant-view-border-radius: 0.5rem;
   --str-video__participant-view-box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
 
   --str-video__menu-border-radius: 0.5rem;
   --str-video__menu-box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --str-video__menu-background-color: var(--pure-white);
+  --str-video__menu-background-color: var(--surface);
 }
 
 /* Rule to remove the scrollbar from the main video area */
@@ -84,7 +105,7 @@
 
 /* Redesigned Pin/Context Menu */
 .str-video__message-actions-box {
-  background: var(--pure-white) !important;
+  background: var(--surface) !important;
   border: 1px solid var(--border) !important;
   border-radius: 0.5rem !important;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
@@ -95,12 +116,12 @@
   border-radius: 0.375rem;
 }
 .str-video__message-actions-box__button:hover {
-  background-color: var(--surface) !important;
+  background-color: var(--background) !important;
 }
 
 /* Redesigned Participant Actions Menu */
 .str-video__participant-context-menu {
-  background: var(--pure-white) !important;
+  background: var(--surface) !important;
   border: 1px solid var(--border) !important;
   border-radius: 0.5rem !important;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1) !important;
@@ -111,7 +132,7 @@
   border-radius: 0.375rem;
 }
 .str-video__participant-context-menu-item:hover {
-  background-color: var(--surface) !important;
+  background-color: var(--background) !important;
 }
 .str-video__participant-context-menu-item svg {
   color: var(--text-primary) !important;
@@ -189,6 +210,10 @@
 .str-video__participant-details {
   background: rgba(248, 250, 252, 0.9) !important;
   color: var(--text-primary) !important;
+}
+
+.dark .str-video__participant-details {
+  background: rgba(30, 41, 59, 0.9) !important;
 }
 
 /* Redesigned Network Quality Indicator */

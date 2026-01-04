@@ -100,7 +100,7 @@ const CallList = ({ type }: { type: 'ended' | 'upcoming' | 'recordings' }) => {
           />
         ))
       ) : (
-        <h1 className="text-2xl font-bold" style={{ color: '#292F36' }}>
+        <h1 className="text-2xl font-bold text-text-primary">
           {noCallsMessage}
         </h1>
       )}

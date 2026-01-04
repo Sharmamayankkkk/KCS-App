@@ -11,6 +11,7 @@ import './globals.css';
 import '../public/styles.css';
 import { Toaster } from '@/components/ui/toaster';
 import { SupabaseProvider } from '@/providers/SupabaseProvider';
+import { ThemeProvider } from '@/components/ui/theme-provider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -109,28 +110,35 @@ export const viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className} bg-background`}>
-        <ClerkProvider
-          appearance={{
-            layout: {
-              socialButtonsVariant: 'iconButton',
-              logoImageUrl: '/icons/KCS-Logo.png',
-            },
-            variables: {
-              colorPrimary: '#B91C1C',
-              colorBackground: '#F8FAFC',
-              colorText: '#0F172A',
-            },
-          }}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
         >
-          <SupabaseProvider>
-            <Toaster />
-            {children}
-            <SpeedInsights />
-            <Analytics />
-          </SupabaseProvider>
-        </ClerkProvider>
+          <ClerkProvider
+            appearance={{
+              layout: {
+                socialButtonsVariant: 'iconButton',
+                logoImageUrl: '/icons/KCS-Logo.png',
+              },
+              variables: {
+                colorPrimary: '#B91C1C',
+                colorBackground: '#F8FAFC',
+                colorText: '#0F172A',
+              },
+            }}
+          >
+            <SupabaseProvider>
+              <Toaster />
+              {children}
+              <SpeedInsights />
+              <Analytics />
+            </SupabaseProvider>
+          </ClerkProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
