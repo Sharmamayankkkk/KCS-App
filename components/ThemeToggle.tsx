@@ -15,11 +15,11 @@ const ThemeToggle = () => {
   if (!mounted) {
     return (
       <button
-        className="relative flex-center size-12 rounded-full bg-gradient-to-br from-surface to-background border-2 border-border transition-all"
+        className="flex-center relative size-12 rounded-full border-2 border-border bg-gradient-to-br from-surface to-background transition-all"
         disabled
         aria-label="Loading theme toggle"
       >
-        <div className="h-5 w-5" />
+        <div className="size-5" />
       </button>
     );
   }
@@ -29,24 +29,24 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="relative flex-center size-12 rounded-full bg-gradient-to-br from-surface to-background border-2 border-border hover:border-accent hover:scale-110 hover:shadow-lg active:scale-95 transition-all duration-300 ease-in-out group overflow-hidden"
+      className="flex-center group relative size-12 overflow-hidden rounded-full border-2 border-border bg-gradient-to-br from-surface to-background transition-all duration-300 ease-in-out hover:scale-110 hover:border-accent hover:shadow-lg active:scale-95"
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
       {/* Background glow effect */}
-      <div className={`absolute inset-0 rounded-full transition-opacity duration-500 ${isDark ? 'opacity-100 bg-gradient-to-br from-indigo-500/20 to-purple-500/20' : 'opacity-100 bg-gradient-to-br from-amber-500/20 to-orange-500/20'}`} />
+      <div className={`absolute inset-0 rounded-full opacity-100 transition-opacity duration-500 ${isDark ? 'bg-gradient-to-br from-indigo-500/20 to-purple-500/20' : 'bg-gradient-to-br from-amber-500/20 to-orange-500/20'}`} />
       
       {/* Icon container with animation */}
-      <div className="relative z-10 flex-center">
+      <div className="flex-center relative z-10">
         {isDark ? (
-          <Sun className="h-5 w-5 text-amber-400 animate-in spin-in-180 zoom-in-75 duration-500 group-hover:text-amber-300 transition-colors" />
+          <Sun className="size-5 text-amber-400 transition-colors duration-500 animate-in zoom-in-75 spin-in-180 group-hover:text-amber-300" />
         ) : (
-          <Moon className="h-5 w-5 text-indigo-600 animate-in spin-in-180 zoom-in-75 duration-500 group-hover:text-indigo-500 transition-colors" />
+          <Moon className="size-5 text-indigo-600 transition-colors duration-500 animate-in zoom-in-75 spin-in-180 group-hover:text-indigo-500" />
         )}
       </div>
       
       {/* Ripple effect on hover */}
-      <div className="absolute inset-0 rounded-full bg-accent/10 opacity-0 group-hover:opacity-100 group-hover:animate-ping transition-opacity" />
+      <div className="bg-accent/10 absolute inset-0 rounded-full opacity-0 transition-opacity group-hover:animate-ping group-hover:opacity-100" />
     </button>
   );
 };
