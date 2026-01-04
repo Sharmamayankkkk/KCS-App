@@ -162,32 +162,32 @@ const PollsPanel = ({ callId, userId, isAdmin, onClose }: PollsPanelProps) => {
         exit={{ opacity: 0, y: 20 }}
         className="relative w-full max-w-md h-full max-h-[600px]"
       >
-        <Card className="w-full h-full flex flex-col bg-white/80 backdrop-blur-lg border-gray-200/50 shadow-2xl rounded-2xl">
+        <Card className="w-full h-full flex flex-col bg-surface/80 backdrop-blur-lg border-border200/50 shadow-2xl rounded-2xl">
           <CardHeader className="flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className='flex items-center gap-2'>
-                <BarChartHorizontalBig className="text-gray-700" />
-                <CardTitle className="text-gray-800">Polls</CardTitle>
+                <BarChartHorizontalBig className="text-text-700" />
+                <CardTitle className="text-text-800">Polls</CardTitle>
               </div>
-              <button onClick={onClose} className="text-gray-500 hover:text-gray-900 transition-colors"><X /></button>
+              <button onClick={onClose} className="text-text-500 hover:text-text-900 transition-colors"><X /></button>
             </div>
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto px-6 py-4">
             {loading ? (
               <div className="flex justify-center items-center h-full">
-                <Loader2 className="animate-spin text-gray-500" size={32} />
+                <Loader2 className="animate-spin text-text-500" size={32} />
               </div>
             ) : (
               <AnimatePresence mode="wait">
                 {view === 'list' && (
                   <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     {isAdmin && (
-                      <Button onClick={() => setView('create')} className="w-full mb-4 bg-gray-800 hover:bg-gray-900 text-white">
+                      <Button onClick={() => setView('create')} className="w-full mb-4 bg-800 hover:bg-900 text-white">
                         <Plus className="mr-2" /> Create New Poll
                       </Button>
                     )}
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Past Polls</h3>
+                    <h3 className="text-lg font-semibold text-text-700 mb-2">Past Polls</h3>
                     {pastPolls.length > 0 ? (
                       <div className="space-y-3">
                         {pastPolls.map(poll => (
@@ -195,9 +195,9 @@ const PollsPanel = ({ callId, userId, isAdmin, onClose }: PollsPanelProps) => {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-8 px-4 border-2 border-dashed border-gray-300 rounded-lg">
-                        <Frown className="mx-auto text-gray-400" size={40} />
-                        <p className="mt-2 text-gray-500">No past polls to show.</p>
+                      <div className="text-center py-8 px-4 border-2 border-dashed border-border300 rounded-lg">
+                        <Frown className="mx-auto text-text-400" size={40} />
+                        <p className="mt-2 text-text-500">No past polls to show.</p>
                       </div>
                     )}
                   </motion.div>
@@ -295,36 +295,36 @@ const CreatePollForm = ({ callId, onCreated, onCancel }: { callId: string, onCre
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-gray-800">Create a New Poll</h3>
+      <h3 className="text-xl font-bold text-text-800">Create a New Poll</h3>
       <Input
         placeholder="Poll Question"
         value={question}
         onChange={e => setQuestion(e.target.value)}
-        className="bg-white/70"
+        className="bg-surface/70"
       />
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-600">Options</label>
+        <label className="text-sm font-medium text-text-600">Options</label>
         {options.map((opt, i) => (
           <div key={i} className="flex items-center gap-2">
             <Input
               placeholder={`Option ${i + 1}`}
               value={opt}
               onChange={e => updateOption(i, e.target.value)}
-              className="bg-white/70"
+              className="bg-surface/70"
             />
             {options.length > 2 && <button onClick={() => removeOption(i)} className="text-red-500 hover:text-red-700"><X size={18} /></button>}
           </div>
         ))}
-        {options.length < 5 && <Button variant='ghost' size='sm' onClick={addOption} className="text-gray-600">Add Option</Button>}
+        {options.length < 5 && <Button variant='ghost' size='sm' onClick={addOption} className="text-text-600">Add Option</Button>}
       </div>
       <div>
-        <label className="text-sm font-medium text-gray-600">Duration (in seconds)</label>
-        <Input type="number" value={duration} onChange={e => setDuration(Number(e.target.value))} className="bg-white/70" />
+        <label className="text-sm font-medium text-text-600">Duration (in seconds)</label>
+        <Input type="number" value={duration} onChange={e => setDuration(Number(e.target.value))} className="bg-surface/70" />
       </div>
       {error && <p className="text-red-500 text-sm">{error}</p>}
       <div className="flex justify-end gap-2 pt-4">
         <Button variant="ghost" onClick={onCancel} disabled={loading}>Cancel</Button>
-        <Button onClick={handleSubmit} disabled={loading} className="bg-gray-800 hover:bg-gray-900 text-white">
+        <Button onClick={handleSubmit} disabled={loading} className="bg-800 hover:bg-900 text-white">
           {loading ? <Loader2 className="animate-spin" /> : <><Send className="mr-2" /> Launch Poll</>}
         </Button>
       </div>
@@ -335,7 +335,7 @@ const CreatePollForm = ({ callId, onCreated, onCancel }: { callId: string, onCre
 const ActivePollView = ({ poll, userVote, onVote, showResults, isAdmin, onEndPoll }: { poll: Poll, userVote: string | null, onVote: (optionId: string) => void, showResults: boolean, isAdmin: boolean, onEndPoll: (pollId: string) => void }) => {
   return (
     <div>
-      <h3 className="text-xl font-bold text-gray-800 mb-4">{poll.question}</h3>
+      <h3 className="text-xl font-bold text-text-800 mb-4">{poll.question}</h3>
       <div className="space-y-3">
         {poll.options.map(option => (
           <PollOption
@@ -349,7 +349,7 @@ const ActivePollView = ({ poll, userVote, onVote, showResults, isAdmin, onEndPol
           />
         ))}
       </div>
-      <p className="text-sm text-gray-500 mt-4 text-center">{poll.total_votes} {poll.total_votes === 1 ? 'vote' : 'votes'}</p>
+      <p className="text-sm text-text-500 mt-4 text-center">{poll.total_votes} {poll.total_votes === 1 ? 'vote' : 'votes'}</p>
       {isAdmin && poll.is_active && (
         <div className="mt-6 flex justify-center">
           <Button variant="destructive" onClick={() => onEndPoll(poll.id)}>End Poll</Button>
@@ -364,7 +364,7 @@ const PollOption = ({ option, hasVoted, isVotedOption, totalVotes, showResults, 
   
   if (showResults || hasVoted) {
     return (
-      <div className="relative w-full h-12 rounded-lg bg-gray-200/70 overflow-hidden">
+      <div className="relative w-full h-12 rounded-lg bg-200/70 overflow-hidden">
         <motion.div
           className="absolute top-0 left-0 h-full"
           initial={{ width: 0 }}
@@ -373,10 +373,10 @@ const PollOption = ({ option, hasVoted, isVotedOption, totalVotes, showResults, 
           style={isVotedOption ? { backgroundColor: '#A41F13' } : { backgroundColor: '#8F7A6E' }}
         />
         <div className="absolute inset-0 flex items-center justify-between px-4">
-          <span className={cn("font-semibold", isVotedOption ? 'text-white' : 'text-gray-800')}>{option.text}</span>
+          <span className={cn("font-semibold", isVotedOption ? 'text-white' : 'text-text-800')}>{option.text}</span>
           <div className="flex items-center gap-2">
             {isVotedOption && <Check size={18} className="text-white" />}
-            <span className={cn("font-bold text-sm", isVotedOption ? 'text-white' : 'text-gray-700')}>{percentage.toFixed(0)}%</span>
+            <span className={cn("font-bold text-sm", isVotedOption ? 'text-white' : 'text-text-700')}>{percentage.toFixed(0)}%</span>
           </div>
         </div>
       </div>
@@ -387,7 +387,7 @@ const PollOption = ({ option, hasVoted, isVotedOption, totalVotes, showResults, 
     <Button 
       variant='outline' 
       onClick={onVote} 
-      className="w-full justify-start p-6 text-lg h-16 bg-white/50 hover:bg-white/90 border-gray-300 hover:border-gray-500"
+      className="w-full justify-start p-6 text-lg h-16 bg-surface/50 hover:bg-surface/90 border-border300 hover:border-border500"
     >
       {option.text}
     </Button>
@@ -396,20 +396,20 @@ const PollOption = ({ option, hasVoted, isVotedOption, totalVotes, showResults, 
 
 const PastPollCard = ({ poll }: { poll: Poll }) => {
   return (
-    <Card className="bg-white/60 p-4 rounded-lg shadow-md">
-      <p className="font-semibold text-gray-800">{poll.question}</p>
+    <Card className="bg-surface/60 p-4 rounded-lg shadow-md">
+      <p className="font-semibold text-text-800">{poll.question}</p>
       <div className="mt-2 space-y-1">
         {poll.options.map(option => {
           const percentage = poll.total_votes > 0 ? (option.vote_count / poll.total_votes) * 100 : 0;
           return (
-            <div key={option.id} className="text-sm text-gray-600 flex justify-between">
+            <div key={option.id} className="text-sm text-text-600 flex justify-between">
               <span>{option.text}</span>
               <span className="font-medium">{percentage.toFixed(0)}%</span>
             </div>
           )
         })}
       </div>
-      <p className="text-xs text-gray-500 mt-2">{poll.total_votes} total votes</p>
+      <p className="text-xs text-text-500 mt-2">{poll.total_votes} total votes</p>
     </Card>
   )
 }

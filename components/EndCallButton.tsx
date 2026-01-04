@@ -69,7 +69,7 @@ const EndCallButton = () => {
             <Button 
               variant="outline" 
               onClick={() => setConfirmOpen(false)}
-              className="border border-gray-300 hover:bg-gray-100 transition-colors"
+              className="border border-border hover:bg-background transition-colors"
             >
               Cancel
             </Button>

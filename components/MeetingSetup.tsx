@@ -223,7 +223,7 @@ const MeetingSetup = ({
   if (callHasEnded) {
     return (
       <div className="flex min-h-screen w-full items-center justify-center bg-[#FAF5F1] p-4">
-        <Alert title="The call has been ended by the host" icon={<AlertTriangle size={48} className="text-[#A41F13]" />} />
+        <Alert title="The call has been ended by the host" icon={<AlertTriangle size={48} className="text-accent" />} />
       </div>
     );
   }
@@ -241,7 +241,7 @@ const MeetingSetup = ({
                   Setup your devices for the meeting
               </p>
           </div>
-          <Card className="w-full p-0 border-none bg-white shadow-lg sm:shadow-xl rounded-xl sm:rounded-2xl overflow-hidden">
+          <Card className="w-full p-0 border-none bg-surface shadow-lg sm:shadow-xl rounded-xl sm:rounded-2xl overflow-hidden">
             <div className="relative aspect-video lg:min-h-[400px] lg:h-[calc(100vh-400px)] bg-[#292F36] rounded-xl sm:rounded-2xl overflow-hidden border-4 border-white shadow-inner">
               <div
                 className={cn(
@@ -264,7 +264,7 @@ const MeetingSetup = ({
               )}
             </div>
 
-            <div className="p-3 sm:p-4 bg-white flex items-center justify-center gap-2 sm:gap-3">
+            <div className="p-3 sm:p-4 bg-surface flex items-center justify-center gap-2 sm:gap-3">
                 <button
                     onClick={toggleMic}
                     className={cn(
@@ -301,7 +301,7 @@ const MeetingSetup = ({
         </div>
 
         <div className="lg:col-span-2 w-full space-y-4 sm:space-y-5 md:space-y-6 mt-4 lg:mt-0">
-          <Card className="p-4 sm:p-5 border-none bg-white shadow-lg rounded-xl sm:rounded-2xl">
+          <Card className="p-4 sm:p-5 border-none bg-surface shadow-lg rounded-xl sm:rounded-2xl">
             <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
               <div className={cn(
                 "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0",
@@ -367,7 +367,7 @@ const MeetingSetup = ({
             </Button>
           </Card>
 
-          <Card className="p-4 sm:p-5 border-none bg-white shadow-lg rounded-xl sm:rounded-2xl">
+          <Card className="p-4 sm:p-5 border-none bg-surface shadow-lg rounded-xl sm:rounded-2xl">
             <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
               <div className={cn(
                 "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0",
@@ -433,11 +433,11 @@ const MeetingSetup = ({
             </Button>
           </Card>
 
-          <Card className="p-4 sm:p-5 border-none bg-white shadow-lg rounded-xl sm:rounded-2xl">
+          <Card className="p-4 sm:p-5 border-none bg-surface shadow-lg rounded-xl sm:rounded-2xl">
             <button
               onClick={() => setShowBackgroundSelector(true)}
               disabled={isProcessingBackground}
-              className="w-full flex items-center justify-between hover:bg-[#FAF5F1] p-3 rounded-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
+              className="w-full flex items-center justify-between hover:bg-background p-3 rounded-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
             >
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-[#8F7A6E] flex items-center justify-center flex-shrink-0">
@@ -460,7 +460,7 @@ const MeetingSetup = ({
             {isJoining ? (
               <div className="text-center py-3 sm:py-4">
                 <div className="mb-3 sm:mb-4">
-                  <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white/20 backdrop-blur-sm">
+                  <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-surface/20 backdrop-blur-sm">
                     <span className="text-4xl sm:text-5xl font-bold text-white">{countdownValue}</span>
                   </div>
                 </div>
@@ -470,7 +470,7 @@ const MeetingSetup = ({
               <div className="space-y-3 sm:space-y-4">
                 <Button
                   onClick={handleJoinMeeting}
-                  className="w-full h-12 sm:h-14 bg-white hover:bg-[#FAF5F1] text-[#A41F13] font-bold text-base sm:text-lg rounded-lg sm:rounded-xl transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 sm:gap-3"
+                  className="w-full h-12 sm:h-14 bg-surface hover:bg-background text-accent font-bold text-base sm:text-lg rounded-lg sm:rounded-xl transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 sm:gap-3"
                 >
                   <Check size={20} strokeWidth={3} className="sm:w-6 sm:h-6" />
                   Join Meeting Now
@@ -485,8 +485,8 @@ const MeetingSetup = ({
       </div>
 
       <div className="mt-4 sm:mt-6 text-center px-2">
-          <div className="inline-flex items-center gap-2 px-3 py-2 sm:px-4 bg-white rounded-full shadow-sm">
-            <Sparkles className="text-[#A41F13] w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+          <div className="inline-flex items-center gap-2 px-3 py-2 sm:px-4 bg-surface rounded-full shadow-sm">
+            <Sparkles className="text-accent w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
             <p className="text-[#8F7A6E] text-xs sm:text-sm">
               <span className="font-semibold">Tip:</span> Test before important meetings
             </p>
@@ -498,7 +498,7 @@ const MeetingSetup = ({
           <div className="relative w-full max-w-4xl max-h-[90vh] overflow-auto">
             <button
               onClick={() => setShowBackgroundSelector(false)}
-              className="sticky top-0 right-0 float-right mb-2 sm:mb-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-all duration-200 z-10"
+              className="sticky top-0 right-0 float-right mb-2 sm:mb-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface/10 hover:bg-surface/20 flex items-center justify-center text-white transition-all duration-200 z-10"
             >
               <X size={20} className="sm:w-6 sm:h-6" />
             </button>
