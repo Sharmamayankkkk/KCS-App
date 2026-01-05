@@ -198,8 +198,8 @@ const ScheduledMeetings = () => {
   if (loading) {
     return (
       <div className="w-full rounded-lg border border-border bg-surface p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Calendar className="h-5 w-5 text-[#B91C1C]" />
+        <div className="mb-4 flex items-center gap-2">
+          <Calendar className="size-5 text-[#B91C1C]" />
           <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
         </div>
         <p className="text-[#64748B]">Loading meetings...</p>
@@ -210,8 +210,8 @@ const ScheduledMeetings = () => {
   if (error) {
     return (
       <div className="w-full rounded-lg border border-border bg-surface p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Calendar className="h-5 w-5 text-[#B91C1C]" />
+        <div className="mb-4 flex items-center gap-2">
+          <Calendar className="size-5 text-[#B91C1C]" />
           <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
         </div>
         <p className="text-red-600">{error}</p>
@@ -222,8 +222,8 @@ const ScheduledMeetings = () => {
   if (meetings.length === 0) {
     return (
       <div className="w-full rounded-lg border border-border bg-surface p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Calendar className="h-5 w-5 text-[#B91C1C]" />
+        <div className="mb-4 flex items-center gap-2">
+          <Calendar className="size-5 text-[#B91C1C]" />
           <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
         </div>
         <p className="text-[#64748B]">No upcoming meetings scheduled.</p>
@@ -233,8 +233,8 @@ const ScheduledMeetings = () => {
 
   return (
     <div className="w-full rounded-lg border border-border bg-surface p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Calendar className="h-5 w-5 text-[#B91C1C]" />
+      <div className="mb-4 flex items-center gap-2">
+        <Calendar className="size-5 text-[#B91C1C]" />
         <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
       </div>
       <div className="space-y-3">
@@ -246,36 +246,36 @@ const ScheduledMeetings = () => {
           return (
             <div
               key={meeting.id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-border hover:border-accent hover:shadow-md transition-all"
+              className="flex flex-col justify-between gap-3 rounded-lg border border-border p-4 transition-all hover:border-accent hover:shadow-md sm:flex-row sm:items-center"
             >
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-semibold text-[#0F172A] truncate">
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 flex items-center gap-2">
+                  <h3 className="truncate font-semibold text-[#0F172A]">
                     {meeting.title}
                   </h3>
                   <PrivacyBadge isPrivate={meeting.is_private} />
                 </div>
                 {meeting.description && (
-                  <p className="text-sm text-[#64748B] truncate">
+                  <p className="truncate text-sm text-[#64748B]">
                     {meeting.description}
                   </p>
                 )}
-                <div className="flex flex-wrap items-center gap-3 mt-2 text-sm text-[#64748B]">
+                <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[#64748B]">
                   <div className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
+                    <Calendar className="size-4" />
                     <span>{dateStr}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
+                    <Clock className="size-4" />
                     <span>{timeStr}</span>
                   </div>
                   {hasStarted && (
-                    <span className="px-2 py-0.5 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
                       Live Now
                     </span>
                   )}
                   {!hasStarted && (
-                    <span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-xs font-medium">
+                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
                       {relativeTime}
                     </span>
                   )}
@@ -287,29 +287,29 @@ const ScheduledMeetings = () => {
                     <Button
                       onClick={() => toggleMeetingPrivacy(meeting)}
                       disabled={updatingMeeting === meeting.call_id}
-                      className="bg-purple-600 hover:bg-purple-700 text-white shrink-0"
+                      className="shrink-0 bg-purple-600 text-white hover:bg-purple-700"
                       size="sm"
                       title={meeting.is_private ? 'Make Public' : 'Make Private'}
                     >
-                      {meeting.is_private ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                      {meeting.is_private ? <Globe className="size-4" /> : <Lock className="size-4" />}
                     </Button>
                     <Button
                       onClick={() => toggleMeetingVisibility(meeting)}
                       disabled={updatingMeeting === meeting.call_id}
-                      className="bg-gray-600 hover:bg-gray-700 text-white shrink-0"
+                      className="shrink-0 bg-gray-600 text-white hover:bg-gray-700"
                       size="sm"
                       title={meeting.is_active ? 'Hide Meeting' : 'Show Meeting'}
                     >
-                      {meeting.is_active ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+                      {meeting.is_active ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
                     </Button>
                   </>
                 )}
                 <Button
                   onClick={() => handleJoinMeeting(meeting.call_id)}
-                  className="bg-[#B91C1C] hover:bg-[#991B1B] text-white shrink-0"
+                  className="shrink-0 bg-[#B91C1C] text-white hover:bg-[#991B1B]"
                   size="sm"
                 >
-                  <Video className="h-4 w-4 mr-2" />
+                  <Video className="mr-2 size-4" />
                   {hasStarted ? 'Join Now' : 'View Meeting'}
                 </Button>
               </div>

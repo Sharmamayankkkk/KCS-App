@@ -116,7 +116,7 @@ export default function DeleteDataPage() {
   if (!isLoaded) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+        <Loader2 className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -125,7 +125,7 @@ export default function DeleteDataPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-          <AlertCircle className="mx-auto h-12 w-12 text-amber-500" />
+          <AlertCircle className="mx-auto size-12 text-amber-500" />
           <h2 className="mt-4 text-2xl font-bold text-gray-900">Sign In Required</h2>
           <p className="mt-2 text-gray-600">
             You must be signed in to manage your data.
@@ -142,8 +142,8 @@ export default function DeleteDataPage() {
     <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="text-center">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100">
-          <Trash2 className="h-8 w-8 text-blue-600" />
+        <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-blue-100">
+          <Trash2 className="size-8 text-blue-600" />
         </div>
         <h1 className="mt-4 text-3xl font-bold text-gray-900">
           Partial Data Deletion
@@ -156,7 +156,7 @@ export default function DeleteDataPage() {
       {/* Info Banner */}
       <div className="mt-8 rounded-lg border border-blue-200 bg-blue-50 p-6">
         <div className="flex">
-          <AlertCircle className="h-6 w-6 flex-shrink-0 text-blue-600" />
+          <AlertCircle className="size-6 shrink-0 text-blue-600" />
           <div className="ml-3">
             <h3 className="text-sm font-semibold text-blue-900">
               Keep Your Account, Delete Specific Data
@@ -181,7 +181,7 @@ export default function DeleteDataPage() {
       {deletedTypes.size > 0 && (
         <div className="mt-6 rounded-lg border border-green-200 bg-green-50 p-6">
           <div className="flex">
-            <CheckCircle className="h-6 w-6 flex-shrink-0 text-green-600" />
+            <CheckCircle className="size-6 shrink-0 text-green-600" />
             <div className="ml-3">
               <h3 className="text-sm font-semibold text-green-900">
                 Data Deleted Successfully
@@ -198,7 +198,7 @@ export default function DeleteDataPage() {
       {error && (
         <div className="mt-6 rounded-lg border border-red-200 bg-red-50 p-6">
           <div className="flex">
-            <AlertCircle className="h-6 w-6 flex-shrink-0 text-red-600" />
+            <AlertCircle className="size-6 shrink-0 text-red-600" />
             <div className="ml-3">
               <h3 className="text-sm font-semibold text-red-900">Error</h3>
               <p className="mt-1 text-sm text-red-800">{error}</p>
@@ -225,12 +225,12 @@ export default function DeleteDataPage() {
             >
               <div className="flex items-start">
                 <div
-                  className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg ${
+                  className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${
                     isSelected ? 'bg-red-100' : 'bg-gray-100'
                   }`}
                 >
                   <Icon
-                    className={`h-6 w-6 ${isSelected ? 'text-red-600' : 'text-gray-600'}`}
+                    className={`size-6 ${isSelected ? 'text-red-600' : 'text-gray-600'}`}
                   />
                 </div>
                 <div className="ml-4 flex-1">
@@ -240,7 +240,7 @@ export default function DeleteDataPage() {
                       type="checkbox"
                       checked={isSelected}
                       onChange={() => toggleDataType(dataType.id)}
-                      className="h-5 w-5 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                      className="size-5 rounded border-gray-300 text-red-600 focus:ring-red-500"
                     />
                   </div>
                   <p className="mt-1 text-sm text-gray-600">{dataType.description}</p>
@@ -296,12 +296,12 @@ export default function DeleteDataPage() {
         >
           {isDeleting ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 size-4 animate-spin" />
               Deleting...
             </>
           ) : (
             <>
-              <Trash2 className="mr-2 h-4 w-4" />
+              <Trash2 className="mr-2 size-4" />
               Delete Selected Data ({selectedTypes.size})
             </>
           )}

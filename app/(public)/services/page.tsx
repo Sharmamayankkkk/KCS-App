@@ -88,7 +88,7 @@ const Services = () => {
         For more information or assistance, please contact us at{' '}
         <a
           href="mailto:divineconnectionkcs@gmail.com"
-          className="text-accent underline hover:text-accent/80"
+          className="hover:text-accent/80 text-accent underline"
         >
           divineconnectionkcs@gmail.com
         </a>

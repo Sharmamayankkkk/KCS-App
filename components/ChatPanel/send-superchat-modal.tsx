@@ -143,32 +143,32 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
   return (
     <div className={cn("fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-300", isVisible ? "bg-black/50 backdrop-blur-sm" : "bg-black/0")}>
       <div className={cn("w-full max-w-md mx-auto transition-all duration-300 ease-out", isVisible ? "scale-100 opacity-100" : "scale-95 opacity-0")}>
-        <div className="bg-light-background rounded-2xl shadow-soft max-h-[90vh] overflow-y-auto custom-scrollbar-hidden">
-          <div className="px-6 py-4 border-b border-secondary-background/50">
+        <div className="custom-scrollbar-hidden max-h-[90vh] overflow-y-auto rounded-2xl bg-light-background shadow-soft">
+          <div className="border-secondary-background/50 border-b px-6 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 bg-light-background rounded-full flex items-center justify-center shadow-soft"><Send size={20} className="text-primary-text" /></div>
+                <div className="flex size-10 items-center justify-center rounded-full bg-light-background shadow-soft"><Send size={20} className="text-primary-text" /></div>
                 <div>
                   <h3 className="text-xl font-bold text-primary-text">Send Superchat</h3>
-                  <p className="text-sm text-secondary-text mt-1">Support with a highlighted message</p>
+                  <p className="mt-1 text-sm text-secondary-text">Support with a highlighted message</p>
                 </div>
               </div>
-              <button onClick={handleClose} className="p-2 text-secondary-text hover:text-primary-text hover:bg-secondary-background rounded-full transition-colors" disabled={loading}><X size={20} /></button>
+              <button onClick={handleClose} className="rounded-full p-2 text-secondary-text transition-colors hover:bg-secondary-background hover:text-primary-text" disabled={loading}><X size={20} /></button>
             </div>
           </div>
-          <div className="px-6 py-6 space-y-6">
+          <div className="space-y-6 p-6">
             {scriptLoaded && paymentStatus === "pending" && (
               <>
                 <div className="space-y-2">
                   <label className="block text-sm font-semibold text-primary-text">Your Message</label>
                   <div className="relative">
-                    <textarea value={message} onChange={(e) => setMessage(e.target.value.slice(0, 200))} rows={3} maxLength={200} disabled={loading} placeholder="Write a message to highlight..." className="w-full p-3 text-primary-text rounded-xl bg-light-background focus:outline-none shadow-soft-inset border border-secondary-background/50 placeholder-secondary-text resize-none"/>
+                    <textarea value={message} onChange={(e) => setMessage(e.target.value.slice(0, 200))} rows={3} maxLength={200} disabled={loading} placeholder="Write a message to highlight..." className="border-secondary-background/50 w-full resize-none rounded-xl border bg-light-background p-3 text-primary-text shadow-soft-inset placeholder:text-secondary-text focus:outline-none"/>
                     <div className="absolute bottom-2 right-3 text-xs text-secondary-text">{message.length}/200</div>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <label className="block text-sm font-semibold text-primary-text">Choose Amount</label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                     {AMOUNT_TIERS.map((tier) => {
                       const IconComponent = tier.icon;
                       const isSelected = selectedAmount === tier.value;
@@ -177,14 +177,14 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
                           <IconComponent size={20} className="mx-auto" />
                           <div className="font-bold">{tier.label}</div>
                           <div className="text-xs opacity-75">{tier.duration}</div>
-                          {isSelected && (<div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center border-2 border-white shadow-lg"><Check size={12} className="text-white" /></div>)}
+                          {isSelected && (<div className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full border-2 border-white bg-green-500 shadow-lg"><Check size={12} className="text-white" /></div>)}
                         </button>
                       )
                     })}
                   </div>
                 </div>
-                {error && (<div className="flex items-start space-x-3 p-4 bg-red-500/10 border border-red-500/20 rounded-xl"><AlertCircle size={18} className="text-red-500 mt-0.5" /><span className="text-red-700 text-sm">{error}</span></div>)}
-                <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3 pt-4 border-t border-secondary-background/50">
+                {error && (<div className="flex items-start space-x-3 rounded-xl border border-red-500/20 bg-red-500/10 p-4"><AlertCircle size={18} className="mt-0.5 text-red-500" /><span className="text-sm text-red-700">{error}</span></div>)}
+                <div className="border-secondary-background/50 flex flex-col space-y-3 border-t pt-4 sm:flex-row sm:space-x-3 sm:space-y-0">
                   <Button variant="outline" onClick={handleClose} disabled={loading} className="flex-1">Cancel</Button>
                   <Button onClick={handleSubmit} disabled={loading || !message.trim()} className={cn("flex-1 text-white font-semibold shadow-soft-inset", `bg-${(getTierClasses(selectedTier.color, true) as any).main}/80`)}>
                     {loading ? (<><Loader2 size={16} className="mr-2 animate-spin" />Processing...</>) : (<>Send {selectedTier.label}</>)}
@@ -192,9 +192,9 @@ export const SendSuperchatModal = ({ callId, senderName, userId, onClose, onSucc
                 </div>
               </>
             )}
-            {paymentStatus === "processing" && ( <div className="py-8 text-center space-y-4"><div className="w-16 h-16 mx-auto rounded-full bg-light-background flex items-center justify-center shadow-soft"><Loader2 size={32} className="animate-spin text-primary-text" /></div><div><h4 className="text-lg font-bold text-primary-text mb-2">Processing Payment</h4><p className="text-secondary-text">Please complete the payment process</p></div></div> )}
-            {paymentStatus === "success" && ( <div className="py-8 text-center space-y-4"><div className="w-20 h-20 mx-auto bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center shadow-lg"><Check size={36} className="text-white" /></div><div><h4 className="text-xl font-bold text-primary-text mb-2">Superchat Sent! 🎉</h4><p className="text-secondary-text mb-1">Your message will be highlighted for {selectedTier.duration}</p><p className="text-secondary-text/80 text-sm">Thank you for your support!</p></div></div> )}
-            {paymentStatus === "failed" && ( <div className="py-8 text-center space-y-4"><div className="w-20 h-20 mx-auto bg-gradient-to-br from-red-400 to-red-600 rounded-full flex items-center justify-center shadow-lg"><X size={36} className="text-white" /></div><div><h4 className="text-lg font-bold text-primary-text mb-2">Payment Failed</h4><p className="text-secondary-text mb-4">{error || "There was an error."}</p><Button onClick={() => setPaymentStatus("pending")}>Try Again</Button></div></div> )}
+            {paymentStatus === "processing" && ( <div className="space-y-4 py-8 text-center"><div className="mx-auto flex size-16 items-center justify-center rounded-full bg-light-background shadow-soft"><Loader2 size={32} className="animate-spin text-primary-text" /></div><div><h4 className="mb-2 text-lg font-bold text-primary-text">Processing Payment</h4><p className="text-secondary-text">Please complete the payment process</p></div></div> )}
+            {paymentStatus === "success" && ( <div className="space-y-4 py-8 text-center"><div className="mx-auto flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-green-600 shadow-lg"><Check size={36} className="text-white" /></div><div><h4 className="mb-2 text-xl font-bold text-primary-text">Superchat Sent! 🎉</h4><p className="mb-1 text-secondary-text">Your message will be highlighted for {selectedTier.duration}</p><p className="text-secondary-text/80 text-sm">Thank you for your support!</p></div></div> )}
+            {paymentStatus === "failed" && ( <div className="space-y-4 py-8 text-center"><div className="mx-auto flex size-20 items-center justify-center rounded-full bg-gradient-to-br from-red-400 to-red-600 shadow-lg"><X size={36} className="text-white" /></div><div><h4 className="mb-2 text-lg font-bold text-primary-text">Payment Failed</h4><p className="mb-4 text-secondary-text">{error || "There was an error."}</p><Button onClick={() => setPaymentStatus("pending")}>Try Again</Button></div></div> )}
           </div>
         </div>
       </div>

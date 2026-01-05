@@ -155,15 +155,15 @@ const PollsPanel = ({ callId, userId, isAdmin, onClose }: PollsPanelProps) => {
   };
   
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex justify-center items-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 backdrop-blur-sm">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
-        className="relative w-full max-w-md h-full max-h-[600px]"
+        className="relative size-full max-h-[600px] max-w-md"
       >
-        <Card className="w-full h-full flex flex-col bg-surface/80 backdrop-blur-lg border-border200/50 shadow-2xl rounded-2xl">
-          <CardHeader className="flex-shrink-0">
+        <Card className="bg-surface/80 border-border200/50 flex size-full flex-col rounded-2xl shadow-2xl backdrop-blur-lg">
+          <CardHeader className="shrink-0">
             <div className="flex items-center justify-between">
               <div className='flex items-center gap-2'>
                 <BarChartHorizontalBig className="text-text-700" />
@@ -171,23 +171,23 @@ const PollsPanel = ({ callId, userId, isAdmin, onClose }: PollsPanelProps) => {
               </div>
               <button onClick={onClose} className="text-text-500 hover:text-text-900 transition-colors"><X /></button>
             </div>
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
           </CardHeader>
           <CardContent className="flex-1 overflow-y-auto px-6 py-4">
             {loading ? (
-              <div className="flex justify-center items-center h-full">
-                <Loader2 className="animate-spin text-text-500" size={32} />
+              <div className="flex h-full items-center justify-center">
+                <Loader2 className="text-text-500 animate-spin" size={32} />
               </div>
             ) : (
               <AnimatePresence mode="wait">
                 {view === 'list' && (
                   <motion.div key="list" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                     {isAdmin && (
-                      <Button onClick={() => setView('create')} className="w-full mb-4 bg-800 hover:bg-900 text-white">
+                      <Button onClick={() => setView('create')} className="bg-800 hover:bg-900 mb-4 w-full text-white">
                         <Plus className="mr-2" /> Create New Poll
                       </Button>
                     )}
-                    <h3 className="text-lg font-semibold text-text-700 mb-2">Past Polls</h3>
+                    <h3 className="text-text-700 mb-2 text-lg font-semibold">Past Polls</h3>
                     {pastPolls.length > 0 ? (
                       <div className="space-y-3">
                         {pastPolls.map(poll => (
@@ -195,9 +195,9 @@ const PollsPanel = ({ callId, userId, isAdmin, onClose }: PollsPanelProps) => {
                         ))}
                       </div>
                     ) : (
-                      <div className="text-center py-8 px-4 border-2 border-dashed border-border300 rounded-lg">
-                        <Frown className="mx-auto text-text-400" size={40} />
-                        <p className="mt-2 text-text-500">No past polls to show.</p>
+                      <div className="border-border300 rounded-lg border-2 border-dashed px-4 py-8 text-center">
+                        <Frown className="text-text-400 mx-auto" size={40} />
+                        <p className="text-text-500 mt-2">No past polls to show.</p>
                       </div>
                     )}
                   </motion.div>
@@ -295,7 +295,7 @@ const CreatePollForm = ({ callId, onCreated, onCancel }: { callId: string, onCre
 
   return (
     <div className="space-y-4">
-      <h3 className="text-xl font-bold text-text-800">Create a New Poll</h3>
+      <h3 className="text-text-800 text-xl font-bold">Create a New Poll</h3>
       <Input
         placeholder="Poll Question"
         value={question}
@@ -303,7 +303,7 @@ const CreatePollForm = ({ callId, onCreated, onCancel }: { callId: string, onCre
         className="bg-surface/70"
       />
       <div className="space-y-2">
-        <label className="text-sm font-medium text-text-600">Options</label>
+        <label className="text-text-600 text-sm font-medium">Options</label>
         {options.map((opt, i) => (
           <div key={i} className="flex items-center gap-2">
             <Input
@@ -318,10 +318,10 @@ const CreatePollForm = ({ callId, onCreated, onCancel }: { callId: string, onCre
         {options.length < 5 && <Button variant='ghost' size='sm' onClick={addOption} className="text-text-600">Add Option</Button>}
       </div>
       <div>
-        <label className="text-sm font-medium text-text-600">Duration (in seconds)</label>
+        <label className="text-text-600 text-sm font-medium">Duration (in seconds)</label>
         <Input type="number" value={duration} onChange={e => setDuration(Number(e.target.value))} className="bg-surface/70" />
       </div>
-      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {error && <p className="text-sm text-red-500">{error}</p>}
       <div className="flex justify-end gap-2 pt-4">
         <Button variant="ghost" onClick={onCancel} disabled={loading}>Cancel</Button>
         <Button onClick={handleSubmit} disabled={loading} className="bg-800 hover:bg-900 text-white">
@@ -335,7 +335,7 @@ const CreatePollForm = ({ callId, onCreated, onCancel }: { callId: string, onCre
 const ActivePollView = ({ poll, userVote, onVote, showResults, isAdmin, onEndPoll }: { poll: Poll, userVote: string | null, onVote: (optionId: string) => void, showResults: boolean, isAdmin: boolean, onEndPoll: (pollId: string) => void }) => {
   return (
     <div>
-      <h3 className="text-xl font-bold text-text-800 mb-4">{poll.question}</h3>
+      <h3 className="text-text-800 mb-4 text-xl font-bold">{poll.question}</h3>
       <div className="space-y-3">
         {poll.options.map(option => (
           <PollOption
@@ -349,7 +349,7 @@ const ActivePollView = ({ poll, userVote, onVote, showResults, isAdmin, onEndPol
           />
         ))}
       </div>
-      <p className="text-sm text-text-500 mt-4 text-center">{poll.total_votes} {poll.total_votes === 1 ? 'vote' : 'votes'}</p>
+      <p className="text-text-500 mt-4 text-center text-sm">{poll.total_votes} {poll.total_votes === 1 ? 'vote' : 'votes'}</p>
       {isAdmin && poll.is_active && (
         <div className="mt-6 flex justify-center">
           <Button variant="destructive" onClick={() => onEndPoll(poll.id)}>End Poll</Button>
@@ -364,9 +364,9 @@ const PollOption = ({ option, hasVoted, isVotedOption, totalVotes, showResults, 
   
   if (showResults || hasVoted) {
     return (
-      <div className="relative w-full h-12 rounded-lg bg-200/70 overflow-hidden">
+      <div className="bg-200/70 relative h-12 w-full overflow-hidden rounded-lg">
         <motion.div
-          className="absolute top-0 left-0 h-full"
+          className="absolute left-0 top-0 h-full"
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -387,7 +387,7 @@ const PollOption = ({ option, hasVoted, isVotedOption, totalVotes, showResults, 
     <Button 
       variant='outline' 
       onClick={onVote} 
-      className="w-full justify-start p-6 text-lg h-16 bg-surface/50 hover:bg-surface/90 border-border300 hover:border-border500"
+      className="bg-surface/50 hover:bg-surface/90 border-border300 hover:border-border500 h-16 w-full justify-start p-6 text-lg"
     >
       {option.text}
     </Button>
@@ -396,20 +396,20 @@ const PollOption = ({ option, hasVoted, isVotedOption, totalVotes, showResults, 
 
 const PastPollCard = ({ poll }: { poll: Poll }) => {
   return (
-    <Card className="bg-surface/60 p-4 rounded-lg shadow-md">
-      <p className="font-semibold text-text-800">{poll.question}</p>
+    <Card className="bg-surface/60 rounded-lg p-4 shadow-md">
+      <p className="text-text-800 font-semibold">{poll.question}</p>
       <div className="mt-2 space-y-1">
         {poll.options.map(option => {
           const percentage = poll.total_votes > 0 ? (option.vote_count / poll.total_votes) * 100 : 0;
           return (
-            <div key={option.id} className="text-sm text-text-600 flex justify-between">
+            <div key={option.id} className="text-text-600 flex justify-between text-sm">
               <span>{option.text}</span>
               <span className="font-medium">{percentage.toFixed(0)}%</span>
             </div>
           )
         })}
       </div>
-      <p className="text-xs text-text-500 mt-2">{poll.total_votes} total votes</p>
+      <p className="text-text-500 mt-2 text-xs">{poll.total_votes} total votes</p>
     </Card>
   )
 }

@@ -1,12 +1,12 @@
 import React from "react";
 
 const Loader: React.FC = () => (
-  <div className="m-0 bg-background flex justify-center items-center h-screen w-screen">
-    <div className="loader-container relative w-[300px] overflow-hidden max-w-[80vw]">
+  <div className="m-0 flex h-screen w-screen items-center justify-center bg-background">
+    <div className="loader-container relative w-[300px] max-w-[80vw] overflow-hidden">
       <img
         src="/icons/KCS-Logo.png"
         alt="KCS Logo"
-        className="loader-img w-full h-auto block"
+        className="loader-img block h-auto w-full"
       />
       <div className="shine" />
       <style jsx>{`

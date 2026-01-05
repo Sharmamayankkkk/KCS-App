@@ -26,7 +26,7 @@ const LegalLinks = () => {
             }}
           >
             <link.icon />
-            <span className="font-semibold block sm:hidden lg:block">{link.label}</span>
+            <span className="block font-semibold sm:hidden lg:block">{link.label}</span>
           </Link>
         );
       })}

@@ -66,13 +66,13 @@ export const EndCallButton = () => {
             <Button
               variant="outline"
               onClick={() => setConfirmOpen(false)}
-              className="border border-gray-300 hover:bg-gray-100 transition-colors"
+              className="border border-gray-300 transition-colors hover:bg-gray-100"
             >
               Cancel
             </Button>
             <Button
               onClick={handleEndCall}
-              className="bg-red-600 hover:bg-red-700 transition-colors focus:ring-red-500"
+              className="bg-red-600 transition-colors hover:bg-red-700 focus:ring-red-500"
             >
               End Call
             </Button>

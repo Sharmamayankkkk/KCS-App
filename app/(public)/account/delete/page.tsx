@@ -49,7 +49,7 @@ export default function DeleteAccountPage() {
   if (!isLoaded) {
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-500" />
+        <Loader2 className="size-8 animate-spin text-gray-500" />
       </div>
     );
   }
@@ -58,7 +58,7 @@ export default function DeleteAccountPage() {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="rounded-lg border border-gray-200 bg-white p-8 text-center">
-          <AlertTriangle className="mx-auto h-12 w-12 text-amber-500" />
+          <AlertTriangle className="mx-auto size-12 text-amber-500" />
           <h2 className="mt-4 text-2xl font-bold text-gray-900">Sign In Required</h2>
           <p className="mt-2 text-gray-600">
             You must be signed in to delete your account.
@@ -79,8 +79,8 @@ export default function DeleteAccountPage() {
       <div className="rounded-lg border border-red-200 bg-white p-8 shadow-lg">
         {/* Header */}
         <div className="text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-            <Trash2 className="h-8 w-8 text-red-600" />
+          <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-red-100">
+            <Trash2 className="size-8 text-red-600" />
           </div>
           <h1 className="mt-4 text-3xl font-bold text-gray-900">Delete Account</h1>
           <p className="mt-2 text-gray-600">
@@ -93,7 +93,7 @@ export default function DeleteAccountPage() {
           <div className="mt-8 space-y-6">
             <div className="rounded-lg bg-red-50 p-6">
               <div className="flex">
-                <AlertTriangle className="h-6 w-6 flex-shrink-0 text-red-600" />
+                <AlertTriangle className="size-6 shrink-0 text-red-600" />
                 <div className="ml-3">
                   <h3 className="text-lg font-semibold text-red-900">
                     Warning: This action cannot be undone
@@ -115,7 +115,7 @@ export default function DeleteAccountPage() {
 
             <div className="rounded-lg border border-amber-200 bg-amber-50 p-6">
               <div className="flex">
-                <AlertTriangle className="h-6 w-6 flex-shrink-0 text-amber-600" />
+                <AlertTriangle className="size-6 shrink-0 text-amber-600" />
                 <div className="ml-3">
                   <h3 className="text-lg font-semibold text-amber-900">
                     Data Retained for Legal Compliance
@@ -221,12 +221,12 @@ export default function DeleteAccountPage() {
               >
                 {isDeleting ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Deleting...
                   </>
                 ) : (
                   <>
-                    <Trash2 className="mr-2 h-4 w-4" />
+                    <Trash2 className="mr-2 size-4" />
                     Delete My Account Permanently
                   </>
                 )}
@@ -238,7 +238,7 @@ export default function DeleteAccountPage() {
         {/* Processing Step */}
         {step === 'processing' && (
           <div className="mt-8 text-center">
-            <Loader2 className="mx-auto h-16 w-16 animate-spin text-red-600" />
+            <Loader2 className="mx-auto size-16 animate-spin text-red-600" />
             <h3 className="mt-4 text-xl font-semibold text-gray-900">
               Deleting Your Account...
             </h3>
@@ -251,7 +251,7 @@ export default function DeleteAccountPage() {
         {/* Success Step */}
         {step === 'success' && (
           <div className="mt-8 text-center">
-            <CheckCircle className="mx-auto h-16 w-16 text-green-600" />
+            <CheckCircle className="mx-auto size-16 text-green-600" />
             <h3 className="mt-4 text-xl font-semibold text-gray-900">
               Account Deleted Successfully
             </h3>

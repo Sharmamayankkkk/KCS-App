@@ -11,11 +11,11 @@ const SocialLinks = () => {
           href={link.href}
           key={link.label}
           target="_blank"
-          className="flex gap-4 items-center p-4 rounded-lg justify-start"
+          className="flex items-center justify-start gap-4 rounded-lg p-4"
           style={{ color: '#FAF5F1' }}
         >
           <link.icon />
-          <span className="font-semibold block sm:hidden lg:block">{link.label}</span>
+          <span className="block font-semibold sm:hidden lg:block">{link.label}</span>
         </Link>
       ))}
     </div>

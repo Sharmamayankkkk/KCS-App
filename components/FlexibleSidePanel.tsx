@@ -26,16 +26,16 @@ type FeedItem = ChatMessageData | (SuperchatMessageType & { type: 'superchat', c
 
 // A small, internal component to display a regular chat message
 const ChatMessageDisplay = ({ message, isAdmin, onPin }: { message: ChatMessageData, isAdmin: boolean, onPin: (id: string) => void }) => (
-  <div className="p-3 rounded-lg transition-all duration-300 bg-secondary-background/30 hover:bg-secondary-background/60 relative group">
-    {message.is_pinned && <div className="absolute top-1 right-2 flex items-center text-xs text-secondary-text"><Pin size={12} className="mr-1" /> Pinned</div>}
-    {isAdmin && <button onClick={() => onPin(message.id)} className="absolute bottom-1 right-2 text-secondary-text bg-light-background/50 p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity" title={message.is_pinned ? 'Unpin Message' : 'Pin Message'}><Pin size={14} /></button>}
+  <div className="bg-secondary-background/30 hover:bg-secondary-background/60 group relative rounded-lg p-3 transition-all duration-300">
+    {message.is_pinned && <div className="absolute right-2 top-1 flex items-center text-xs text-secondary-text"><Pin size={12} className="mr-1" /> Pinned</div>}
+    {isAdmin && <button onClick={() => onPin(message.id)} className="bg-light-background/50 absolute bottom-1 right-2 rounded-full p-1 text-secondary-text opacity-0 transition-opacity group-hover:opacity-100" title={message.is_pinned ? 'Unpin Message' : 'Pin Message'}><Pin size={14} /></button>}
     <div className="flex flex-col">
-      <span className="font-semibold text-primary-text break-words pr-8 flex items-center gap-1.5">
+      <span className="flex items-center gap-1.5 break-words pr-8 font-semibold text-primary-text">
         {message.sender}
         <VerifiedBadge userEmail={message.sender_email} size={14} />
       </span>
-      <span className="mt-1 text-primary-text break-words">{message.text}</span>
-      {message.attachment_url && <a href={message.attachment_url} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex items-center gap-2 p-2 rounded-md bg-secondary-background/50 hover:bg-secondary-background text-sm text-primary-accent"><Paperclip size={16} /><span className="truncate max-w-[200px]">{message.attachment_name || 'View Attachment'}</span></a>}
+      <span className="mt-1 break-words text-primary-text">{message.text}</span>
+      {message.attachment_url && <a href={message.attachment_url} target="_blank" rel="noopener noreferrer" className="bg-secondary-background/50 mt-2 inline-flex items-center gap-2 rounded-md p-2 text-sm text-primary-accent hover:bg-secondary-background"><Paperclip size={16} /><span className="max-w-[200px] truncate">{message.attachment_name || 'View Attachment'}</span></a>}
     </div>
   </div>
 );
@@ -128,7 +128,7 @@ export const FlexibleSidePanel = ({ callId, userId, isAdmin, senderName, onClose
 
   const sendMessage = async () => {
     if (!supabase || (!messageText.trim() && !attachmentFile)) return;
-    let attachmentUrl: string | null = null, attachmentName: string | null = null;
+    let attachmentUrl: string | null = null; let attachmentName: string | null = null;
     if (attachmentFile) {
       setIsUploading(true);
       const fileName = `${userId}-${Date.now()}.${attachmentFile.name.split('.').pop()}`;
@@ -173,9 +173,9 @@ export const FlexibleSidePanel = ({ callId, userId, isAdmin, senderName, onClose
   ];
 
   return (
-    <div className="fixed top-0 right-0 p-4 bg-light-background/90 backdrop-blur-md rounded-l-2xl w-[300px] sm:w-[350px] h-full z-[100] overflow-hidden flex flex-col border-l border-secondary-background shadow-2xl animate-in slide-in-from-right-1/2 duration-300">
-      <div className="flex justify-between items-center mb-4 flex-shrink-0">
-        <div className="flex items-center gap-2 p-1 rounded-lg bg-secondary-background/50">
+    <div className="bg-light-background/90 fixed right-0 top-0 z-[100] flex h-full w-[300px] flex-col overflow-hidden rounded-l-2xl border-l border-secondary-background p-4 shadow-2xl backdrop-blur-md duration-300 animate-in slide-in-from-right-1/2 sm:w-[350px]">
+      <div className="mb-4 flex shrink-0 items-center justify-between">
+        <div className="bg-secondary-background/50 flex items-center gap-2 rounded-lg p-1">
           {tabs.map((tab) => (
             <Button key={tab.name} variant="ghost" size="sm" onClick={() => setActiveTab(tab.name as PanelTab)} className={cn('flex items-center gap-1.5 px-2 sm:px-3 py-1 text-xs h-auto', activeTab === tab.name ? 'bg-background shadow-md rounded-md' : 'text-secondary-text')}>
               <tab.icon size={14} />
@@ -184,32 +184,32 @@ export const FlexibleSidePanel = ({ callId, userId, isAdmin, senderName, onClose
           ))}
         </div>
         <button 
-          className="p-2 transition rounded-full hover:bg-red-500/20 bg-secondary-background/50 border border-secondary-background flex-shrink-0 touch-manipulation" 
+          className="bg-secondary-background/50 shrink-0 touch-manipulation rounded-full border border-secondary-background p-2 transition hover:bg-red-500/20" 
           onClick={onClose}
           title="Close panel"
           aria-label="Close panel"
         >
-          <X className="text-primary-text size-5" />
+          <X className="size-5 text-primary-text" />
         </button>
       </div>
 
-      <div className="flex-1 overflow-hidden flex flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
         {activeTab === 'chat' && (
-          <div className="flex-1 flex flex-col min-h-0">
-            {pinnedMessage && <div className="mb-2 p-2 rounded-lg bg-secondary-background/50 border border-secondary-background flex-shrink-0"><div className="flex items-center text-xs text-secondary-text mb-1"><Pin size={12} className="mr-1.5" /> PINNED MESSAGE</div><p className="text-sm text-primary-text truncate"><strong>{pinnedMessage.sender}:</strong> {pinnedMessage.text}</p></div>}
-            <div ref={chatContainerRef} onScroll={handleScroll} className="flex-1 space-y-3 overflow-y-auto custom-scrollbar-hidden pr-2">
+          <div className="flex min-h-0 flex-1 flex-col">
+            {pinnedMessage && <div className="bg-secondary-background/50 mb-2 shrink-0 rounded-lg border border-secondary-background p-2"><div className="mb-1 flex items-center text-xs text-secondary-text"><Pin size={12} className="mr-1.5" /> PINNED MESSAGE</div><p className="truncate text-sm text-primary-text"><strong>{pinnedMessage.sender}:</strong> {pinnedMessage.text}</p></div>}
+            <div ref={chatContainerRef} onScroll={handleScroll} className="custom-scrollbar-hidden flex-1 space-y-3 overflow-y-auto pr-2">
               {combinedFeed.map((item) => (item.type === 'superchat' ? <SuperchatMessage key={item.id} message={item as SuperchatMessageType} isAdmin={isAdmin} /> : <ChatMessageDisplay key={item.id} message={item} isAdmin={isAdmin} onPin={handlePinMessage} />))}
               <div ref={chatEndRef} />
             </div>
-            <div className="mt-4 flex flex-col gap-3 flex-shrink-0">
-              {attachmentFile && <div className="flex items-center justify-between p-2 text-sm bg-secondary-background/50 rounded-md"><span className="truncate max-w-[200px]">{attachmentFile.name}</span><button onClick={() => setAttachmentFile(null)}><X size={16} /></button></div>}
+            <div className="mt-4 flex shrink-0 flex-col gap-3">
+              {attachmentFile && <div className="bg-secondary-background/50 flex items-center justify-between rounded-md p-2 text-sm"><span className="max-w-[200px] truncate">{attachmentFile.name}</span><button onClick={() => setAttachmentFile(null)}><X size={16} /></button></div>}
               <div className="relative">
-                <input type="text" placeholder="Type a message..." className="w-full py-3 pl-10 pr-12 text-primary-text rounded-full bg-light-background focus:outline-none shadow-soft-inset border border-secondary-background/50" value={messageText} onChange={(e) => setMessageText(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') sendMessage(); }}/>
+                <input type="text" placeholder="Type a message..." className="border-secondary-background/50 w-full rounded-full border bg-light-background py-3 pl-10 pr-12 text-primary-text shadow-soft-inset focus:outline-none" value={messageText} onChange={(e) => setMessageText(e.target.value)} onKeyDown={(e) => { if (e.key === 'Enter') sendMessage(); }}/>
                 <input type="file" ref={fileInputRef} onChange={handleFileSelect} className="hidden" />
-                <button onClick={() => fileInputRef.current?.click()} className="absolute left-2 top-1/2 transform -translate-y-1/2 p-2 text-secondary-text hover:text-primary-text" title="Attach a file"><Paperclip size={18} /></button>
-                <button onClick={sendMessage} disabled={isUploading || (!messageText.trim() && !attachmentFile)} className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary-text text-light-background disabled:bg-secondary-background disabled:opacity-70 rounded-full p-2 transition-all duration-200">{isUploading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}</button>
+                <button onClick={() => fileInputRef.current?.click()} className="absolute left-2 top-1/2 -translate-y-1/2 p-2 text-secondary-text hover:text-primary-text" title="Attach a file"><Paperclip size={18} /></button>
+                <button onClick={sendMessage} disabled={isUploading || (!messageText.trim() && !attachmentFile)} className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-primary-text p-2 text-light-background transition-all duration-200 disabled:bg-secondary-background disabled:opacity-70">{isUploading ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}</button>
               </div>
-              <Button onClick={() => setShowSendSuperchat(true)} className="font-semibold bg-primary-accent text-white shadow-soft-destructive hover:opacity-90" size="sm"><Crown size={14} className="mr-1.5" /> Send Superchat</Button>
+              <Button onClick={() => setShowSendSuperchat(true)} className="bg-primary-accent font-semibold text-white shadow-soft-destructive hover:opacity-90" size="sm"><Crown size={14} className="mr-1.5" /> Send Superchat</Button>
             </div>
           </div>
         )}

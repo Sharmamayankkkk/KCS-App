@@ -31,10 +31,10 @@ const MeetingCard = ({
 
   return (
     <section
-      className="flex min-h-[258px] w-full flex-col justify-between rounded-[14px] px-5 py-8 xl:max-w-[568px] bg-surface/80 backdrop-blur-lg border border-border shadow-soft text-text-primary"
+      className="bg-surface/80 flex min-h-[258px] w-full flex-col justify-between rounded-[14px] border border-border px-5 py-8 text-text-primary shadow-soft backdrop-blur-lg xl:max-w-[568px]"
     >
       <article className="flex flex-col gap-5">
-        <Icon className="h-7 w-7 text-accent" />
+        <Icon className="size-7 text-accent" />
         <div className="flex justify-between">
           <div className="flex flex-col gap-2">
             <h1 className="text-2xl font-bold">{title}</h1>
@@ -47,10 +47,10 @@ const MeetingCard = ({
           <div className="flex gap-2">
             <Button
               onClick={handleClick}
-              className="rounded px-6 bg-accent text-background hover:bg-accent/90"
+              className="hover:bg-accent/90 rounded bg-accent px-6 text-background"
             >
               {ButtonIcon1 && (
-                <ButtonIcon1 className="h-5 w-5 mr-2" />
+                <ButtonIcon1 className="mr-2 size-5" />
               )}
               &nbsp; {buttonText}
             </Button>
@@ -61,9 +61,9 @@ const MeetingCard = ({
                   title: "Link Copied",
                 });
               }}
-              className="px-6 bg-surface border border-border text-text-primary hover:bg-background"
+              className="border border-border bg-surface px-6 text-text-primary hover:bg-background"
             >
-              <Copy className="h-5 w-5 mr-2" />
+              <Copy className="mr-2 size-5" />
               &nbsp; Copy Link
             </Button>
           </div>
