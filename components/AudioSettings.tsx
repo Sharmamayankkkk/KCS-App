@@ -108,35 +108,36 @@ export const AudioSettings = () => {
           <Volume2 />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent side="top" align="center" className="z-[200] w-56">
-        <DropdownMenuLabel>Audio Settings</DropdownMenuLabel>
+      <DropdownMenuContent side="top" align="center" className="z-[200] w-48 sm:w-56">
+        <DropdownMenuLabel className="text-xs sm:text-sm">Audio Settings</DropdownMenuLabel>
         <DropdownMenuSeparator />
         
         <DropdownMenuCheckboxItem
           checked={noiseCancellationEnabled}
           onCheckedChange={toggleNoiseCancellation}
+          className="text-xs sm:text-sm"
         >
           Noise Cancellation
         </DropdownMenuCheckboxItem>
 
         <DropdownMenuSeparator />
-        <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
+        <DropdownMenuLabel className="text-muted-foreground text-[10px] sm:text-xs font-normal">
           Audio Quality
         </DropdownMenuLabel>
 
         <DropdownMenuItem
           onClick={() => setHiFiAudio(false)}
-          className="cursor-pointer"
+          className="cursor-pointer text-xs sm:text-sm"
         >
-          <Check className={`mr-2 size-4 ${audioQuality === 'standard' ? 'visible' : 'invisible'}`} />
+          <Check className={`mr-1.5 sm:mr-2 size-3 sm:size-4 ${audioQuality === 'standard' ? 'visible' : 'invisible'}`} />
           <span>Standard Quality</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem
           onClick={() => setHiFiAudio(true)}
-          className="cursor-pointer"
+          className="cursor-pointer text-xs sm:text-sm"
         >
-          <Check className={`mr-2 size-4 ${audioQuality === 'hifi' ? 'visible' : 'invisible'}`} />
+          <Check className={`mr-1.5 sm:mr-2 size-3 sm:size-4 ${audioQuality === 'hifi' ? 'visible' : 'invisible'}`} />
           <span>Hi-Fi Quality</span>
         </DropdownMenuItem>
 
@@ -145,6 +146,7 @@ export const AudioSettings = () => {
         <DropdownMenuCheckboxItem
           checked={stereoEnabled}
           onCheckedChange={toggleStereoAudio}
+          className="text-xs sm:text-sm"
         >
           Stereo Audio
         </DropdownMenuCheckboxItem>

@@ -224,8 +224,8 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               />
             )}
           </div>
-          <div className={cn(`fixed bottom-0 w-full px-4 pb-4 transition-opacity duration-300`, showControls ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none')}>
-            <div className="bg-background/80 mx-auto flex max-w-max flex-wrap items-center justify-center gap-2 rounded-2xl border p-3 shadow-lg backdrop-blur-md transition sm:gap-3">
+          <div className={cn(`fixed bottom-0 w-full px-2 sm:px-4 pb-2 sm:pb-4 transition-opacity duration-300`, showControls ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none')}>
+            <div className="bg-background/80 mx-auto flex max-w-max flex-wrap items-center justify-center gap-1.5 sm:gap-2 rounded-xl sm:rounded-2xl border p-2 sm:p-3 shadow-lg backdrop-blur-md transition">
               <CallControls
                 onLeave={() => router.push('/home')}
                 setLayout={setLayout}
@@ -233,13 +233,13 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               />
               {isAdmin && (
                 <>
-                  <div className="mx-1 h-8 w-px bg-border"></div>
+                  <div className="mx-0.5 sm:mx-1 h-6 sm:h-8 w-px bg-border"></div>
                   <AdminControls />
                 </>
               )}
-              <div className="mx-1 h-8 w-px bg-border"></div>
-              <Button variant="default" size="icon" onClick={() => setIsSidePanelOpen(prev => !prev)} title="Toggle Panels">
-                <PanelRightOpen />
+              <div className="mx-0.5 sm:mx-1 h-6 sm:h-8 w-px bg-border"></div>
+              <Button variant="default" size="icon" onClick={() => setIsSidePanelOpen(prev => !prev)} title="Toggle Panels" className="size-8 sm:size-10">
+                <PanelRightOpen className="size-4 sm:size-5" />
               </Button>
             </div>
           </div>

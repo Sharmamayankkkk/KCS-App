@@ -176,7 +176,7 @@ export const CallControls: React.FC<CallControlsProps> = ({
             <Settings />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="top" align="center" className="z-[200] w-56">
+        <DropdownMenuContent side="top" align="center" className="z-[200] w-48 sm:w-56">
           <DropdownMenuItem onClick={() => setShowBackgroundSelector?.(true)}>
             <ImageIcon className="mr-2 size-4" />
             <span>Change Background</span>

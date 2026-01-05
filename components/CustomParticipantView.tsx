@@ -79,17 +79,17 @@ export const CustomParticipantView = ({
       {/* Custom overlay */}
       <div className="pointer-events-none absolute inset-0">
         {/* Top bar with participant info */}
-        <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/60 to-transparent p-2">
+        <div className="absolute inset-x-0 top-0 bg-gradient-to-b from-black/60 to-transparent p-1.5 sm:p-2">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="max-w-[150px] truncate text-sm font-medium text-white">
+            <div className="flex items-center gap-1 sm:gap-2 min-w-0 flex-1">
+              <span className="max-w-[100px] sm:max-w-[150px] truncate text-xs sm:text-sm font-medium text-white">
                 {participantName}
                 {isLocalParticipant && ' (You)'}
               </span>
               
               {/* Connection quality indicator */}
               {showConnectionQuality && (
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
                   {getConnectionIcon()}
                 </div>
               )}
@@ -99,34 +99,34 @@ export const CustomParticipantView = ({
             {onPin && (
               <button
                 onClick={onPin}
-                className="pointer-events-auto rounded p-1 transition-colors hover:bg-white/20"
+                className="pointer-events-auto rounded p-0.5 sm:p-1 transition-colors hover:bg-white/20 flex-shrink-0"
               >
-                <Pin className={cn('size-4', isPinned ? 'text-yellow-400 fill-yellow-400' : 'text-white')} />
+                <Pin className={cn('size-3 sm:size-4', isPinned ? 'text-yellow-400 fill-yellow-400' : 'text-white')} />
               </button>
             )}
           </div>
         </div>
 
         {/* Bottom bar with audio/video status */}
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-          <div className="flex items-center gap-2">
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-1.5 sm:p-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             {/* Audio status */}
             <div
               className={cn(
-                'flex items-center justify-center w-6 h-6 rounded-full',
+                'flex items-center justify-center size-5 sm:size-6 rounded-full flex-shrink-0',
                 isAudioMuted ? 'bg-red-500' : 'bg-green-500'
               )}
             >
               {isAudioMuted ? (
-                <MicOff className="size-3 text-white" />
+                <MicOff className="size-2.5 sm:size-3 text-white" />
               ) : (
-                <Mic className="size-3 text-white" />
+                <Mic className="size-2.5 sm:size-3 text-white" />
               )}
             </div>
 
             {/* Audio level indicator */}
             {showAudioLevel && !isAudioMuted && (
-              <div className="h-1 flex-1 overflow-hidden rounded-full bg-gray-600">
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-gray-600 min-w-0">
                 <div
                   className={cn(
                     'h-full bg-green-500 transition-all duration-150',
@@ -138,7 +138,7 @@ export const CustomParticipantView = ({
 
             {/* Screen sharing indicator */}
             {isScreenSharing && (
-              <div className="rounded bg-blue-500 px-2 py-0.5 text-xs text-white">
+              <div className="rounded bg-blue-500 px-1.5 sm:px-2 py-0.5 text-[10px] sm:text-xs text-white flex-shrink-0">
                 Sharing
               </div>
             )}
@@ -153,13 +153,13 @@ export const CustomParticipantView = ({
         {/* Video muted overlay */}
         {isVideoMuted && (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-800">
-            <div className="text-center">
-              <div className="mx-auto mb-2 flex size-16 items-center justify-center rounded-full bg-gray-700">
-                <span className="text-2xl font-bold text-white">
+            <div className="text-center px-2">
+              <div className="mx-auto mb-1.5 sm:mb-2 flex size-12 sm:size-16 items-center justify-center rounded-full bg-gray-700">
+                <span className="text-lg sm:text-2xl font-bold text-white">
                   {participantName.charAt(0).toUpperCase()}
                 </span>
               </div>
-              <span className="text-sm text-white">{participantName}</span>
+              <span className="text-xs sm:text-sm text-white truncate block max-w-full">{participantName}</span>
             </div>
           </div>
         )}
