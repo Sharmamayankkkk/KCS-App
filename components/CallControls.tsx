@@ -20,6 +20,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Settings, LayoutList, Image as ImageIcon, Smile, Share, Circle, Maximize, Minimize, PictureInPicture2 } from 'lucide-react';
 import Image from 'next/image';
+import { isScreenShareSupported } from '@/lib/device-utils';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
@@ -43,19 +44,26 @@ export const CallControls: React.FC<CallControlsProps> = ({
   const call = useCall();
   const { 
     useIsCallRecordingInProgress, 
-    useScreenShareState, 
-    useHasOngoingScreenShare 
+    useHasOngoingScreenShare,
+    useLocalParticipant
   } = useCallStateHooks();
   const isCallRecordingInProgress = useIsCallRecordingInProgress();
-  const { screenShare, isMute: isScreenSharing } = useScreenShareState();
-  const isSomeoneScreenSharing = useHasOngoingScreenShare();
+  const hasOngoingScreenShare = useHasOngoingScreenShare();
+  const localParticipant = useLocalParticipant();
   const [isAwaitingResponse, setIsAwaitingResponse] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isPipSupported, setIsPipSupported] = useState(false);
+  const [canScreenShare, setCanScreenShare] = useState(false);
+  
+  // Check if local participant is screen sharing
+  const isScreenSharing = localParticipant?.publishedTracks.includes('screenShare') || false;
 
   useEffect(() => {
     // Check if Picture-in-Picture is supported
     setIsPipSupported('pictureInPictureEnabled' in document);
+    
+    // Check if screen sharing is supported (desktop only)
+    setCanScreenShare(isScreenShareSupported());
 
     // Listen for fullscreen changes
     const handleFullscreenChange = () => {
@@ -96,14 +104,24 @@ export const CallControls: React.FC<CallControlsProps> = ({
     }
   }, [call, isCallRecordingInProgress]);
 
-  // ✅ FINAL: Filled in the screen share logic
+  // Screen share logic
   const toggleScreenShare = useCallback(async () => {
+    if (!call) return;
+    
     try {
-      await screenShare.toggle();
+      if (isScreenSharing) {
+        // Stop screen sharing
+        await call.stopPublish('screenShare');
+      } else {
+        // Start screen sharing
+        await call.publishScreenShare();
+      }
     } catch (e) {
       console.error('Failed to toggle screen share', e);
+      // Provide user feedback
+      alert('Failed to share screen. Please ensure you have granted screen sharing permissions.');
     }
-  }, [screenShare]);
+  }, [call, isScreenSharing]);
   
   const sendReaction = useCallback(async (reaction: {
     type: string;
@@ -149,6 +167,8 @@ export const CallControls: React.FC<CallControlsProps> = ({
         <ToggleAudioPublishingButton />
       </SpeakingWhileMutedNotification>
       <ToggleVideoPublishingButton />
+      
+      <AudioSettings />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
@@ -156,7 +176,7 @@ export const CallControls: React.FC<CallControlsProps> = ({
             <Settings />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent side="top" align="center" className="w-56 z-[200]">
+        <DropdownMenuContent side="top" align="center" className="z-[200] w-56">
           <DropdownMenuItem onClick={() => setShowBackgroundSelector?.(true)}>
             <ImageIcon className="mr-2 size-4" />
             <span>Change Background</span>
@@ -220,14 +240,28 @@ export const CallControls: React.FC<CallControlsProps> = ({
             </DropdownMenuSubContent>
           </DropdownMenuSub>
 
-          <DropdownMenuItem 
-            onClick={toggleScreenShare}
-            disabled={!isScreenSharing && isSomeoneScreenSharing}
-            className="cursor-pointer"
-          >
-            <Share className="mr-2 size-4" />
-            <span>{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</span>
-          </DropdownMenuItem>
+          {canScreenShare && (
+            <DropdownMenuItem 
+              onClick={toggleScreenShare}
+              disabled={!isScreenSharing && hasOngoingScreenShare}
+              className="cursor-pointer"
+              title={!isScreenSharing && hasOngoingScreenShare ? "Someone else is already sharing their screen" : ""}
+            >
+              <Share className="mr-2 size-4" />
+              <span>{isScreenSharing ? 'Stop Sharing' : 'Share Screen'}</span>
+            </DropdownMenuItem>
+          )}
+          
+          {!canScreenShare && (
+            <DropdownMenuItem 
+              disabled
+              className="cursor-not-allowed opacity-50"
+            >
+              <Share className="mr-2 size-4" />
+              <span>Share Screen</span>
+              <span className="text-muted-foreground ml-2 text-xs">(Desktop only)</span>
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuSeparator />
 

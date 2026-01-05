@@ -8,7 +8,7 @@ const CustomGridLayout = () => {
 
   return (
     <div
-      className="grid w-full h-full gap-4 p-4"
+      className="grid size-full gap-4 p-4"
       style={{
         gridTemplateColumns: `repeat(auto-fit, minmax(250px, 1fr))`,
         gridAutoRows: "minmax(150px, 1fr)",
@@ -17,7 +17,7 @@ const CustomGridLayout = () => {
       {participants.map((participant) => (
         <div
           key={participant.sessionId}
-          className="rounded-lg bg-black overflow-hidden shadow-md aspect-video flex"
+          className="flex aspect-video overflow-hidden rounded-lg bg-black shadow-md"
         >
           {/* ✅ 2. Pass your custom component as a prop */}
           <ParticipantView

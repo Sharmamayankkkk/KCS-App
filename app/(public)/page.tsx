@@ -29,7 +29,7 @@ const HomePage = () => {
           <div className="mt-10 flex justify-center gap-4">
             <Link
               href="/sign-up"
-              className="inline-flex items-center justify-center rounded-full bg-accent px-8 py-3.5 text-base font-semibold text-pure-white shadow-md transition-all hover:bg-accent/90 hover:shadow-lg"
+              className="text-pure-white hover:bg-accent/90 inline-flex items-center justify-center rounded-full bg-accent px-8 py-3.5 text-base font-semibold shadow-md transition-all hover:shadow-lg"
             >
               Get Started for Free
             </Link>
@@ -56,7 +56,7 @@ const HomePage = () => {
             </p>
           </div>
           <div className="mt-16 grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div className="rounded-2xl bg-background p-8 shadow-md border border-border">
+            <div className="rounded-2xl border border-border bg-background p-8 shadow-md">
               <h3 className="text-xl font-semibold text-text-primary">
                 Monetize Your Passion
               </h3>
@@ -66,7 +66,7 @@ const HomePage = () => {
                 directly.
               </p>
             </div>
-            <div className="rounded-2xl bg-background p-8 shadow-md border border-border">
+            <div className="rounded-2xl border border-border bg-background p-8 shadow-md">
               <h3 className="text-xl font-semibold text-text-primary">
                 Broadcast to the World
               </h3>
@@ -75,7 +75,7 @@ const HomePage = () => {
                 reach while keeping your community hub on KCS Meet.
               </p>
             </div>
-            <div className="rounded-2xl bg-background p-8 shadow-md border border-border">
+            <div className="rounded-2xl border border-border bg-background p-8 shadow-md">
               <h3 className="text-xl font-semibold text-text-primary">
                 Effortless & Accessible
               </h3>

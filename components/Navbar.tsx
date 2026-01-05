@@ -19,7 +19,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className="fixed z-50 w-full px-6 py-4 lg:px-10 flex items-center justify-between bg-primary"
+      className="fixed z-50 flex w-full items-center justify-between bg-primary px-6 py-4 lg:px-10"
     >
       <Link href="/" className="flex items-center gap-2">
         <Image
@@ -30,14 +30,14 @@ const Navbar = () => {
           className="max-sm:size-12"
         />
         <p
-          className="text-3xl font-extrabold max-sm:hidden text-background"
+          className="text-3xl font-extrabold text-background max-sm:hidden"
         >
           KCS
         </p>
       </Link>
 
       <div className="flex items-center gap-6">
-        <div className="hidden sm:flex items-center gap-4">
+        <div className="hidden items-center gap-4 sm:flex">
           <ThemeToggle />
           <SignedIn>
             <div className="flex items-center gap-2">
@@ -48,7 +48,7 @@ const Navbar = () => {
 
           <SignedOut>
             <Link href="/sign-in">
-              <Button className="bg-accent text-background hover:bg-accent/90">
+              <Button className="hover:bg-accent/90 bg-accent text-background">
                 Sign in
               </Button>
             </Link>

@@ -31,9 +31,9 @@ const MobileNav = () => {
         <SheetTrigger asChild>
           <button className="sm:hidden">
             {isOpen ? (
-              <X className="h-8 w-8 text-background" />
+              <X className="size-8 text-background" />
             ) : (
-              <Menu className="h-8 w-8 text-background" />
+              <Menu className="size-8 text-background" />
             )}
           </button>
         </SheetTrigger>
@@ -52,7 +52,7 @@ const MobileNav = () => {
           <div className="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto pt-8">
             <div className="flex flex-col gap-6">
               <SignedIn>
-                <div className="flex justify-center items-center gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <UserButton afterSignOutUrl="/sign-in" />
                   <VerifiedBadge userEmail={userEmail} size={18} />
                 </div>

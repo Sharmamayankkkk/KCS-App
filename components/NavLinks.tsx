@@ -38,7 +38,7 @@ const NavLinks = () => {
             )}
           >
             <item.icon />
-            <p className="text-lg font-semibold block sm:hidden lg:block">{item.label}</p>
+            <p className="block text-lg font-semibold sm:hidden lg:block">{item.label}</p>
           </Link>
         );
       })}
@@ -60,7 +60,7 @@ const NavLinks = () => {
             )}
           >
             <item.icon />
-            <p className="text-lg font-semibold block sm:hidden lg:block">{item.label}</p>
+            <p className="block text-lg font-semibold sm:hidden lg:block">{item.label}</p>
           </Link>
         );
       })}

@@ -8,6 +8,7 @@ import { Check, Mic, MicOff, Video, VideoOff, Image, AlertTriangle, X, Sparkles,
 import { cn } from '@/lib/utils';
 import { BackgroundSelector } from './BackgroundSelector';
 import { useBackgroundProcessor } from '@/hooks/useBackgroundProcessor';
+import { getFriendlyCameraLabel, getFriendlyMicrophoneLabel } from '@/lib/device-utils';
 
 interface BackgroundOption {
   id: string;
@@ -229,42 +230,42 @@ const MeetingSetup = ({
   }
 
   return (
-    <div className="min-h-screen w-full bg-[#FAF5F1] flex flex-col items-center justify-center p-3 sm:p-4 md:p-6">
-      <div className="w-full max-w-7xl lg:grid lg:grid-cols-5 lg:gap-8 items-start">
-        <div className="lg:col-span-3 w-full flex flex-col items-center">
-          <div className="text-center lg:text-left mb-4 sm:mb-6 md:mb-8 px-2 w-full">
+    <div className="flex min-h-screen w-full flex-col items-center justify-center bg-[#FAF5F1] p-3 sm:p-4 md:p-6">
+      <div className="w-full max-w-7xl items-start lg:grid lg:grid-cols-5 lg:gap-8">
+        <div className="flex w-full flex-col items-center lg:col-span-3">
+          <div className="mb-4 w-full px-2 text-center sm:mb-6 md:mb-8 lg:text-left">
               <h1
-                  className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#292F36] mb-2 sm:mb-3"
+                  className="mb-2 text-2xl font-bold text-[#292F36] sm:mb-3 sm:text-3xl md:text-4xl"
                   dangerouslySetInnerHTML={{ __html: 'Hare Krishna<br> Ready to join?' }}
               />
-              <p className="text-[#8F7A6E] text-sm sm:text-base md:text-lg max-w-2xl mx-auto lg:mx-0">
+              <p className="mx-auto max-w-2xl text-sm text-[#8F7A6E] sm:text-base md:text-lg lg:mx-0">
                   Setup your devices for the meeting
               </p>
           </div>
-          <Card className="w-full p-0 border-none bg-surface shadow-lg sm:shadow-xl rounded-xl sm:rounded-2xl overflow-hidden">
-            <div className="relative aspect-video lg:min-h-[400px] lg:h-[calc(100vh-400px)] bg-[#292F36] rounded-xl sm:rounded-2xl overflow-hidden border-4 border-white shadow-inner">
+          <Card className="w-full overflow-hidden rounded-xl border-none bg-surface p-0 shadow-lg sm:rounded-2xl sm:shadow-xl">
+            <div className="relative aspect-video overflow-hidden rounded-xl border-4 border-white bg-[#292F36] shadow-inner sm:rounded-2xl lg:h-[calc(100vh-400px)] lg:min-h-[400px]">
               <div
                 className={cn(
                   'absolute inset-0 flex flex-col items-center justify-center z-10 bg-gradient-to-br from-[#292F36] to-[#292F36]/90 transition-opacity duration-300',
                   isCameraEnabled ? 'opacity-0 pointer-events-none' : 'opacity-100',
                 )}
               >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#8F7A6E]/20 flex items-center justify-center mb-3 sm:mb-4">
-                  <VideoOff size={32} className="text-[#8F7A6E] sm:w-10 sm:h-10" />
+                <div className="mb-3 flex size-16 items-center justify-center rounded-full bg-[#8F7A6E]/20 sm:mb-4 sm:size-20">
+                  <VideoOff size={32} className="text-[#8F7A6E] sm:size-10" />
                 </div>
-                <p className="text-[#FAF5F1] text-sm sm:text-base font-medium">Camera is off</p>
+                <p className="text-sm font-medium text-[#FAF5F1] sm:text-base">Camera is off</p>
               </div>
               <VideoPreview className={cn('w-full h-full', !isCameraEnabled && 'opacity-0')} />
               
               {isCameraEnabled && (
-                <div className="absolute top-3 left-3 sm:top-4 sm:left-4 px-2.5 py-1 sm:px-3 sm:py-1.5 bg-[#292F36]/80 backdrop-blur-sm rounded-full flex items-center gap-1.5 sm:gap-2">
-                  <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#A41F13] animate-pulse" />
-                  <span className="text-white text-xs sm:text-sm font-medium">Live</span>
+                <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-[#292F36]/80 px-2.5 py-1 backdrop-blur-sm sm:left-4 sm:top-4 sm:gap-2 sm:px-3 sm:py-1.5">
+                  <div className="size-1.5 animate-pulse rounded-full bg-[#A41F13] sm:size-2" />
+                  <span className="text-xs font-medium text-white sm:text-sm">Live</span>
                 </div>
               )}
             </div>
 
-            <div className="p-3 sm:p-4 bg-surface flex items-center justify-center gap-2 sm:gap-3">
+            <div className="flex items-center justify-center gap-2 bg-surface p-3 sm:gap-3 sm:p-4">
                 <button
                     onClick={toggleMic}
                     className={cn(
@@ -274,7 +275,7 @@ const MeetingSetup = ({
                         : 'bg-[#A41F13] text-white hover:bg-[#A41F13]/90'
                     )}
                 >
-                    {isMicEnabled ? <Mic size={20} className="sm:w-6 sm:h-6" /> : <MicOff size={20} className="sm:w-6 sm:h-6" />}
+                    {isMicEnabled ? <Mic size={20} className="sm:size-6" /> : <MicOff size={20} className="sm:size-6" />}
                 </button>
 
                 <button
@@ -286,32 +287,32 @@ const MeetingSetup = ({
                         : 'bg-[#A41F13] text-white hover:bg-[#A41F13]/90'
                     )}
                 >
-                    {isCameraEnabled ? <Video size={20} className="sm:w-6 sm:h-6" /> : <VideoOff size={20} className="sm:w-6 sm:h-6" />}
+                    {isCameraEnabled ? <Video size={20} className="sm:size-6" /> : <VideoOff size={20} className="sm:size-6" />}
                 </button>
 
                 <button
                     onClick={() => setShowBackgroundSelector(true)}
                     disabled={isProcessingBackground}
-                    className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-[#E0DBD8] text-[#292F36] hover:bg-[#8F7A6E]/30 flex items-center justify-center transition-all duration-200 active:scale-95 disabled:opacity-50"
+                    className="flex size-12 items-center justify-center rounded-full bg-[#E0DBD8] text-[#292F36] transition-all duration-200 hover:bg-[#8F7A6E]/30 active:scale-95 disabled:opacity-50 sm:size-14"
                 >
-                    <Image size={20} className="sm:w-6 sm:h-6" />
+                    <Image size={20} className="sm:size-6" />
                 </button>
             </div>
           </Card>
         </div>
 
-        <div className="lg:col-span-2 w-full space-y-4 sm:space-y-5 md:space-y-6 mt-4 lg:mt-0">
-          <Card className="p-4 sm:p-5 border-none bg-surface shadow-lg rounded-xl sm:rounded-2xl">
-            <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+        <div className="mt-4 w-full space-y-4 sm:space-y-5 md:space-y-6 lg:col-span-2 lg:mt-0">
+          <Card className="rounded-xl border-none bg-surface p-4 shadow-lg sm:rounded-2xl sm:p-5">
+            <div className="mb-3 flex items-center gap-3 sm:mb-4 sm:gap-4">
               <div className={cn(
                 "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0",
                 isCameraEnabled ? "bg-[#292F36]" : "bg-[#A41F13]"
               )}>
-                <Camera className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+                <Camera className="size-5 text-white sm:size-6" />
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-[#292F36] font-bold text-base sm:text-lg">Camera</h3>
-                <p className="text-[#8F7A6E] text-xs sm:text-sm truncate">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base font-bold text-[#292F36] sm:text-lg">Camera</h3>
+                <p className="truncate text-xs text-[#8F7A6E] sm:text-sm">
                   {isCameraEnabled ? 'Ready to use' : 'Currently disabled'}
                 </p>
               </div>
@@ -320,10 +321,13 @@ const MeetingSetup = ({
             <div className="mb-3 sm:mb-4">
               <button
                 onClick={() => setShowCameraDevices(!showCameraDevices)}
-                className="w-full flex items-center justify-between p-3 bg-[#FAF5F1] hover:bg-[#E0DBD8] rounded-lg transition-all duration-200"
+                className="flex w-full items-center justify-between rounded-lg bg-[#FAF5F1] p-3 transition-all duration-200 hover:bg-[#E0DBD8]"
               >
-                <span className="text-[#292F36] text-sm font-medium truncate">
-                  {cameras.find(c => c.deviceId === selectedCameraId)?.label || 'Select camera'}
+                <span className="truncate text-sm font-medium text-[#292F36]">
+                  {(() => {
+                    const camera = cameras.find(c => c.deviceId === selectedCameraId);
+                    return camera ? getFriendlyCameraLabel(camera, cameras.indexOf(camera)) : 'Select camera';
+                  })()}
                 </span>
                 <ChevronDown className={cn(
                   "text-[#8F7A6E] flex-shrink-0 transition-transform duration-200 w-5 h-5",
@@ -332,7 +336,7 @@ const MeetingSetup = ({
               </button>
               
               {showCameraDevices && cameras.length > 0 && (
-                <div className="mt-2 space-y-1 max-h-48 overflow-y-auto">
+                <div className="mt-2 max-h-48 space-y-1 overflow-y-auto">
                   {cameras.map((camera) => (
                     <button
                       key={camera.deviceId}
@@ -347,7 +351,7 @@ const MeetingSetup = ({
                           : "bg-[#FAF5F1] text-[#292F36] hover:bg-[#E0DBD8]"
                       )}
                     >
-                      {camera.label || `Camera ${cameras.indexOf(camera) + 1}`}
+                      {getFriendlyCameraLabel(camera, cameras.indexOf(camera))}
                     </button>
                   ))}
                 </div>
@@ -367,17 +371,17 @@ const MeetingSetup = ({
             </Button>
           </Card>
 
-          <Card className="p-4 sm:p-5 border-none bg-surface shadow-lg rounded-xl sm:rounded-2xl">
-            <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+          <Card className="rounded-xl border-none bg-surface p-4 shadow-lg sm:rounded-2xl sm:p-5">
+            <div className="mb-3 flex items-center gap-3 sm:mb-4 sm:gap-4">
               <div className={cn(
                 "w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0",
                 isMicEnabled ? "bg-[#292F36]" : "bg-[#A41F13]"
               )}>
-                <Headphones className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+                <Headphones className="size-5 text-white sm:size-6" />
               </div>
-              <div className="flex-1 min-w-0">
-                <h3 className="text-[#292F36] font-bold text-base sm:text-lg">Microphone</h3>
-                <p className="text-[#8F7A6E] text-xs sm:text-sm truncate">
+              <div className="min-w-0 flex-1">
+                <h3 className="text-base font-bold text-[#292F36] sm:text-lg">Microphone</h3>
+                <p className="truncate text-xs text-[#8F7A6E] sm:text-sm">
                   {isMicEnabled ? 'Ready to use' : 'Currently disabled'}
                 </p>
               </div>
@@ -386,10 +390,13 @@ const MeetingSetup = ({
             <div className="mb-3 sm:mb-4">
               <button
                 onClick={() => setShowMicDevices(!showMicDevices)}
-                className="w-full flex items-center justify-between p-3 bg-[#FAF5F1] hover:bg-[#E0DBD8] rounded-lg transition-all duration-200"
+                className="flex w-full items-center justify-between rounded-lg bg-[#FAF5F1] p-3 transition-all duration-200 hover:bg-[#E0DBD8]"
               >
-                <span className="text-[#292F36] text-sm font-medium truncate">
-                  {microphones.find(m => m.deviceId === selectedMicId)?.label || 'Select microphone'}
+                <span className="truncate text-sm font-medium text-[#292F36]">
+                  {(() => {
+                    const mic = microphones.find(m => m.deviceId === selectedMicId);
+                    return mic ? getFriendlyMicrophoneLabel(mic, microphones.indexOf(mic)) : 'Select microphone';
+                  })()}
                 </span>
                 <ChevronDown className={cn(
                   "text-[#8F7A6E] flex-shrink-0 transition-transform duration-200 w-5 h-5",
@@ -398,7 +405,7 @@ const MeetingSetup = ({
               </button>
               
               {showMicDevices && microphones.length > 0 && (
-                <div className="mt-2 space-y-1 max-h-48 overflow-y-auto">
+                <div className="mt-2 max-h-48 space-y-1 overflow-y-auto">
                   {microphones.map((mic) => (
                     <button
                       key={mic.deviceId}
@@ -413,7 +420,7 @@ const MeetingSetup = ({
                           : "bg-[#FAF5F1] text-[#292F36] hover:bg-[#E0DBD8]"
                       )}
                     >
-                      {mic.label || `Microphone ${microphones.indexOf(mic) + 1}`}
+                      {getFriendlyMicrophoneLabel(mic, microphones.indexOf(mic))}
                     </button>
                   ))}
                 </div>
@@ -433,49 +440,49 @@ const MeetingSetup = ({
             </Button>
           </Card>
 
-          <Card className="p-4 sm:p-5 border-none bg-surface shadow-lg rounded-xl sm:rounded-2xl">
+          <Card className="rounded-xl border-none bg-surface p-4 shadow-lg sm:rounded-2xl sm:p-5">
             <button
               onClick={() => setShowBackgroundSelector(true)}
               disabled={isProcessingBackground}
-              className="w-full flex items-center justify-between hover:bg-background p-3 rounded-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-50"
+              className="flex w-full items-center justify-between rounded-lg p-3 transition-all duration-200 hover:bg-background active:scale-[0.98] disabled:opacity-50"
             >
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-[#8F7A6E] flex items-center justify-center flex-shrink-0">
-                  <MonitorPlay className="text-white w-5 h-5 sm:w-6 sm:h-6" />
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[#8F7A6E] sm:size-12">
+                  <MonitorPlay className="size-5 text-white sm:size-6" />
                 </div>
-                <div className="text-left flex-1 min-w-0">
-                  <p className="text-[#292F36] font-semibold text-sm sm:text-base">Background</p>
-                  <p className="text-[#8F7A6E] text-xs sm:text-sm truncate">
+                <div className="min-w-0 flex-1 text-left">
+                  <p className="text-sm font-semibold text-[#292F36] sm:text-base">Background</p>
+                  <p className="truncate text-xs text-[#8F7A6E] sm:text-sm">
                     {isProcessingBackground ? 'Processing...' : selectedBackground.name}
                   </p>
                 </div>
               </div>
-              <div className="flex-shrink-0 px-4 py-2 bg-[#E0DBD8] rounded-lg text-[#292F36] text-sm font-medium">
+              <div className="shrink-0 rounded-lg bg-[#E0DBD8] px-4 py-2 text-sm font-medium text-[#292F36]">
                 Change
               </div>
             </button>
           </Card>
 
-          <Card className="p-4 sm:p-5 md:p-6 border-none bg-gradient-to-br from-[#A41F13] to-[#A41F13]/90 shadow-lg sm:shadow-xl rounded-xl sm:rounded-2xl">
+          <Card className="rounded-xl border-none bg-gradient-to-br from-[#A41F13] to-[#A41F13]/90 p-4 shadow-lg sm:rounded-2xl sm:p-5 sm:shadow-xl md:p-6">
             {isJoining ? (
-              <div className="text-center py-3 sm:py-4">
+              <div className="py-3 text-center sm:py-4">
                 <div className="mb-3 sm:mb-4">
-                  <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-surface/20 backdrop-blur-sm">
-                    <span className="text-4xl sm:text-5xl font-bold text-white">{countdownValue}</span>
+                  <div className="bg-surface/20 inline-flex size-16 items-center justify-center rounded-full backdrop-blur-sm sm:size-20">
+                    <span className="text-4xl font-bold text-white sm:text-5xl">{countdownValue}</span>
                   </div>
                 </div>
-                <p className="text-white/90 text-base sm:text-lg font-medium">Joining meeting...</p>
+                <p className="text-base font-medium text-white/90 sm:text-lg">Joining meeting...</p>
               </div>
             ) : (
               <div className="space-y-3 sm:space-y-4">
                 <Button
                   onClick={handleJoinMeeting}
-                  className="w-full h-12 sm:h-14 bg-surface hover:bg-background text-accent font-bold text-base sm:text-lg rounded-lg sm:rounded-xl transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2 sm:gap-3"
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-surface text-base font-bold text-accent transition-all duration-200 hover:bg-background active:scale-[0.98] sm:h-14 sm:gap-3 sm:rounded-xl sm:text-lg"
                 >
-                  <Check size={20} strokeWidth={3} className="sm:w-6 sm:h-6" />
+                  <Check size={20} strokeWidth={3} className="sm:size-6" />
                   Join Meeting Now
                 </Button>
-                <p className="text-white/70 text-xs sm:text-sm text-center leading-relaxed px-2">
+                <p className="px-2 text-center text-xs leading-relaxed text-white/70 sm:text-sm">
                   By joining, you agree to our terms of service and privacy policy
                 </p>
               </div>
@@ -484,23 +491,23 @@ const MeetingSetup = ({
         </div>
       </div>
 
-      <div className="mt-4 sm:mt-6 text-center px-2">
-          <div className="inline-flex items-center gap-2 px-3 py-2 sm:px-4 bg-surface rounded-full shadow-sm">
-            <Sparkles className="text-accent w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
-            <p className="text-[#8F7A6E] text-xs sm:text-sm">
+      <div className="mt-4 px-2 text-center sm:mt-6">
+          <div className="inline-flex items-center gap-2 rounded-full bg-surface px-3 py-2 shadow-sm sm:px-4">
+            <Sparkles className="size-4 shrink-0 text-accent sm:size-5" />
+            <p className="text-xs text-[#8F7A6E] sm:text-sm">
               <span className="font-semibold">Tip:</span> Test before important meetings
             </p>
           </div>
       </div>
 
       {showBackgroundSelector && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-[#292F36]/60 backdrop-blur-sm">
-          <div className="relative w-full max-w-4xl max-h-[90vh] overflow-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#292F36]/60 p-3 backdrop-blur-sm sm:p-4">
+          <div className="relative max-h-[90vh] w-full max-w-4xl overflow-auto">
             <button
               onClick={() => setShowBackgroundSelector(false)}
-              className="sticky top-0 right-0 float-right mb-2 sm:mb-3 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-surface/10 hover:bg-surface/20 flex items-center justify-center text-white transition-all duration-200 z-10"
+              className="bg-surface/10 hover:bg-surface/20 sticky right-0 top-0 z-10 float-right mb-2 flex size-10 items-center justify-center rounded-full text-white transition-all duration-200 sm:mb-3 sm:size-12"
             >
-              <X size={20} className="sm:w-6 sm:h-6" />
+              <X size={20} className="sm:size-6" />
             </button>
             <div className="clear-both">
               <BackgroundSelector

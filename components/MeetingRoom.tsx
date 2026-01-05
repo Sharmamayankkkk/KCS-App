@@ -26,6 +26,9 @@ import { BackgroundSelector } from './BackgroundSelector';
 import { useBackgroundProcessor } from '@/hooks/useBackgroundProcessor';
 import { FlexibleSidePanel } from './FlexibleSidePanel';
 import AdminControls from './AdminPanel/AdminControls';
+import RecordingInProgressNotification from './RecordingInProgressNotification';
+import { useNotificationSounds } from '@/hooks/useNotificationSounds';
+import { PermissionRequests } from './PermissionRequests';
 
 type CallLayoutType = 'grid' | 'speaker-left' | 'speaker-right';
 
@@ -69,6 +72,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const callingState = useCallCallingState();
   const hideTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { processFrame, cleanup } = useBackgroundProcessor();
+  
+  // Enable notification sounds for meeting events
+  useNotificationSounds();
 
   useEffect(() => {
     try {
@@ -176,12 +182,12 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     const layouts = {
       grid: <CustomGridLayout />,
       'speaker-left': (
-        <div className="hidden md:block w-full h-full">
+        <div className="hidden size-full md:block">
           <SpeakerLayout participantsBarPosition="left" />
         </div>
       ),
       'speaker-right': (
-        <div className="hidden md:block w-full h-full">
+        <div className="hidden size-full md:block">
           <SpeakerLayout participantsBarPosition="right" />
         </div>
       ),
@@ -192,7 +198,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
       return <CustomGridLayout />;
     }
     
-    return layouts[layout] || layouts['grid'];
+    return layouts[layout] || layouts.grid;
   }, [layout]);
 
   if (callingState !== CallingState.JOINED) return <Loader />;
@@ -200,8 +206,10 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   return videoClient && call ? (
     <StreamVideo client={videoClient}>
       <StreamCall call={call}>
-        <section className="relative w-full h-full flex flex-col bg-background">
-          <div className="relative flex items-center justify-center size-full">
+        <section className="relative flex size-full flex-col bg-background">
+          <RecordingInProgressNotification />
+          <PermissionRequests isAdmin={isAdmin} />
+          <div className="relative flex size-full items-center justify-center">
             <div className={cn('flex transition-all duration-300 ease-in-out size-full', { 'md:max-w-[calc(100%-350px)]': isSidePanelOpen })}>
               {CallLayout}
             </div>
@@ -217,7 +225,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
             )}
           </div>
           <div className={cn(`fixed bottom-0 w-full px-4 pb-4 transition-opacity duration-300`, showControls ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none')}>
-            <div className="flex flex-wrap items-center justify-center gap-2 p-3 mx-auto transition rounded-2xl sm:gap-3 bg-background/80 backdrop-blur-md max-w-max shadow-lg border">
+            <div className="bg-background/80 mx-auto flex max-w-max flex-wrap items-center justify-center gap-2 rounded-2xl border p-3 shadow-lg backdrop-blur-md transition sm:gap-3">
               <CallControls
                 onLeave={() => router.push('/home')}
                 setLayout={setLayout}
@@ -225,11 +233,11 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
               />
               {isAdmin && (
                 <>
-                  <div className="h-8 w-px bg-border mx-1"></div>
+                  <div className="mx-1 h-8 w-px bg-border"></div>
                   <AdminControls />
                 </>
               )}
-              <div className="h-8 w-px bg-border mx-1"></div>
+              <div className="mx-1 h-8 w-px bg-border"></div>
               <Button variant="default" size="icon" onClick={() => setIsSidePanelOpen(prev => !prev)} title="Toggle Panels">
                 <PanelRightOpen />
               </Button>

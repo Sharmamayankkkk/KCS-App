@@ -107,24 +107,24 @@ export const BackgroundSelector = ({
   const getBackgroundIcon = (type: string) => {
     switch (type) {
       case 'none':
-        return <Monitor className="w-4 h-4" />
+        return <Monitor className="size-4" />
       case 'blur':
-        return <Blur className="w-4 h-4" />
+        return <Blur className="size-4" />
       case 'image':
-        return <ImageIcon className="w-4 h-4" />
+        return <ImageIcon className="size-4" />
       default:
-        return <ImageIcon className="w-4 h-4" />
+        return <ImageIcon className="size-4" />
     }
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#292F36]/70 backdrop-blur-sm">
-      <div className="w-full max-w-2xl mx-4 bg-[#FAF5F1] rounded-2xl shadow-2xl overflow-hidden">
+      <div className="mx-4 w-full max-w-2xl overflow-hidden rounded-2xl bg-[#FAF5F1] shadow-2xl">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#E0DBD8] bg-gradient-to-r from-[#FAF5F1] to-[#E0DBD8]">
+        <div className="border-b border-[#E0DBD8] bg-gradient-to-r from-[#FAF5F1] to-[#E0DBD8] px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#A41F13] to-[#8F7A6E] rounded-full flex items-center justify-center">
+              <div className="flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-[#A41F13] to-[#8F7A6E]">
                 <ImageIcon size={20} className="text-white" />
               </div>
               <div>
@@ -134,7 +134,7 @@ export const BackgroundSelector = ({
             </div>
             <button
               onClick={onClose}
-              className="p-2 text-[#8F7A6E] hover:text-[#292F36] hover:bg-[#E0DBD8] rounded-full transition-colors"
+              className="rounded-full p-2 text-[#8F7A6E] transition-colors hover:bg-[#E0DBD8] hover:text-[#292F36]"
             >
               <X size={20} />
             </button>
@@ -142,10 +142,10 @@ export const BackgroundSelector = ({
         </div>
 
         {/* Content */}
-        <div className="p-6 max-h-[70vh] overflow-y-auto">
+        <div className="max-h-[70vh] overflow-y-auto p-6">
           {/* Upload Section */}
           <div className="mb-6">
-            <h4 className="text-sm font-semibold text-[#8F7A6E] mb-3">Upload Custom Background</h4>
+            <h4 className="mb-3 text-sm font-semibold text-[#8F7A6E]">Upload Custom Background</h4>
             <div className="flex items-center space-x-3">
               <Button
                 onClick={() => fileInputRef.current?.click()}
@@ -172,7 +172,7 @@ export const BackgroundSelector = ({
           <div className="space-y-4">
             <h4 className="text-sm font-semibold text-[#8F7A6E]">Available Backgrounds</h4>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
               {allBackgrounds.map((background) => {
                 const isSelected = selectedBackground.id === background.id
                 const isCustom = background.id.startsWith('custom-')
@@ -189,16 +189,16 @@ export const BackgroundSelector = ({
                     onClick={() => onBackgroundChange(background)}
                   >
                     {/* Background Preview */}
-                    <div className="aspect-video relative bg-[#E0DBD8]">
+                    <div className="relative aspect-video bg-[#E0DBD8]">
                       {background.type === 'none' && (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#E0DBD8] to-[#FAF5F1]">
-                          <Monitor className="w-8 h-8 text-[#8F7A6E]" />
+                        <div className="flex size-full items-center justify-center bg-gradient-to-br from-[#E0DBD8] to-[#FAF5F1]">
+                          <Monitor className="size-8 text-[#8F7A6E]" />
                         </div>
                       )}
                       
                       {background.type === 'blur' && (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#E0DBD8] to-[#FAF5F1]">
-                          <Blur className="w-8 h-8 text-[#8F7A6E]" />
+                        <div className="flex size-full items-center justify-center bg-gradient-to-br from-[#E0DBD8] to-[#FAF5F1]">
+                          <Blur className="size-8 text-[#8F7A6E]" />
                         </div>
                       )}
                       
@@ -206,7 +206,7 @@ export const BackgroundSelector = ({
                         <img
                           src={background.preview}
                           alt={background.name}
-                          className="w-full h-full object-cover"
+                          className="size-full object-cover"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
                             target.style.display = 'none'
@@ -224,9 +224,9 @@ export const BackgroundSelector = ({
 
                       {/* Selection Indicator */}
                       {isSelected && (
-                        <div className="absolute inset-0 bg-[#A41F13]/20 flex items-center justify-center">
-                          <div className="w-8 h-8 bg-[#A41F13] rounded-full flex items-center justify-center">
-                            <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <div className="absolute inset-0 flex items-center justify-center bg-[#A41F13]/20">
+                          <div className="flex size-8 items-center justify-center rounded-full bg-[#A41F13]">
+                            <svg className="size-5 text-white" fill="currentColor" viewBox="0 0 20 20">
                               <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                             </svg>
                           </div>
@@ -240,7 +240,7 @@ export const BackgroundSelector = ({
                             e.stopPropagation()
                             removeCustomBackground(background.id)
                           }}
-                          className="absolute top-2 right-2 w-6 h-6 bg-[#A41F13] hover:bg-[#A41F13]/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-[#A41F13] opacity-0 transition-opacity hover:bg-[#A41F13]/80 group-hover:opacity-100"
                         >
                           <X size={12} className="text-white" />
                         </button>
@@ -248,10 +248,10 @@ export const BackgroundSelector = ({
                     </div>
 
                     {/* Background Info */}
-                    <div className="p-3 bg-white">
+                    <div className="bg-white p-3">
                       <div className="flex items-center space-x-2">
                         {getBackgroundIcon(background.type)}
-                        <span className="text-sm font-medium text-[#292F36] truncate">
+                        <span className="truncate text-sm font-medium text-[#292F36]">
                           {background.name}
                         </span>
                       </div>
@@ -264,7 +264,7 @@ export const BackgroundSelector = ({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[#E0DBD8] bg-[#FAF5F1]">
+        <div className="border-t border-[#E0DBD8] bg-[#FAF5F1] px-6 py-4">
           <div className="flex justify-end space-x-3">
             <Button variant="outline" onClick={onClose}>
               Cancel

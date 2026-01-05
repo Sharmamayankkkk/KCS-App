@@ -281,9 +281,9 @@ const AdminAttendancePage = () => {
         className="rounded-lg p-6"
         style={{ backgroundColor: '#292F36', color: '#FAF5F1' }}
       >
-        <div className="mb-4 flex flex-col sm:flex-row gap-3">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row">
           <div
-            className="flex items-center gap-2 rounded-lg p-4 flex-1"
+            className="flex flex-1 items-center gap-2 rounded-lg p-4"
             style={{ backgroundColor: '#1F2937' }}
           >
             <Search className="size-5 opacity-70" />
@@ -300,13 +300,13 @@ const AdminAttendancePage = () => {
             className="flex items-center gap-2 rounded-lg p-2"
             style={{ backgroundColor: '#1F2937' }}
           >
-            <Calendar className="size-5 opacity-70 ml-2" />
+            <Calendar className="ml-2 size-5 opacity-70" />
             <ReactDatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
               placeholderText="Filter by date"
               dateFormat="MMM d, yyyy"
-              className="bg-transparent outline-none cursor-pointer"
+              className="cursor-pointer bg-transparent outline-none"
               isClearable
             />
           </div>
@@ -316,23 +316,23 @@ const AdminAttendancePage = () => {
           <Button
             onClick={handleExportCSV}
             disabled={filteredAttendance.length === 0}
-            className="bg-green-600 hover:bg-green-700 text-white"
+            className="bg-green-600 text-white hover:bg-green-700"
             size="sm"
           >
-            <Download className="h-4 w-4 mr-2" />
+            <Download className="mr-2 size-4" />
             Export CSV
           </Button>
           <Button
             onClick={handleExportXLSX}
             disabled={filteredAttendance.length === 0}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className="bg-blue-600 text-white hover:bg-blue-700"
             size="sm"
           >
-            <FileSpreadsheet className="h-4 w-4 mr-2" />
+            <FileSpreadsheet className="mr-2 size-4" />
             Export XLSX
           </Button>
           {selectedDate && (
-            <span className="flex items-center gap-2 px-3 py-2 rounded bg-blue-600 text-white text-sm">
+            <span className="flex items-center gap-2 rounded bg-blue-600 px-3 py-2 text-sm text-white">
               Showing: {selectedDate.toLocaleDateString('en-US')}
               <button
                 onClick={() => setSelectedDate(null)}
@@ -433,7 +433,7 @@ const StatCard = ({
 const DisplayRow = ({ record, onEdit, onDelete, formatters }: any) => (
   <>
     <td className="p-3">
-      <p className="font-semibold flex items-center gap-1.5" style={{ color: '#FAF5F1' }}>
+      <p className="flex items-center gap-1.5 font-semibold" style={{ color: '#FAF5F1' }}>
         {record.username || 'Unknown User'}
         <VerifiedBadge userEmail={record.users?.email} size={14} />
       </p>

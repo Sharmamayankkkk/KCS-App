@@ -21,9 +21,9 @@ const HomeCard = ({ className, icon: Icon, title, description, handleClick }: Ho
       onClick={handleClick}
     >
       <div
-        className="flex-center size-12 rounded-lg bg-background border border-border"
+        className="flex-center size-12 rounded-lg border border-border bg-background"
       >
-        <Icon className="h-7 w-7 text-accent" />
+        <Icon className="size-7 text-accent" />
       </div>
 
       <div className="flex flex-col gap-2">

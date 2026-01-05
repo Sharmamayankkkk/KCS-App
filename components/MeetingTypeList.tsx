@@ -225,7 +225,7 @@ Rama Rama, Hare Hare`;
               Add a Title
             </label>
             <Input
-              className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
+              className="border border-border bg-background text-text-primary focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0"
               onChange={(e) =>
                 setValues({ ...values, title: e.target.value })
               }
@@ -234,7 +234,7 @@ Rama Rama, Hare Hare`;
               Add a description
             </label>
             <Textarea
-              className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
+              className="border border-border bg-background text-text-primary focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0"
               onChange={(e) =>
                 setValues({ ...values, description: e.target.value })
               }
@@ -261,9 +261,9 @@ Rama Rama, Hare Hare`;
               id="isPrivate"
               checked={values.isPrivate}
               onChange={(e) => setValues({ ...values, isPrivate: e.target.checked })}
-              className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
+              className="size-4 rounded border-border text-accent focus:ring-accent"
             />
-            <label htmlFor="isPrivate" className="text-base font-normal leading-[22.4px] text-text-primary cursor-pointer">
+            <label htmlFor="isPrivate" className="cursor-pointer text-base font-normal leading-[22.4px] text-text-primary">
               Make this meeting private (invite-only)
             </label>
           </div>
@@ -280,7 +280,7 @@ Rama Rama, Hare Hare`;
         >
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-center">
-              <CheckSquare className="h-16 w-16 text-accent" />
+              <CheckSquare className="size-16 text-accent" />
             </div>
             
             <p className="text-sm text-text-secondary">
@@ -293,42 +293,42 @@ Rama Rama, Hare Hare`;
                   navigator.clipboard.writeText(meetingLink);
                   toast({ title: 'Link Copied' });
                 }}
-                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-accent text-background hover:bg-accent/90"
+                className="hover:bg-accent/90 flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-background transition"
               >
-                <Copy className="h-5 w-5" />
+                <Copy className="size-5" />
                 Copy Meeting Link
               </button>
 
               <button
                 onClick={handleShare}
-                className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-text-secondary text-background hover:bg-text-secondary/90"
+                className="hover:bg-text-secondary/90 flex items-center justify-center gap-2 rounded-lg bg-text-secondary px-4 py-3 text-background transition"
               >
-                <Share2 className="h-5 w-5" />
+                <Share2 className="size-5" />
                 Share Meeting
               </button>
 
               <div className="grid grid-cols-3 gap-2">
                 <button
                   onClick={shareToWhatsApp}
-                  className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#25D366] px-3 py-2 text-white hover:bg-[#20BA5A] transition"
+                  className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#25D366] px-3 py-2 text-white transition hover:bg-[#20BA5A]"
                 >
-                  <MessageCircle className="h-5 w-5" />
+                  <MessageCircle className="size-5" />
                   <span className="text-xs">WhatsApp</span>
                 </button>
                 
                 <button
                   onClick={shareToTelegram}
-                  className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#0088cc] px-3 py-2 text-white hover:bg-[#0077b5] transition"
+                  className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#0088cc] px-3 py-2 text-white transition hover:bg-[#0077b5]"
                 >
-                  <Send className="h-5 w-5" />
+                  <Send className="size-5" />
                   <span className="text-xs">Telegram</span>
                 </button>
                 
                 <button
                   onClick={shareToFacebook}
-                  className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#1877F2] px-3 py-2 text-white hover:bg-[#166FE5] transition"
+                  className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#1877F2] px-3 py-2 text-white transition hover:bg-[#166FE5]"
                 >
-                  <Facebook className="h-5 w-5" />
+                  <Facebook className="size-5" />
                   <span className="text-xs">Facebook</span>
                 </button>
               </div>
@@ -350,27 +350,27 @@ Rama Rama, Hare Hare`;
           </label>
           <Input
             placeholder="Enter meeting title"
-            className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
+            className="border border-border bg-background text-text-primary focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0"
             onChange={(e) => setValues({ ...values, title: e.target.value })}
           />
           <label className="text-base font-normal leading-[22.4px] text-text-primary">
             Add a description
           </label>
           <Textarea
-            className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
+            className="border border-border bg-background text-text-primary focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0"
             onChange={(e) =>
               setValues({ ...values, description: e.target.value })
             }
           />
-          <div className="flex items-center gap-3 mt-2">
+          <div className="mt-2 flex items-center gap-3">
             <input
               type="checkbox"
               id="isPrivateInstant"
               checked={values.isPrivate}
               onChange={(e) => setValues({ ...values, isPrivate: e.target.checked })}
-              className="h-4 w-4 rounded border-border text-accent focus:ring-accent"
+              className="size-4 rounded border-border text-accent focus:ring-accent"
             />
-            <label htmlFor="isPrivateInstant" className="text-base font-normal leading-[22.4px] text-text-primary cursor-pointer">
+            <label htmlFor="isPrivateInstant" className="cursor-pointer text-base font-normal leading-[22.4px] text-text-primary">
               Make this meeting private (invite-only)
             </label>
           </div>
@@ -389,7 +389,7 @@ Rama Rama, Hare Hare`;
       >
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-center">
-            <CheckSquare className="h-16 w-16 text-accent" />
+            <CheckSquare className="size-16 text-accent" />
           </div>
           
           <p className="text-sm text-text-secondary">
@@ -401,9 +401,9 @@ Rama Rama, Hare Hare`;
               onClick={() => {
                 router.push(`/meeting/${callDetail?.id}`);
               }}
-              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-accent text-background hover:bg-accent/90"
+              className="hover:bg-accent/90 flex items-center justify-center gap-2 rounded-lg bg-accent px-4 py-3 text-background transition"
             >
-              <Video className="h-5 w-5" />
+              <Video className="size-5" />
               Join Meeting Now
             </button>
 
@@ -412,42 +412,42 @@ Rama Rama, Hare Hare`;
                 navigator.clipboard.writeText(meetingLink);
                 toast({ title: 'Link Copied' });
               }}
-              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-text-secondary text-background hover:bg-text-secondary/90"
+              className="hover:bg-text-secondary/90 flex items-center justify-center gap-2 rounded-lg bg-text-secondary px-4 py-3 text-background transition"
             >
-              <Copy className="h-5 w-5" />
+              <Copy className="size-5" />
               Copy Meeting Link
             </button>
 
             <button
               onClick={handleShare}
-              className="flex items-center justify-center gap-2 rounded-lg px-4 py-3 transition bg-text-secondary text-background hover:bg-text-secondary/90"
+              className="hover:bg-text-secondary/90 flex items-center justify-center gap-2 rounded-lg bg-text-secondary px-4 py-3 text-background transition"
             >
-              <Share2 className="h-5 w-5" />
+              <Share2 className="size-5" />
               Share Meeting
             </button>
 
             <div className="grid grid-cols-3 gap-2">
               <button
                 onClick={shareToWhatsApp}
-                className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#25D366] px-3 py-2 text-white hover:bg-[#20BA5A] transition"
+                className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#25D366] px-3 py-2 text-white transition hover:bg-[#20BA5A]"
               >
-                <MessageCircle className="h-5 w-5" />
+                <MessageCircle className="size-5" />
                 <span className="text-xs">WhatsApp</span>
               </button>
               
               <button
                 onClick={shareToTelegram}
-                className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#0088cc] px-3 py-2 text-white hover:bg-[#0077b5] transition"
+                className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#0088cc] px-3 py-2 text-white transition hover:bg-[#0077b5]"
               >
-                <Send className="h-5 w-5" />
+                <Send className="size-5" />
                 <span className="text-xs">Telegram</span>
               </button>
               
               <button
                 onClick={shareToFacebook}
-                className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#1877F2] px-3 py-2 text-white hover:bg-[#166FE5] transition"
+                className="flex flex-col items-center justify-center gap-1 rounded-lg bg-[#1877F2] px-3 py-2 text-white transition hover:bg-[#166FE5]"
               >
-                <Facebook className="h-5 w-5" />
+                <Facebook className="size-5" />
                 <span className="text-xs">Facebook</span>
               </button>
             </div>
@@ -464,7 +464,7 @@ Rama Rama, Hare Hare`;
       >
         <Input
           placeholder="Meeting link"
-          className="border border-border focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0 bg-background text-text-primary"
+          className="border border-border bg-background text-text-primary focus-visible:ring-1 focus-visible:ring-accent focus-visible:ring-offset-0"
           onChange={(e) => setValues({ ...values, link: e.target.value })}
         />
       </MeetingModal>

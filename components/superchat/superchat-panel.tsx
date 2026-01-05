@@ -133,8 +133,8 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
   const filteredSuperchats = showPinnedOnly ? superchats.filter((msg) => msg.isPinned) : superchats
 
   return (
-    <div className="flex flex-col h-full bg-[#19232d]/95 backdrop-blur-md rounded-lg p-4">
-      <div className="flex items-center justify-between mb-4">
+    <div className="flex h-full flex-col rounded-lg bg-[#19232d]/95 p-4 backdrop-blur-md">
+      <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center">
           <Crown className="mr-2" size={20} style={{ color: '#A41F13' }} />
           <h3 className="text-lg font-semibold text-white">Superchats</h3>
@@ -143,8 +143,8 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
           <Button
             variant="outline"
             size="sm"
-            className={`text-xs text-white rounded-full px-3 transition-all duration-200 ${
-              showPinnedOnly ? "border-gray-700/50" : "bg-transparent border-gray-700/50"
+            className={`rounded-full px-3 text-xs text-white transition-all duration-200 ${
+              showPinnedOnly ? "border-gray-700/50" : "border-gray-700/50 bg-transparent"
             }`}
             style={showPinnedOnly ? { backgroundColor: 'rgba(164, 31, 19, 0.5)', borderColor: 'rgba(164, 31, 19, 0.5)' } : {}}
             onClick={() => setShowPinnedOnly(!showPinnedOnly)}
@@ -152,7 +152,7 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
             {showPinnedOnly ? "Show All" : "Pinned Only"}
           </Button>
           <button
-            className="text-white hover:text-gray-300 transition rounded-full p-1.5 hover:bg-gray-700/50"
+            className="rounded-full p-1.5 text-white transition hover:bg-gray-700/50 hover:text-gray-300"
             onClick={onClose}
           >
             <X size={20} />
@@ -160,7 +160,7 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
         </div>
       </div>
 
-      <div ref={containerRef} className="flex-1 overflow-y-auto space-y-2 custom-scrollbar-hidden">
+      <div ref={containerRef} className="custom-scrollbar-hidden flex-1 space-y-2 overflow-y-auto">
         <AnimatePresence>
           {filteredSuperchats.map((message) => (
             <SuperchatMessage key={message.id} message={message} onPin={handlePinSuperchat} isAdmin={isAdmin} />
@@ -168,7 +168,7 @@ export const SuperchatPanel = ({ callId, userId, isAdmin = false, onClose }: Sup
         </AnimatePresence>
 
         {filteredSuperchats.length === 0 && (
-          <div className="text-center text-gray-400 py-8">
+          <div className="py-8 text-center text-gray-400">
             {showPinnedOnly ? "No pinned superchats yet" : "No superchats yet"}
           </div>
         )}

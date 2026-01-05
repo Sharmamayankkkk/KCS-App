@@ -43,7 +43,7 @@ const PublicNavbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-border bg-surface/95 shadow-sm backdrop-blur-md">
+    <nav className="bg-surface/95 fixed top-0 z-50 w-full border-b border-border shadow-sm backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2">
           <img
@@ -72,7 +72,7 @@ const PublicNavbar = () => {
           <ThemeToggle />
           <Link
             href="/sign-in"
-            className="hidden rounded-md px-4 py-2 text-sm font-semibold bg-accent text-background hover:bg-accent/90 shadow-sm md:block"
+            className="hover:bg-accent/90 hidden rounded-md bg-accent px-4 py-2 text-sm font-semibold text-background shadow-sm md:block"
           >
             Sign In
           </Link>
@@ -81,7 +81,7 @@ const PublicNavbar = () => {
           <div className="md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="focus:outline-none text-text-secondary"
+              className="text-text-secondary focus:outline-none"
             >
               {isMenuOpen ? (
                 <X className="size-6" />
@@ -111,7 +111,7 @@ const PublicNavbar = () => {
             <Link
               href="/sign-in"
               onClick={() => setIsMenuOpen(false)}
-              className="w-full rounded-md px-4 py-2.5 text-center text-base font-semibold bg-accent text-background hover:bg-accent/90 shadow-sm"
+              className="hover:bg-accent/90 w-full rounded-md bg-accent px-4 py-2.5 text-center text-base font-semibold text-background shadow-sm"
             >
               Sign In
             </Link>
