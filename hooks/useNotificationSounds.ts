@@ -19,7 +19,10 @@ export const useNotificationSounds = () => {
   // Initialize audio context
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const AudioContextConstructor = window.AudioContext || (window as any).webkitAudioContext;
+      if (AudioContextConstructor) {
+        audioContextRef.current = new AudioContextConstructor();
+      }
     }
     return () => {
       audioContextRef.current?.close();
