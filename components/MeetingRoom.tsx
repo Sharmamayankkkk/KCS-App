@@ -130,8 +130,6 @@ const MeetingRoom = ({ userData }: MeetingRoomProps) => {
     };
   }, [call, userData?.id]);
 
-
-
   useEffect(() => {
     if (!call) return;
     const setupBackgroundProcessing = async () => {
