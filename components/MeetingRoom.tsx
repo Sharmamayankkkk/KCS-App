@@ -5,9 +5,6 @@ import { useRouter } from 'next/navigation';
 import { useUser } from '@clerk/nextjs';
 import {
   CallingState,
-  StreamCall,
-  StreamVideo,
-  StreamVideoClient,
   useCall,
   useCallStateHooks,
   SpeakerLayout,
@@ -47,8 +44,6 @@ const DEFAULT_BACKGROUND: BackgroundOption = {
 };
 
 interface MeetingRoomProps {
-  apiKey: string;
-  userToken: string;
   userData: {
     id: string;
     fullName?: string | null;
@@ -57,7 +52,7 @@ interface MeetingRoomProps {
   };
 }
 
-const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
+const MeetingRoom = ({ userData }: MeetingRoomProps) => {
   const router = useRouter();
   const { user } = useUser();
   const [layout, setLayout] = useState<CallLayoutType>('grid');
@@ -66,7 +61,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
   const [showControls, setShowControls] = useState(true);
   const [selectedBackground, setSelectedBackground] = useState<BackgroundOption>(DEFAULT_BACKGROUND);
   const [showBackgroundSelector, setShowBackgroundSelector] = useState(false);
-  const [videoClient, setVideoClient] = useState<StreamVideoClient | null>(null);
   const call = useCall();
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
@@ -136,15 +130,7 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
     };
   }, [call, userData?.id]);
 
-  useEffect(() => {
-    if (!apiKey || !userToken || !userData) return;
-    const _client = new StreamVideoClient({ apiKey, user: userData, token: userToken });
-    setVideoClient(_client);
-    return () => {
-      _client.disconnectUser();
-      setVideoClient(null);
-    };
-  }, [apiKey, userToken, userData]);
+
 
   useEffect(() => {
     if (!call) return;
@@ -203,9 +189,9 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
 
   if (callingState !== CallingState.JOINED) return <Loader />;
 
-  return videoClient && call ? (
-    <StreamVideo client={videoClient}>
-      <StreamCall call={call}>
+  if (!call) return <Loader />;
+
+  return (
         <section className="relative flex size-full flex-col bg-background">
           <RecordingInProgressNotification />
           <PermissionRequests isAdmin={isAdmin} />
@@ -246,10 +232,6 @@ const MeetingRoom = ({ apiKey, userToken, userData }: MeetingRoomProps) => {
           {showSendSuperchat && call?.id && (<SendSuperchatModal callId={call.id} senderName={userData?.fullName || 'Anonymous'} userId={userData?.id || ''} onClose={() => setShowSendSuperchat(false)} onSuccess={() => {}} />)}
           {showBackgroundSelector && (<BackgroundSelector selectedBackground={selectedBackground} onBackgroundChange={handleBackgroundChange} onClose={() => setShowBackgroundSelector(false)} />)}
         </section>
-      </StreamCall>
-    </StreamVideo>
-  ) : (
-    <Loader />
   );
 };
 

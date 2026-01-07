@@ -51,7 +51,7 @@ const MeetingPage = () => {
           {!isSetupComplete ? (
             <MeetingSetup setIsSetupComplete={setIsSetupComplete} />
           ) : (
-            <MeetingRoom apiKey={call.id} userToken={user.id} userData={user} />
+            <MeetingRoom userData={user} />
           )}
         </StreamTheme>
       </StreamCall>
