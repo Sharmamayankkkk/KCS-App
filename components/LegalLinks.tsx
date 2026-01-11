@@ -30,7 +30,7 @@ const LegalLinks = () => {
               <link.icon className="size-5" />
             </div>
             
-            <span className="text-sm font-medium leading-none hidden lg:block tracking-wide">
+            <span className="text-sm font-medium leading-none tracking-wide">
               {link.label}
             </span>
           </Link>
