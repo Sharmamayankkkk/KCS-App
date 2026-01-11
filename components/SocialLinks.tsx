@@ -2,32 +2,39 @@
 
 import { socialLinks } from '@/constants/links';
 import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 const SocialLinks = () => {
   return (
-    <div className="flex flex-col gap-3">
-      {socialLinks.map((link) => (
-        <Link
-          href={link.href}
-          key={link.label}
-          target="_blank"
-          className="group relative flex items-center justify-start gap-4 overflow-hidden rounded-2xl bg-secondary/30 p-4 shadow-sm transition-all duration-300 hover:-translate-x-1 hover:bg-secondary/50 hover:shadow-md"
-          style={{ color: '#FAF5F1' }}
-        >
-          {/* Material Design 3 State Layer */}
-          <div className="absolute inset-0 bg-white opacity-0 transition-opacity duration-300 group-hover:opacity-10" />
-          
-          <div className="relative z-10 flex size-10 items-center justify-center rounded-xl bg-white/10 transition-transform duration-300 group-hover:scale-110">
-            <link.icon className="size-5" strokeWidth={2} />
-          </div>
-          <span className="relative z-10 block text-base font-semibold tracking-tight sm:hidden lg:block">
-            {link.label}
-          </span>
-          
-          {/* Ripple effect indicator */}
-          <div className="absolute bottom-0 left-0 top-0 w-1 origin-top scale-y-0 bg-white/30 transition-transform duration-300 group-hover:scale-y-100" />
-        </Link>
-      ))}
+    <div className="flex flex-col w-full gap-3 px-2">
+      {/* Section Header */}
+      <p className="px-2 text-xs font-bold text-[#CAC4D0] uppercase tracking-wider">
+        Social
+      </p>
+      
+      {/* Horizontal Icon Grid */}
+      <div className="flex flex-wrap gap-2 px-2">
+        {socialLinks.map((link) => (
+          <Link
+            href={link.href}
+            key={link.label}
+            target="_blank"
+            className={cn(
+              'flex items-center justify-center p-3 rounded-full transition-all duration-300 group relative',
+              'bg-[#2B2930] hover:bg-[#49454F] border border-[#49454F]/30 hover:border-[#D0BCFF]/50 hover:shadow-md'
+            )}
+            title={link.label}
+          >
+            {/* Icon Wrapper with Hover Glow */}
+            <div className="relative z-10 text-[#E6E0E9] group-hover:text-white transition-colors group-hover:scale-110">
+              <link.icon className="size-5" />
+            </div>
+            
+            {/* Subtle glow effect */}
+            <div className="absolute inset-0 rounded-full bg-[#D0BCFF] opacity-0 blur-md group-hover:opacity-20 transition-opacity" />
+          </Link>
+        ))}
+      </div>
     </div>
   );
 };

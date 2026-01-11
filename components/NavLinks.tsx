@@ -19,94 +19,48 @@ const NavLinks = () => {
     return adminEmails.includes(userEmail);
   }, [user]);
 
+  const renderLinks = (links: typeof sidebarLinks) => {
+    return links.map((item) => {
+      const isActive = pathname === item.route || pathname.startsWith(`${item.route}/`);
+
+      return (
+        <Link
+          href={item.route}
+          key={item.label}
+          className={cn(
+            'flex items-center gap-4 p-4 rounded-full transition-all duration-200 group',
+            {
+              // Active State: MD3 Secondary Container
+              'bg-[#D0BCFF] text-[#381E72] font-semibold': isActive,
+              // Inactive State: Transparent
+              'text-[#E6E0E9] hover:bg-[#49454F]/30': !isActive,
+            }
+          )}
+        >
+          <div className={cn("relative", { "text-[#381E72]": isActive, "text-[#CAC4D0] group-hover:text-[#E6E0E9]": !isActive })}>
+             <item.icon className="size-6" />
+          </div>
+          
+          <p className="text-base font-medium leading-none hidden md:block">
+            {item.label}
+          </p>
+        </Link>
+      );
+    });
+  };
+
   return (
-    <>
-      {sidebarLinks.map((item) => {
-        const isActive =
-          pathname === item.route || pathname.startsWith(`${item.route}/`);
-
-        return (
-          <Link
-            href={item.route}
-            key={item.label}
-            className={cn(
-              'group relative flex items-center gap-4 overflow-hidden rounded-2xl p-4 text-background transition-all duration-300',
-              {
-                'bg-accent shadow-md hover:shadow-lg': isActive,
-                'bg-secondary/30 shadow-sm hover:bg-secondary/50 hover:shadow-md': !isActive,
-              }
-            )}
-          >
-            {/* MD3 State Layer */}
-            <div className={cn(
-              'absolute inset-0 bg-white transition-opacity duration-300',
-              isActive ? 'opacity-0 group-hover:opacity-10' : 'opacity-0 group-hover:opacity-5'
-            )} />
-            
-            <div className={cn(
-              'relative z-10 flex size-10 items-center justify-center rounded-xl transition-all duration-300',
-              {
-                'bg-white/20': isActive,
-                'bg-white/10 group-hover:scale-110': !isActive,
-              }
-            )}>
-              <item.icon className="size-5" strokeWidth={2} />
-            </div>
-            <p className="relative z-10 block text-lg font-semibold tracking-tight sm:hidden lg:block">
-              {item.label}
-            </p>
-            
-            {/* Active indicator */}
-            {isActive && (
-              <div className="absolute inset-y-0 left-0 w-1 bg-white/40" />
-            )}
-          </Link>
-        );
-      })}
+    <div className="flex flex-col gap-2 w-full">
+      {renderLinks(sidebarLinks)}
       
-      {isAdmin && adminSidebarLinks.map((item) => {
-        const isActive =
-          pathname === item.route || pathname.startsWith(`${item.route}/`);
-
-        return (
-          <Link
-            href={item.route}
-            key={item.label}
-            className={cn(
-              'group relative flex items-center gap-4 overflow-hidden rounded-2xl p-4 text-background transition-all duration-300',
-              {
-                'bg-accent shadow-md hover:shadow-lg': isActive,
-                'bg-secondary/30 shadow-sm hover:bg-secondary/50 hover:shadow-md': !isActive,
-              }
-            )}
-          >
-            {/* MD3 State Layer */}
-            <div className={cn(
-              'absolute inset-0 bg-white transition-opacity duration-300',
-              isActive ? 'opacity-0 group-hover:opacity-10' : 'opacity-0 group-hover:opacity-5'
-            )} />
-            
-            <div className={cn(
-              'relative z-10 flex size-10 items-center justify-center rounded-xl transition-all duration-300',
-              {
-                'bg-white/20': isActive,
-                'bg-white/10 group-hover:scale-110': !isActive,
-              }
-            )}>
-              <item.icon className="size-5" strokeWidth={2} />
-            </div>
-            <p className="relative z-10 block text-lg font-semibold tracking-tight sm:hidden lg:block">
-              {item.label}
-            </p>
-            
-            {/* Active indicator */}
-            {isActive && (
-              <div className="absolute inset-y-0 left-0 w-1 bg-white/40" />
-            )}
-          </Link>
-        );
-      })}
-    </>
+      {isAdmin && (
+        <>
+          <div className="my-2 border-t border-[#49454F]/50 mx-4" />
+          <p className="px-4 text-xs font-bold text-[#CAC4D0] uppercase tracking-wider mb-1">Admin</p>
+          {renderLinks(adminSidebarLinks)}
+        </>
+      )}
+    </div>
   );
 };
 

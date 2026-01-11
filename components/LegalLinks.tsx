@@ -9,7 +9,7 @@ const LegalLinks = () => {
   const pathname = usePathname();
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-1 w-full px-2">
       {legalLinks.map((link) => {
         const isActive = pathname === link.href;
         return (
@@ -17,40 +17,22 @@ const LegalLinks = () => {
             href={link.href}
             key={link.label}
             className={cn(
-              'group relative flex items-center justify-start gap-4 overflow-hidden rounded-2xl p-4 transition-all duration-300',
+              'flex items-center gap-4 px-4 py-3 rounded-full transition-all duration-200 group w-full',
               {
-                'bg-accent shadow-md hover:shadow-lg': isActive,
-                'bg-secondary/30 shadow-sm hover:bg-secondary/50 hover:shadow-md': !isActive,
+                // Active: Tonal Red (Error Container)
+                'bg-[#93000A] text-[#FFDAD6]': isActive,
+                // Inactive: Transparent text with hover
+                'text-[#CAC4D0] hover:bg-[#49454F]/30 hover:text-[#E6E0E9]': !isActive,
               }
             )}
-            style={{ color: '#FAF5F1' }}
           >
-            {/* Material Design 3 State Layer */}
-            <div className={cn(
-              'absolute inset-0 bg-white transition-opacity duration-300',
-              {
-                'opacity-0 group-hover:opacity-10': isActive,
-                'opacity-0 group-hover:opacity-5': !isActive,
-              }
-            )} />
-            
-            <div className={cn(
-              'relative z-10 flex size-10 items-center justify-center rounded-xl transition-all duration-300',
-              {
-                'bg-white/20': isActive,
-                'bg-white/10 group-hover:scale-110': !isActive,
-              }
-            )}>
-              <link.icon className="size-5" strokeWidth={2} />
+            <div className={cn("relative shrink-0", { "text-[#FFDAD6]": isActive, "text-[#CAC4D0] group-hover:text-[#E6E0E9]": !isActive })}>
+              <link.icon className="size-5" />
             </div>
-            <span className="relative z-10 block text-base font-semibold tracking-tight sm:hidden lg:block">
+            
+            <span className="text-sm font-medium leading-none hidden lg:block tracking-wide">
               {link.label}
             </span>
-            
-            {/* Active indicator */}
-            {isActive && (
-              <div className="absolute inset-y-0 left-0 w-1 bg-white/40" />
-            )}
           </Link>
         );
       })}

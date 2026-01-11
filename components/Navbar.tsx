@@ -18,19 +18,19 @@ const Navbar = () => {
 
   return (
     <nav
-      className="fixed z-50 flex w-full items-center justify-between bg-primary px-6 py-4 shadow-md backdrop-blur-sm lg:px-10"
+      className="fixed z-50 flex w-full items-center justify-between bg-[#141218] px-6 py-4 lg:px-10 border-b border-[#49454F]/30 shadow-sm"
     >
-      <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-105">
-        <div className="flex size-12 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-md">
-          <Image
-            src="/icons/KCS.png"
-            width={48}
-            height={48}
-            alt="KCS logo"
-            className="size-full object-cover"
-          />
+      <Link href="/" className="flex items-center gap-2 group">
+        <div className="relative">
+             <Image
+              src="/icons/KCS.png"
+              width={40}
+              height={40}
+              alt="KCS logo"
+              className="max-sm:size-10 transition-transform group-hover:scale-105"
+            />
         </div>
-        <p className="text-3xl font-bold tracking-tight text-background max-sm:hidden">
+        <p className="text-[22px] font-bold text-[#E6E0E9] max-sm:hidden tracking-tight ml-1">
           KCS
         </p>
       </Link>
@@ -38,15 +38,32 @@ const Navbar = () => {
       <div className="flex items-center gap-6">
         <div className="hidden items-center gap-4 sm:flex">
           <ThemeToggle />
+
           <SignedIn>
-            <VerifiedBadge userEmail={userEmail} size={40}>
-              <UserButton afterSignOutUrl="/sign-in" />
-            </VerifiedBadge>
+            {/* User Profile Container */}
+            <div className="relative flex items-center justify-center">
+              <UserButton 
+                afterSignOutUrl="/sign-in"
+                appearance={{
+                    elements: {
+                        avatarBox: "h-10 w-10 ring-2 ring-[#49454F] hover:ring-[#D0BCFF] transition-all duration-300",
+                        userButtonTrigger: "focus:shadow-none"
+                    }
+                }}
+              />
+              
+              {/* Verified Badge - Overlapping Bottom Right */}
+              <div className="absolute -bottom-1 -right-1 z-20 pointer-events-none">
+                 <div className="bg-[#141218] rounded-full p-[2px] shadow-sm">
+                    <VerifiedBadge userEmail={userEmail} size={14} />
+                 </div>
+              </div>
+            </div>
           </SignedIn>
 
           <SignedOut>
             <Link href="/sign-in">
-              <Button className="rounded-full bg-accent px-6 py-2.5 font-semibold text-background shadow-sm transition-all hover:bg-accent/90 hover:shadow-md">
+              <Button className="rounded-full bg-[#D0BCFF] text-[#381E72] hover:bg-[#E8DEF8] px-6 h-10 font-medium transition-all hover:shadow-md hover:scale-[1.02]">
                 Sign in
               </Button>
             </Link>
