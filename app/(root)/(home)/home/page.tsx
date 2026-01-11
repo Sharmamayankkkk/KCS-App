@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import MeetingTypeList from '@/components/MeetingTypeList';
 import ScheduledMeetings from '@/components/ScheduledMeetings';
+import { Clock, MapPin } from 'lucide-react';
 
 const Home = () => {
   const [userTimeZone, setUserTimeZone] = useState<string | null>(null);
@@ -36,30 +37,50 @@ const Home = () => {
   }, []);
 
   return (
-    <section className="flex size-full flex-col gap-5 text-white">
-      <div className="relative flex h-80 w-full items-center overflow-hidden rounded-[20px] p-4">
-        <video
-          src="/images/hero-background.mp4"
-          autoPlay
-          muted
-          loop
-          className="absolute left-0 top-0 z-[-1] size-full object-cover"
-        />
-        <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-extrabold text-white lg:text-7xl">
-            {time || 'Loading...'}
-          </h1>
-          <p className="text-sky-1  text-lg font-medium lg:text-2xl">
-            {date || 'Loading...'}
-          </p>
-          <p className="text-white-400 text-sm">
-            Time Zone: {userTimeZone || 'Detecting...'}
-          </p>
+    <section className="flex size-full flex-col gap-8">
+      {/* Material Design 3 Hero Section */}
+      <div className="relative flex h-[360px] w-full items-end overflow-hidden rounded-[32px] bg-gradient-to-br from-[#2B2930] via-[#1D1B20] to-[#141218] shadow-lg border border-[#49454F]/30">
+        {/* Animated Background Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute inset-0 bg-[url('/images/hero-background.jpg')] bg-cover bg-center opacity-20" />
+        </div>
+        
+        {/* Decorative Orbs */}
+        <div className="absolute -right-20 -top-20 size-64 rounded-full bg-[#D0BCFF]/20 blur-[100px]" />
+        <div className="absolute -bottom-20 -left-20 size-64 rounded-full bg-[#D0BCFF]/10 blur-[100px]" />
+        
+        {/* Content Container */}
+        <div className="relative z-10 flex w-full flex-col gap-6 p-8 pb-10">
+          {/* Time Display */}
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <div className="flex size-12 items-center justify-center rounded-full bg-[#D0BCFF]/20 backdrop-blur-sm">
+                <Clock className="size-6 text-[#D0BCFF]" />
+              </div>
+              <h1 className="text-6xl font-bold tracking-tight text-[#E6E0E9]">
+                {time || 'Loading...'}
+              </h1>
+            </div>
+            
+            <p className="text-xl font-medium text-[#CAC4D0] pl-[60px]">
+              {date || 'Loading...'}
+            </p>
+          </div>
+          
+          {/* Timezone Badge */}
+          <div className="inline-flex w-fit items-center gap-2 rounded-full bg-[#2B2930]/80 backdrop-blur-md px-5 py-2.5 border border-[#49454F]/50 ml-[60px]">
+            <MapPin className="size-4 text-[#D0BCFF]" />
+            <span className="text-sm font-medium text-[#E6E0E9]">
+              {userTimeZone || 'Detecting timezone...'}
+            </span>
+          </div>
         </div>
       </div>
 
+      {/* Meeting Actions Grid */}
       <MeetingTypeList />
       
+      {/* Scheduled Meetings Section */}
       <ScheduledMeetings />
     </section>
   );

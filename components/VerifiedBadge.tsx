@@ -15,15 +15,19 @@ export const VerifiedBadge = ({ userEmail, userId, size = 16, className = '' }: 
   if (!isAdmin) return null;
 
   return (
-    <Image
-      src="/images/verified.png"
-      alt="Verified Admin"
-      width={size}
-      height={size}
-      className={`inline-block ${className}`}
-      style={{ flexShrink: 0 }}
+    <div 
+      className={`inline-flex items-center justify-center select-none ${className}`}
       title="Verified Admin"
-    />
+    >
+      <Image
+        src="/images/verified.png"
+        alt="Verified Badge"
+        width={size}
+        height={size}
+        className="object-contain drop-shadow-md"
+        style={{ width: size, height: size }}
+      />
+    </div>
   );
 };
 

@@ -197,47 +197,55 @@ const ScheduledMeetings = () => {
 
   if (loading) {
     return (
-      <div className="w-full rounded-lg border border-border bg-surface p-6">
-        <div className="mb-4 flex items-center gap-2">
-          <Calendar className="size-5 text-[#B91C1C]" />
-          <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
+      <div className="w-full rounded-[28px] border border-[#49454F]/40 bg-[#2B2930] p-8 shadow-sm">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex size-12 items-center justify-center rounded-[20px] bg-[#D0BCFF]/15">
+            <Calendar className="size-6 text-[#D0BCFF]" />
+          </div>
+          <h2 className="text-2xl font-bold text-[#E6E0E9]">Scheduled Meetings</h2>
         </div>
-        <p className="text-[#64748B]">Loading meetings...</p>
+        <p className="text-[#CAC4D0]">Loading meetings...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="w-full rounded-lg border border-border bg-surface p-6">
-        <div className="mb-4 flex items-center gap-2">
-          <Calendar className="size-5 text-[#B91C1C]" />
-          <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
+      <div className="w-full rounded-[28px] border border-[#49454F]/40 bg-[#2B2930] p-8 shadow-sm">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex size-12 items-center justify-center rounded-[20px] bg-[#D0BCFF]/15">
+            <Calendar className="size-6 text-[#D0BCFF]" />
+          </div>
+          <h2 className="text-2xl font-bold text-[#E6E0E9]">Scheduled Meetings</h2>
         </div>
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-400">{error}</p>
       </div>
     );
   }
 
   if (meetings.length === 0) {
     return (
-      <div className="w-full rounded-lg border border-border bg-surface p-6">
-        <div className="mb-4 flex items-center gap-2">
-          <Calendar className="size-5 text-[#B91C1C]" />
-          <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
+      <div className="w-full rounded-[28px] border border-[#49454F]/40 bg-[#2B2930] p-8 shadow-sm">
+        <div className="mb-6 flex items-center gap-3">
+          <div className="flex size-12 items-center justify-center rounded-[20px] bg-[#D0BCFF]/15">
+            <Calendar className="size-6 text-[#D0BCFF]" />
+          </div>
+          <h2 className="text-2xl font-bold text-[#E6E0E9]">Scheduled Meetings</h2>
         </div>
-        <p className="text-[#64748B]">No upcoming meetings scheduled.</p>
+        <p className="text-[#CAC4D0]">No upcoming meetings scheduled.</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full rounded-lg border border-border bg-surface p-6">
-      <div className="mb-4 flex items-center gap-2">
-        <Calendar className="size-5 text-[#B91C1C]" />
-        <h2 className="text-xl font-bold text-[#0F172A]">Scheduled Meetings</h2>
+    <div className="w-full rounded-[28px] border border-[#49454F]/40 bg-[#2B2930] p-8 shadow-sm">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex size-12 items-center justify-center rounded-[20px] bg-[#D0BCFF]/15">
+          <Calendar className="size-6 text-[#D0BCFF]" />
+        </div>
+        <h2 className="text-2xl font-bold text-[#E6E0E9]">Scheduled Meetings</h2>
       </div>
-      <div className="space-y-3">
+      <div className="space-y-4">
         {meetings.map((meeting) => {
           const { timeStr, dateStr, relativeTime, hasStarted } = formatDateTime(
             meeting.start_time
@@ -246,36 +254,36 @@ const ScheduledMeetings = () => {
           return (
             <div
               key={meeting.id}
-              className="flex flex-col justify-between gap-3 rounded-lg border border-border p-4 transition-all hover:border-accent hover:shadow-md sm:flex-row sm:items-center"
+              className="group flex flex-col justify-between gap-4 rounded-[24px] border border-[#49454F]/40 bg-[#1D1B20] p-6 transition-all hover:border-[#D0BCFF]/50 hover:shadow-md sm:flex-row sm:items-center"
             >
               <div className="min-w-0 flex-1">
-                <div className="mb-1 flex items-center gap-2">
-                  <h3 className="truncate font-semibold text-[#0F172A]">
+                <div className="mb-2 flex items-center gap-2">
+                  <h3 className="truncate text-lg font-semibold text-[#E6E0E9]">
                     {meeting.title}
                   </h3>
                   <PrivacyBadge isPrivate={meeting.is_private} />
                 </div>
                 {meeting.description && (
-                  <p className="truncate text-sm text-[#64748B]">
+                  <p className="mb-3 truncate text-sm text-[#CAC4D0]">
                     {meeting.description}
                   </p>
                 )}
-                <div className="mt-2 flex flex-wrap items-center gap-3 text-sm text-[#64748B]">
-                  <div className="flex items-center gap-1">
-                    <Calendar className="size-4" />
+                <div className="flex flex-wrap items-center gap-4 text-sm text-[#CAC4D0]">
+                  <div className="flex items-center gap-2 rounded-full bg-[#49454F]/30 px-3 py-1.5">
+                    <Calendar className="size-4 text-[#D0BCFF]" />
                     <span>{dateStr}</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="size-4" />
+                  <div className="flex items-center gap-2 rounded-full bg-[#49454F]/30 px-3 py-1.5">
+                    <Clock className="size-4 text-[#D0BCFF]" />
                     <span>{timeStr}</span>
                   </div>
                   {hasStarted && (
-                    <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                    <span className="rounded-full bg-green-600/20 px-3 py-1.5 text-xs font-medium text-green-400">
                       Live Now
                     </span>
                   )}
                   {!hasStarted && (
-                    <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">
+                    <span className="rounded-full bg-blue-600/20 px-3 py-1.5 text-xs font-medium text-blue-400">
                       {relativeTime}
                     </span>
                   )}
@@ -287,7 +295,7 @@ const ScheduledMeetings = () => {
                     <Button
                       onClick={() => toggleMeetingPrivacy(meeting)}
                       disabled={updatingMeeting === meeting.call_id}
-                      className="shrink-0 bg-purple-600 text-white hover:bg-purple-700"
+                      className="shrink-0 rounded-full bg-purple-600/20 text-purple-300 hover:bg-purple-600/30 border border-purple-600/40"
                       size="sm"
                       title={meeting.is_private ? 'Make Public' : 'Make Private'}
                     >
@@ -296,7 +304,7 @@ const ScheduledMeetings = () => {
                     <Button
                       onClick={() => toggleMeetingVisibility(meeting)}
                       disabled={updatingMeeting === meeting.call_id}
-                      className="shrink-0 bg-gray-600 text-white hover:bg-gray-700"
+                      className="shrink-0 rounded-full bg-[#49454F]/40 text-[#CAC4D0] hover:bg-[#49454F]/60 border border-[#49454F]/50"
                       size="sm"
                       title={meeting.is_active ? 'Hide Meeting' : 'Show Meeting'}
                     >
@@ -306,7 +314,7 @@ const ScheduledMeetings = () => {
                 )}
                 <Button
                   onClick={() => handleJoinMeeting(meeting.call_id)}
-                  className="shrink-0 bg-[#B91C1C] text-white hover:bg-[#991B1B]"
+                  className="shrink-0 rounded-full bg-[#D0BCFF] text-[#381E72] hover:bg-[#E8DEF8] font-medium shadow-sm hover:shadow-md transition-all"
                   size="sm"
                 >
                   <Video className="mr-2 size-4" />

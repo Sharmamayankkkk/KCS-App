@@ -15,25 +15,31 @@ const HomeCard = ({ className, icon: Icon, title, description, handleClick }: Ho
   return (
     <section
       className={cn(
-        'px-4 py-6 flex flex-col justify-between w-full xl:max-w-[270px] min-h-[260px] rounded-xl cursor-pointer bg-surface border border-border shadow-sm hover:shadow-md transition-all',
+        'group relative flex min-h-[240px] w-full flex-col justify-between overflow-hidden rounded-[28px] bg-[#2B2930] p-6 transition-all duration-300 hover:bg-[#383540] cursor-pointer border border-[#49454F]/40 hover:border-[#D0BCFF]/50 hover:shadow-lg xl:max-w-[270px]',
         className
       )}
       onClick={handleClick}
     >
-      <div
-        className="flex-center size-12 rounded-lg border border-border bg-background"
-      >
-        <Icon className="size-7 text-accent" />
+      {/* Background Gradient Effect */}
+      <div className="absolute inset-0 opacity-0 transition-opacity duration-300 bg-gradient-to-br from-[#D0BCFF]/10 to-transparent group-hover:opacity-100" />
+      
+      {/* Icon Container */}
+      <div className="relative z-10 inline-flex size-14 items-center justify-center rounded-[20px] bg-[#D0BCFF]/15 transition-all duration-300 group-hover:bg-[#D0BCFF]/25 group-hover:scale-110">
+        <Icon className="size-7 text-[#D0BCFF]" strokeWidth={2} />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-bold text-text-primary">
+      {/* Content */}
+      <div className="relative z-10 flex flex-col gap-2">
+        <h1 className="text-[22px] font-bold tracking-tight text-[#E6E0E9]">
           {title}
         </h1>
-        <p className="text-lg font-normal text-text-secondary">
+        <p className="text-[15px] font-normal leading-relaxed text-[#CAC4D0]">
           {description}
         </p>
       </div>
+
+      {/* Hover Indicator Line */}
+      <div className="absolute bottom-0 left-0 right-0 h-[3px] origin-left scale-x-0 bg-gradient-to-r from-[#D0BCFF] to-[#D0BCFF]/50 transition-transform duration-300 group-hover:scale-x-100" />
     </section>
   );
 };

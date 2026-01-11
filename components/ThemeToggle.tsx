@@ -14,13 +14,7 @@ const ThemeToggle = () => {
 
   if (!mounted) {
     return (
-      <button
-        className="flex-center relative size-12 rounded-full border-2 border-border bg-gradient-to-br from-surface to-background transition-all"
-        disabled
-        aria-label="Loading theme toggle"
-      >
-        <div className="size-5" />
-      </button>
+      <div className="size-10 rounded-full bg-[#49454F]/20 animate-pulse" />
     );
   }
 
@@ -29,24 +23,20 @@ const ThemeToggle = () => {
   return (
     <button
       onClick={() => setTheme(isDark ? 'light' : 'dark')}
-      className="flex-center group relative size-12 overflow-hidden rounded-full border-2 border-border bg-gradient-to-br from-surface to-background transition-all duration-300 ease-in-out hover:scale-110 hover:border-accent hover:shadow-lg active:scale-95"
+      className="group relative flex items-center justify-center size-10 rounded-full bg-[#49454F]/20 hover:bg-[#49454F]/40 transition-all duration-300"
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
-      {/* Background glow effect */}
-      <div className={`absolute inset-0 rounded-full opacity-100 transition-opacity duration-500 ${isDark ? 'bg-gradient-to-br from-indigo-500/20 to-purple-500/20' : 'bg-gradient-to-br from-amber-500/20 to-orange-500/20'}`} />
-      
-      {/* Icon container with animation */}
-      <div className="flex-center relative z-10">
+      <div className="relative z-10 text-[#E6E0E9]">
         {isDark ? (
-          <Sun className="size-5 text-amber-400 transition-colors duration-500 animate-in zoom-in-75 spin-in-180 group-hover:text-amber-300" />
+          <Sun className="size-5 transition-transform duration-500 hover:rotate-90 text-[#E6E0E9]" />
         ) : (
-          <Moon className="size-5 text-indigo-600 transition-colors duration-500 animate-in zoom-in-75 spin-in-180 group-hover:text-indigo-500" />
+          <Moon className="size-5 transition-transform duration-500 hover:-rotate-12 text-[#381E72]" />
         )}
       </div>
       
-      {/* Ripple effect on hover */}
-      <div className="bg-accent/10 absolute inset-0 rounded-full opacity-0 transition-opacity group-hover:animate-ping group-hover:opacity-100" />
+      {/* Ripple/Feedback layer */}
+      <span className="absolute inset-0 rounded-full scale-0 bg-[#E6E0E9]/10 transition-transform duration-200 group-active:scale-100" />
     </button>
   );
 };
