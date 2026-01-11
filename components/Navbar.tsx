@@ -19,19 +19,19 @@ const Navbar = () => {
 
   return (
     <nav
-      className="fixed z-50 flex w-full items-center justify-between bg-primary px-6 py-4 lg:px-10"
+      className="fixed z-50 flex w-full items-center justify-between bg-primary px-6 py-4 shadow-md backdrop-blur-sm lg:px-10"
     >
-      <Link href="/" className="flex items-center gap-2">
-        <Image
-          src="/icons/KCS.png"
-          width={48}
-          height={48}
-          alt="KCS logo"
-          className="max-sm:size-12"
-        />
-        <p
-          className="text-3xl font-extrabold text-background max-sm:hidden"
-        >
+      <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-105">
+        <div className="flex size-12 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-md">
+          <Image
+            src="/icons/KCS.png"
+            width={48}
+            height={48}
+            alt="KCS logo"
+            className="size-full object-cover"
+          />
+        </div>
+        <p className="text-3xl font-bold tracking-tight text-background max-sm:hidden">
           KCS
         </p>
       </Link>
@@ -40,15 +40,14 @@ const Navbar = () => {
         <div className="hidden items-center gap-4 sm:flex">
           <ThemeToggle />
           <SignedIn>
-            <div className="flex items-center gap-2">
+            <VerifiedBadge userEmail={userEmail} size={40}>
               <UserButton afterSignOutUrl="/sign-in" />
-              <VerifiedBadge userEmail={userEmail} size={18} />
-            </div>
+            </VerifiedBadge>
           </SignedIn>
 
           <SignedOut>
             <Link href="/sign-in">
-              <Button className="hover:bg-accent/90 bg-accent text-background">
+              <Button className="rounded-full bg-accent px-6 py-2.5 font-semibold text-background shadow-sm transition-all hover:bg-accent/90 hover:shadow-md">
                 Sign in
               </Button>
             </Link>

@@ -29,44 +29,48 @@ const MobileNav = () => {
     <section className="w-full max-w-[264px]">
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <button className="sm:hidden">
+          <button className="rounded-xl p-2 transition-all hover:bg-secondary/30 sm:hidden">
             {isOpen ? (
-              <X className="size-8 text-background" />
+              <X className="size-7 text-background" strokeWidth={2.5} />
             ) : (
-              <Menu className="size-8 text-background" />
+              <Menu className="size-7 text-background" strokeWidth={2.5} />
             )}
           </button>
         </SheetTrigger>
-        <SheetContent side="left" className="border-none bg-primary">
+        <SheetContent side="left" className="border-none bg-primary shadow-2xl">
           <SheetClose asChild>
-            <Link href="/" className="flex items-center gap-2" onClick={() => setIsOpen(false)}>
-              <Image
-                src="/icons/KCS.png"
-                width={48}
-                height={48}
-                alt="KCS logo"
-              />
-              <p className="text-3xl font-extrabold text-background">KCS</p>
+            <Link href="/" className="flex items-center gap-3" onClick={() => setIsOpen(false)}>
+              <div className="flex size-12 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-sm">
+                <Image
+                  src="/icons/KCS.png"
+                  width={48}
+                  height={48}
+                  alt="KCS logo"
+                  className="size-full object-cover"
+                />
+              </div>
+              <p className="text-3xl font-bold tracking-tight text-background">KCS</p>
             </Link>
           </SheetClose>
           <div className="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto pt-8">
             <div className="flex flex-col gap-6">
               <SignedIn>
-                <div className="flex items-center justify-center gap-2">
-                  <UserButton afterSignOutUrl="/sign-in" />
-                  <VerifiedBadge userEmail={userEmail} size={18} />
+                <div className="flex items-center justify-center">
+                  <VerifiedBadge userEmail={userEmail} size={48}>
+                    <UserButton afterSignOutUrl="/sign-in" />
+                  </VerifiedBadge>
                 </div>
               </SignedIn>
               <div className="flex justify-center">
                 <ThemeToggle />
               </div>
               <NavLinks />
-              <div className="mt-6 flex-1 border-t border-secondary pt-6">
+              <div className="mt-6 flex-1 border-t border-secondary/50 pt-6">
                 <SocialLinks />
               </div>
             </div>
             <div className="pb-4">
-              <div className="border-t border-secondary pt-4">
+              <div className="border-t border-secondary/50 pt-4">
                 <LegalLinks />
               </div>
             </div>
