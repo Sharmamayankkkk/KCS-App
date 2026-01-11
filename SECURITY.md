@@ -24,6 +24,8 @@
 - The vulnerability requires either local file access or specific malicious input patterns
 - No fix is currently available from the package maintainer
 - The feature is essential for administrative workflows
+- The export operation happens client-side for better UX (no server upload needed)
+- Data being exported is already accessible to the admin through the UI
 
 #### Mitigation:
 - Restrict attendance export feature to verified admin users only
