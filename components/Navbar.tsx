@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import MobileNav from './MobileNav';
 import { useMemo } from 'react';
-import { isUserAdmin } from '@/lib/utils';
 import VerifiedBadge from './VerifiedBadge';
 import ThemeToggle from './ThemeToggle';
 

@@ -39,11 +39,8 @@ const NavLinks = () => {
           >
             {/* MD3 State Layer */}
             <div className={cn(
-              'absolute inset-0 transition-opacity duration-300',
-              {
-                'bg-white opacity-0 group-hover:opacity-10': isActive,
-                'bg-white opacity-0 group-hover:opacity-10': !isActive,
-              }
+              'absolute inset-0 bg-white transition-opacity duration-300',
+              isActive ? 'opacity-0 group-hover:opacity-10' : 'opacity-0 group-hover:opacity-5'
             )} />
             
             <div className={cn(
@@ -61,7 +58,7 @@ const NavLinks = () => {
             
             {/* Active indicator */}
             {isActive && (
-              <div className="absolute bottom-0 left-0 top-0 w-1 bg-white/40" />
+              <div className="absolute inset-y-0 left-0 w-1 bg-white/40" />
             )}
           </Link>
         );
@@ -85,11 +82,8 @@ const NavLinks = () => {
           >
             {/* MD3 State Layer */}
             <div className={cn(
-              'absolute inset-0 transition-opacity duration-300',
-              {
-                'bg-white opacity-0 group-hover:opacity-10': isActive,
-                'bg-white opacity-0 group-hover:opacity-10': !isActive,
-              }
+              'absolute inset-0 bg-white transition-opacity duration-300',
+              isActive ? 'opacity-0 group-hover:opacity-10' : 'opacity-0 group-hover:opacity-5'
             )} />
             
             <div className={cn(
@@ -107,7 +101,7 @@ const NavLinks = () => {
             
             {/* Active indicator */}
             {isActive && (
-              <div className="absolute bottom-0 left-0 top-0 w-1 bg-white/40" />
+              <div className="absolute inset-y-0 left-0 w-1 bg-white/40" />
             )}
           </Link>
         );
