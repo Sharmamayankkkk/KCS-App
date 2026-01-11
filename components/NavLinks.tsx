@@ -7,7 +7,11 @@ import { cn } from '@/lib/utils';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const NavLinks = () => {
+interface NavLinksProps {
+  onLinkClick?: () => void;
+}
+
+const NavLinks = ({ onLinkClick }: NavLinksProps = {}) => {
   const pathname = usePathname();
   const { user } = useUser();
 
@@ -27,6 +31,7 @@ const NavLinks = () => {
         <Link
           href={item.route}
           key={item.label}
+          onClick={onLinkClick}
           className={cn(
             'flex items-center gap-4 p-4 rounded-full transition-all duration-200 group',
             {
@@ -41,7 +46,7 @@ const NavLinks = () => {
              <item.icon className="size-6" />
           </div>
           
-          <p className="text-base font-medium leading-none hidden md:block">
+          <p className="text-base font-medium leading-none">
             {item.label}
           </p>
         </Link>

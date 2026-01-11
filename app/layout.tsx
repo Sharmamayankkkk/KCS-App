@@ -102,7 +102,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport = {
-  themeColor: '#B91C1C',
+  themeColor: '#D0BCFF',
   width: 'device-width',
   initialScale: 1,
   minimumScale: 1,
@@ -112,10 +112,10 @@ export const viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} bg-background`}>
+      <body className={`${inter.className} bg-[#141218] text-[#E6E0E9]`}>
         <ThemeProvider
           attribute="class"
-          defaultTheme="light"
+          defaultTheme="dark"
           enableSystem
           disableTransitionOnChange
         >
@@ -126,9 +126,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 logoImageUrl: '/icons/KCS-Logo.png',
               },
               variables: {
-                colorPrimary: '#B91C1C',
-                colorBackground: '#F8FAFC',
-                colorText: '#0F172A',
+                colorPrimary: '#D0BCFF',
+                colorBackground: '#141218',
+                colorText: '#E6E0E9',
               },
             }}
           >

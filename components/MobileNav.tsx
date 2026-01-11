@@ -82,7 +82,7 @@ const MobileNav = () => {
                 </SignedIn>
 
                 {/* Main Navigation */}
-                <NavLinks />
+                <NavLinks onLinkClick={() => setIsOpen(false)} />
 
                 {/* Theme Toggle */}
                 <div className="flex items-center justify-between px-4 py-3 rounded-full bg-[#2B2930]/40 border border-[#49454F]/20">
