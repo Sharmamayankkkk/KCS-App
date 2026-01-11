@@ -20,8 +20,8 @@ export const VerifiedBadge = ({ userEmail, userId, size = 40, className = '', ch
   // Check if user is admin by email or userId
   const isAdmin = isUserAdmin(userEmail || userId || '');
 
-  if (!isAdmin && !children) return null;
-  if (!isAdmin && children) return <>{children}</>;
+  // If not admin, return children or null
+  if (!isAdmin) return children ? <>{children}</> : null;
 
   // If admin, wrap children with verified badge
   return (
